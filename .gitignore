@@ -2,5 +2,3 @@
 *.core  
 core.*
 *.import
-addons/rclgd/gen/*
-addons/rclgd/gen
