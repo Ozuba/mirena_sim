@@ -18,29 +18,6 @@ it implements the various required sensors to start off with ros2 tinkering,
 - [x] CLI Interface
 
 # Installation
-**This repo uses git LFS!** 
-To correctly clone it you should:
-## 1. Install Git LFS
-First, ensure that **Git LFS** is installed on your system.
-- **For Ubuntu/Debian**:
-    ```bash
-    sudo apt-get install git-lfs
-    ```
-- **For macOS (using Homebrew)**:
-    ```bash
-    brew install git-lfs
-    ```
-- **For Windows**:
-    Download the installer from [Git LFS Downloads](https://git-lfs.github.com/) and follow the installation instructions.
-## 2. Initialize Git LFS
-
-After installing, initialize Git LFS on your system:
-```bash
-git lfs install
-```
-
-## Clone the repo and pull lfs files
 ```bash
 git clone https://github.com/Tecnun-eRacing/mirena_sim
-git lfs pull
 ```
