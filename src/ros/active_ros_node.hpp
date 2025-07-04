@@ -15,7 +15,7 @@ namespace mirena {
         ~ActiveRosNode();
 
         void set_paused(bool value);
-        bool get_paused();
+        bool is_paused();
         void set_spin_period_ms(int64_t value);;
         int64_t get_spin_period_ms();
 

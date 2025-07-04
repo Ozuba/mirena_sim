@@ -20,7 +20,7 @@ void mirena::ActiveRosNode::set_paused(bool value)
     _paused_flag.store(value);
 }
 
-bool mirena::ActiveRosNode::get_paused()
+bool mirena::ActiveRosNode::is_paused()
 {
     return _paused_flag.load();
 }
