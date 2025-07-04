@@ -1,0 +1,35 @@
+[gd_scene load_steps=2 format=3 uid="uid://70spcmcc35b2"]
+
+[ext_resource type="Script" uid="uid://nylf2sr0lyd7" path="res://UserInterface/mirena_logger/logger.gd" id="1_s8ff6"]
+
+[node name="MirenaLogger" type="PanelContainer"]
+visible = false
+clip_contents = true
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -410.0
+offset_top = -350.0
+offset_right = 410.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 0
+script = ExtResource("1_s8ff6")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="RichTextLabel" type="RichTextLabel" parent="MarginContainer"]
+custom_minimum_size = Vector2(800, 300)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 1
+scroll_following = true
+vertical_alignment = 2

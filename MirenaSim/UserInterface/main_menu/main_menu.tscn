@@ -1,0 +1,221 @@
+[gd_scene load_steps=15 format=3 uid="uid://d11pn6ulabdj"]
+
+[ext_resource type="Script" uid="uid://tf8c8bvbsfiy" path="res://UserInterface/main_menu/main_menu.gd" id="1_0tiax"]
+[ext_resource type="Script" uid="uid://dooq1p86put6u" path="res://UserInterface/main_menu/reset_car_button.gd" id="2_36byi"]
+[ext_resource type="Script" uid="uid://h8loxw71m2fb" path="res://UserInterface/main_menu/enable_car_wrapping_toggle.gd" id="2_val13"]
+[ext_resource type="Script" uid="uid://ckcshxbc5tl2m" path="res://UserInterface/main_menu/pilot_mode_list.gd" id="3_mk41h"]
+[ext_resource type="Script" uid="uid://dujnw75uc52pb" path="res://UserInterface/main_menu/open_track_loader_button.gd" id="4_k57i6"]
+[ext_resource type="Script" uid="uid://dosle5kvsopjd" path="res://UserInterface/main_menu/quick_load_track_button.gd" id="5_jt4lf"]
+[ext_resource type="Script" uid="uid://dxxbvc2h8443w" path="res://UserInterface/main_menu/slam_preset_button.gd" id="6_at1ur"]
+[ext_resource type="Script" uid="uid://bg8cssnvr4g36" path="res://UserInterface/main_menu/clear_track_button.gd" id="6_ltbmu"]
+[ext_resource type="Script" uid="uid://jcfmiw54pkkg" path="res://UserInterface/main_menu/planning_preset_button.gd" id="7_7xacn"]
+[ext_resource type="Script" uid="uid://diekbqtarsxb0" path="res://UserInterface/main_menu/control_preset_button.gd" id="8_igje0"]
+[ext_resource type="Script" uid="uid://cvi013pe17nkx" path="res://UserInterface/main_menu/39_button.gd" id="9_lmtxd"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_0tiax"]
+font_size = 22
+font_color = Color(0.744876, 0.999331, 1, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_k57i6"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_val13"]
+
+[node name="MainMenu" type="PanelContainer"]
+custom_minimum_size = Vector2(300, 400)
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -200.0
+offset_right = 300.0
+offset_bottom = 200.0
+grow_vertical = 2
+script = ExtResource("1_0tiax")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Options Menu"
+label_settings = SubResource("LabelSettings_0tiax")
+
+[node name="TabContainer" type="TabContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+current_tab = 0
+
+[node name="General" type="TabBar" parent="MarginContainer/VBoxContainer/TabContainer"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/TabContainer/General"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Panel" type="ScrollContainer" parent="MarginContainer/VBoxContainer/TabContainer/General/MarginContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/General/MarginContainer/Panel"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="Padding1" type="Label" parent="MarginContainer/VBoxContainer/TabContainer/General/MarginContainer/Panel/VBoxContainer"]
+layout_mode = 2
+text = "----- Vehicle -----"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/General/MarginContainer/Panel/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/TabContainer/General/MarginContainer/Panel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Enable Position Wrapping"
+
+[node name="EnableCarWrapping" type="CheckButton" parent="MarginContainer/VBoxContainer/TabContainer/General/MarginContainer/Panel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_styles/focus = SubResource("StyleBoxEmpty_k57i6")
+script = ExtResource("2_val13")
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/General/MarginContainer/Panel/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/TabContainer/General/MarginContainer/Panel/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "Pilot:"
+
+[node name="PilotMode" type="ItemList" parent="MarginContainer/VBoxContainer/TabContainer/General/MarginContainer/Panel/VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_force_pass_scroll_events = false
+item_count = 4
+item_0/text = "No Pilot"
+item_1/text = "Ros Pilot"
+item_2/text = "Manual Pilot"
+item_3/text = "Follow Track"
+script = ExtResource("3_mk41h")
+
+[node name="ResetcarButton" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/General/MarginContainer/Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_val13")
+text = "Reset Car Position"
+script = ExtResource("2_36byi")
+
+[node name="Padding2" type="Label" parent="MarginContainer/VBoxContainer/TabContainer/General/MarginContainer/Panel/VBoxContainer"]
+layout_mode = 2
+text = "----- Track -----"
+horizontal_alignment = 1
+
+[node name="OpenTrackLoader" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/General/MarginContainer/Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_val13")
+text = "Open Track Loader"
+script = ExtResource("4_k57i6")
+
+[node name="QuickLoadTrack" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/General/MarginContainer/Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_val13")
+text = "Quick Load Track"
+script = ExtResource("5_jt4lf")
+
+[node name="ClearTrack" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/General/MarginContainer/Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_val13")
+text = "Clear Track"
+script = ExtResource("6_ltbmu")
+
+[node name="Ros2" type="TabBar" parent="MarginContainer/VBoxContainer/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/TabContainer/Ros2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Ros2/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Padding1" type="Label" parent="MarginContainer/VBoxContainer/TabContainer/Ros2/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Presets"
+horizontal_alignment = 1
+
+[node name="SlamPreset" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Ros2/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_val13")
+text = "Slam"
+script = ExtResource("6_at1ur")
+
+[node name="PlanningPreset" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Ros2/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_val13")
+text = "Planning"
+script = ExtResource("7_7xacn")
+
+[node name="ControlPreset" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Ros2/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_val13")
+text = "Control"
+script = ExtResource("8_igje0")
+
+[node name="Other" type="TabBar" parent="MarginContainer/VBoxContainer/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/TabContainer/Other"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Other/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="39" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Other/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_val13")
+text = "39"
+script = ExtResource("9_lmtxd")
