@@ -1,6 +1,6 @@
 #include "active_ros_node.hpp"
 
-mirena::ActiveRosNode::ActiveRosNode(const std::string &node_name, const rclcpp::NodeOptions &options = rclcpp::NodeOptions()) : ActiveRosNode(rclcpp::Node::make_shared(node_name, options))
+mirena::ActiveRosNode::ActiveRosNode(const std::string &node_name, const rclcpp::NodeOptions &options) : ActiveRosNode(rclcpp::Node::make_shared(node_name, options))
 {
 }
 

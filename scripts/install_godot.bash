@@ -18,12 +18,12 @@ if [ ! -d "$GODOT_EXE_DIR" ]; then
 fi
 
 # === File and URL definitions ===
-FILE1_NAME="Godot_v4.4-stable_linux.arm64"
-FILE2_NAME="Godot_v4.4-stable_linux.x86_64"
+FILE1_NAME="Godot_v4.4.1-stable_linux.arm64"
+FILE2_NAME="Godot_v4.4.1-stable_linux.x86_64"
 ZIP1_NAME="${FILE1_NAME}.zip"
 ZIP2_NAME="${FILE2_NAME}.zip"
-URL1="https://github.com/godotengine/godot-builds/releases/download/4.4-stable/Godot_v4.4-stable_linux.arm64.zip"
-URL2="https://github.com/godotengine/godot-builds/releases/download/4.4-stable/Godot_v4.4-stable_linux.x86_64.zip"
+URL1="https://github.com/godotengine/godot-builds/releases/download/4.4.1-stable/Godot_v4.4.1-stable_linux.arm64.zip"
+URL2="https://github.com/godotengine/godot-builds/releases/download/4.4.1-stable/Godot_v4.4.1-stable_linux.x86_64.zip"
 
 FILE1_PATH="$GODOT_EXE_DIR/$FILE1_NAME"
 FILE2_PATH="$GODOT_EXE_DIR/$FILE2_NAME"

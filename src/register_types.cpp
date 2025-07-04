@@ -4,6 +4,7 @@
 #include <godot_cpp/godot.hpp>
 
 using namespace godot;
+using namespace mirena;
 // Modules initialization
 void mirenasim_init(ModuleInitializationLevel p_level)
 {
