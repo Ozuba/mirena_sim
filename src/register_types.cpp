@@ -19,7 +19,7 @@ void mirenasim_init(ModuleInitializationLevel p_level)
 		godot::UtilityFunctions::print("ROS2 Context Launched");
 	}
 
-	GDREGISTER_CLASS(RosTime);
+	//GDREGISTER_CLASS(RosTime);
 	GDREGISTER_CLASS(RosNode3D);
 	GDREGISTER_CLASS(MirenaCarBase);
 	GDREGISTER_CLASS(MirenaCam);
