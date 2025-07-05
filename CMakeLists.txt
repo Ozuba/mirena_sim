@@ -69,9 +69,12 @@ set(SOURCES
     src/node/mirena_gps.cpp
 
     src/ref_counted/ros_time.cpp
+    src/ref_counted/mirena_ros_bridge.cpp
     
     src/ros/active_ros_node.cpp
 
+    src/utility/ros_conversions.cpp
+    
     src/register_types.cpp
 )
 

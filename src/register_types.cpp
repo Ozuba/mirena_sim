@@ -26,7 +26,9 @@ void mirenasim_init(ModuleInitializationLevel p_level)
 	GDREGISTER_CLASS(MirenaLidar);
 	GDREGISTER_CLASS(MirenaImu);
 	GDREGISTER_CLASS(MirenaGPS);
+
 	GDREGISTER_CLASS(RosTime);
+	GDREGISTER_CLASS(MirenaRosBridge);
 }
 
 void mirenasim_deinit(ModuleInitializationLevel p_level)

@@ -3,9 +3,9 @@
 using namespace mirena;
 using namespace godot;
 
-MirenaRosBridge::MirenaRosBridge() : _ros_node(rclcpp::Node("mirena_ros_bridge")),
-                                     _debugFullTrackPub(this->_ros_node.create_publisher<mirena_common::msg::BezierCurve>(DEBUG_FULL_TRACK_TOPIC, 10)),
-                                     _debugImmediateTrackPub(this->_ros_node.create_publisher<mirena_common::msg::BezierCurve>(DEBUG_IMMEDIATE_TRACK_TOPIC, 10))
+MirenaRosBridge::MirenaRosBridge() : _ros_node("mirena_ros_bridge"),
+                                     _debugFullTrackPub(_ros_node->create_publisher<mirena_common::msg::BezierCurve>(DEBUG_FULL_TRACK_TOPIC, 10)),
+                                     _debugImmediateTrackPub(_ros_node->create_publisher<mirena_common::msg::BezierCurve>(DEBUG_IMMEDIATE_TRACK_TOPIC, 10))
 {
 }
 
