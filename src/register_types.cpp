@@ -13,11 +13,6 @@ void mirenasim_init(ModuleInitializationLevel p_level)
 		return;
 	}
 	
-    //auto context = std::make_shared<rclcpp::Context>();
-    //    context->init(0, nullptr);
-    //auto node = std::make_shared<rclcpp::Node>("godot_node", rclcpp::NodeOptions().context(context));
-    
-
 	// Launch The ROS2 Context
 	if (!rclcpp::ok())
 	{

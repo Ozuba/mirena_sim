@@ -67,9 +67,9 @@ void mirena::RosTime::cancel_update_timer()
 
 void RosTime::_bind_methods()
 {
-    godot::ClassDB::bind_method(D_METHOD("set_update_period", "millis"), &RosTime::set_update_period);
-    godot::ClassDB::bind_method(D_METHOD("get_update_period"), &RosTime::get_update_period);
+    godot::ClassDB::bind_method(D_METHOD("set_broadcast_period", "millis"), &RosTime::set_update_period);
+    godot::ClassDB::bind_method(D_METHOD("get_broadcast_period"), &RosTime::get_update_period);
     godot::ClassDB::bind_method(D_METHOD("publish_sim_clock"), &RosTime::_publish_sim_clock);
-    godot::ClassDB::bind_method(D_METHOD("cancel_update_timer"), &RosTime::cancel_update_timer);
+    godot::ClassDB::bind_method(D_METHOD("pause_broadcast"), &RosTime::cancel_update_timer);
 
 }

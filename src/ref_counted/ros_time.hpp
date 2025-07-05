@@ -6,7 +6,7 @@
 
 #include <ros/active_ros_node.hpp>
 
-#define DEBUG_SIM_CLOCK_TOPIC "/debug/sim/clock"
+#define DEBUG_SIM_CLOCK_TOPIC "/clock"
 
 namespace mirena {
 class RosTime : public godot::RefCounted {
