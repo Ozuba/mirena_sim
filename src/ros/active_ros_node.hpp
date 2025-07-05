@@ -1,3 +1,5 @@
+#pragma once
+
 #include "rclcpp/rclcpp.hpp"
 #include <thread>
 #include <chrono>
@@ -5,7 +7,7 @@
 
 namespace mirena {
     // Self-spinning ros node
-    // Wrapper to make rclcpp::Node work fine with composition
+    // Wrapper over rclcpp::Node with composition in mind; Interface is the same as a shared_ptr (operator-> for accessing the node) 
     // Handles the node lifecycle and spinning
     class ActiveRosNode {
         public:
