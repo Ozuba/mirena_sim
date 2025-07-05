@@ -12,6 +12,12 @@ void mirenasim_init(ModuleInitializationLevel p_level)
 	{
 		return;
 	}
+	
+    //auto context = std::make_shared<rclcpp::Context>();
+    //    context->init(0, nullptr);
+    //auto node = std::make_shared<rclcpp::Node>("godot_node", rclcpp::NodeOptions().context(context));
+    
+
 	// Launch The ROS2 Context
 	if (!rclcpp::ok())
 	{
@@ -19,14 +25,13 @@ void mirenasim_init(ModuleInitializationLevel p_level)
 		godot::UtilityFunctions::print("ROS2 Context Launched");
 	}
 
-	//GDREGISTER_CLASS(RosTime);
 	GDREGISTER_CLASS(RosNode3D);
 	GDREGISTER_CLASS(MirenaCarBase);
 	GDREGISTER_CLASS(MirenaCam);
 	GDREGISTER_CLASS(MirenaLidar);
 	GDREGISTER_CLASS(MirenaImu);
 	GDREGISTER_CLASS(MirenaGPS);
-
+	GDREGISTER_CLASS(RosTime);
 }
 
 void mirenasim_deinit(ModuleInitializationLevel p_level)
@@ -35,7 +40,9 @@ void mirenasim_deinit(ModuleInitializationLevel p_level)
 	{
 		return;
 	}
-	rclcpp::shutdown(); //Gracefully close ros2 context
+
+	godot::UtilityFunctions::print("ROS2 Context Shut down");
+	rclcpp::shutdown(); 
 }
 
 extern "C"

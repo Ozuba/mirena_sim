@@ -4,13 +4,15 @@
 
 #include "utility/toolbox.hpp"
 
+#define DEFAULT_PERIOD_MS 100
+
 using namespace mirena;
 using namespace godot;
 
 RosTime::RosTime() : _ros_node("sim_ros_time"),
                      _debug_sim_clock_pub(_ros_node->create_publisher<builtin_interfaces::msg::Time>(DEBUG_SIM_CLOCK_TOPIC, 10))
 {
-    set_update_period(100);
+    set_update_period(DEFAULT_PERIOD_MS);
 }
 
 RosTime::~RosTime()
@@ -38,7 +40,7 @@ void mirena::RosTime::_update()
 
 bool mirena::RosTime::has_active_update_timer()
 {
-    return _update_timer == nullptr;
+    return _update_timer != nullptr;
 }
 
 int64_t mirena::RosTime::get_update_period()
@@ -70,5 +72,4 @@ void RosTime::_bind_methods()
     godot::ClassDB::bind_method(D_METHOD("publish_sim_clock"), &RosTime::_publish_sim_clock);
     godot::ClassDB::bind_method(D_METHOD("cancel_update_timer"), &RosTime::cancel_update_timer);
 
-    ADD_PROPERTY(PropertyInfo(godot::Variant::INT, "update_period"), "set_update_period", "get_update_period");
 }

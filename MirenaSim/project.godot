@@ -22,6 +22,7 @@ config/icon="res://icon.png"
 
 SIM="*res://Scripts/singletons/sim.gd"
 MirenaLogger="*res://Scripts/singletons/mirena_logger.gd"
+ROS="*res://Scripts/singletons/ros.gd"
 
 [display]
 
