@@ -2,7 +2,7 @@
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/classes/time.hpp>
 
-#include <builtin_interfaces/msg/time.h>
+#include <rosgraph_msgs/msg/clock.hpp>
 
 #include <ros/active_ros_node.hpp>
 
@@ -14,7 +14,7 @@ class RosTime : public godot::RefCounted {
 
 private:
     ActiveRosNode _ros_node;
-    rclcpp::Publisher<builtin_interfaces::msg::Time>::SharedPtr _debug_sim_clock_pub;
+    rclcpp::Publisher<rosgraph_msgs::msg::Clock>::SharedPtr _debug_sim_clock_pub;
 
     rclcpp::TimerBase::SharedPtr _update_timer;
     int64_t _update_period_ms = 0;

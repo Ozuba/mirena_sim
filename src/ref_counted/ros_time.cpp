@@ -10,7 +10,7 @@ using namespace mirena;
 using namespace godot;
 
 RosTime::RosTime() : _ros_node("sim_ros_time"),
-                     _debug_sim_clock_pub(_ros_node->create_publisher<builtin_interfaces::msg::Time>(DEBUG_SIM_CLOCK_TOPIC, 10))
+                     _debug_sim_clock_pub(_ros_node->create_publisher<rosgraph_msgs::msg::Clock>(DEBUG_SIM_CLOCK_TOPIC, 10))
 {
     set_update_period(DEFAULT_PERIOD_MS);
 }
@@ -21,12 +21,12 @@ RosTime::~RosTime()
 
 void RosTime::_publish_sim_clock()
 {
-    builtin_interfaces::msg::Time msg;
+    rosgraph_msgs::msg::Clock msg;
 
     uint64_t current_time_us = godot::Time::get_singleton()->get_ticks_usec();
 
-    msg.sec = current_time_us / 1000000;
-    msg.nanosec = (current_time_us % 1000000) * 1000;
+    msg.clock.sec = current_time_us / 1000000;
+    msg.clock.nanosec = (current_time_us % 1000000) * 1000;
 
     _debug_sim_clock_pub->publish(msg);
 }
