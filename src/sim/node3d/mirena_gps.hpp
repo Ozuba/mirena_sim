@@ -3,7 +3,7 @@
 // GODOT
 #include <godot_cpp/classes/node3d.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
-#include "node/ros_node3d.hpp"
+#include"sim/node3d/ros_node3d.hpp"
 
 // ROS
 #include "rclcpp/rclcpp.hpp"

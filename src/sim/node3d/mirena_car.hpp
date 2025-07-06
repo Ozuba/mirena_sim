@@ -10,7 +10,7 @@
 #include "mirena_common/msg/wheel_speeds.hpp"
 #include "mirena_common/msg/car.hpp"
 
-#include "node/ros_node3d.hpp"
+#include"sim/node3d/ros_node3d.hpp"
 
 #define WSS_PUB_TOPIC "sensors/wss"
 #define CAR_INPUT_SUB_TOPIC "control/car_input"

@@ -5,14 +5,14 @@
 //ROS2 for context init
 #include <rclcpp/rclcpp.hpp>
 //Modules
-#include "node/ros_node3d.hpp"
-#include "node/mirena_car.hpp"
-#include "node/mirena_cam.hpp"
-#include "node/mirena_lidar.hpp"
-#include "node/mirena_imu.hpp"
-#include "node/mirena_gps.hpp"
-#include "ref_counted/ros_time.hpp"
-#include "ref_counted/mirena_ros_bridge.hpp"
+#include "sim/node3d/ros_node3d.hpp"
+#include "sim/node3d/mirena_car.hpp"
+#include "sim/node3d/mirena_cam.hpp"
+#include "sim/node3d/mirena_lidar.hpp"
+#include "sim/node3d/mirena_imu.hpp"
+#include "sim/node3d/mirena_gps.hpp"
+#include "sim/ref_counted/ros_time.hpp"
+#include "sim/ref_counted/mirena_ros_bridge.hpp"
 
 using namespace godot;
 

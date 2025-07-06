@@ -3,7 +3,7 @@
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/classes/curve3d.hpp>
 
-#include "utility/ros_conversions.hpp"
+#include "ros/ros_conversions.hpp"
 #include "ros/active_ros_node.hpp"
 
 #define DEBUG_FULL_TRACK_TOPIC "debug/sim/full_track_path"
@@ -24,8 +24,8 @@ namespace mirena
 		rclcpp::Publisher<mirena_common::msg::BezierCurve>::SharedPtr _debugImmediateTrackPub; // Line strip
 
 
-		void _publish_full_track_curve(godot::Ref<godot::Curve3D> curve){_debugFullTrackPub->publish(mirena::to_msg(curve));}
-		void _publish_immediate_track_curve(godot::Ref<godot::Curve3D> curve){_debugFullTrackPub->publish(mirena::to_msg(curve));}
+		void _publish_full_track_curve(godot::Ref<godot::Curve3D> curve);
+		void _publish_immediate_track_curve(godot::Ref<godot::Curve3D> curve);
 
 	public:
 		// Constructors

@@ -5,7 +5,7 @@
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 #include <godot_cpp/classes/engine.hpp>
-#include "node/ros_node3d.hpp"
+#include"sim/node3d/ros_node3d.hpp"
 #include <omp.h>
 
 // ROS
