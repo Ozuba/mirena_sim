@@ -155,7 +155,6 @@ func loadTrack(filepath : String) -> void:
 	
 	# Preprocessing
 	var loaded_track = self._get_curve3d_from_file(filepath)
-	print(loaded_track.get_point_position(0), loaded_track.get_point_position(loaded_track.point_count-1))
 	if loaded_track == null: 
 		MirenaLogger.disp_error(["Couldn't load track. Either the file doesn't exist or is in an invalid format"])
 		return
