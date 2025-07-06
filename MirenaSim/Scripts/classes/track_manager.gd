@@ -3,21 +3,29 @@ class_name TrackManager
 
 signal track_cleared
 
+static var _cone_scene = preload("res://Scenes/cones/cone.tscn")
+
 ## Curve defining the track. A value of null means no track is currently loaded
 var _track : Curve3D
+var _cones : Array[Cone]
 
-## Exposes Followable Path for the track
 var _car_path : Path3D
-
-## Visible path mesh
 var _car_path_mesh: MeshInstance3D
+
+var _ros_publishing_timer: Timer = Timer.new()
+var track_publishind_paused: bool = false: 
+	set(value):
+		_ros_publishing_timer.paused = value
+	get():
+		return _ros_publishing_timer.paused
+
+func _ready() -> void:
+	_ros_publishing_timer.autostart = true
+	_ros_publishing_timer.timeout.connect(self._publish_ros_debug)
+	add_child(_ros_publishing_timer)
 
 ## Generates the cones along a path with given separation and spacing
 func _gen_gates(path : Curve3D, spacing : float = 4, width : float = 3):
-	# Preload Cone Scene
-	
-	var coneScene = load("res://Scenes/cones/cone.tscn") 
-	
 	#Calc Dimensions
 	var length = path.get_baked_length() #Gets length
 	var num_gates = int(length / spacing) # Calculates number of gates
@@ -29,7 +37,8 @@ func _gen_gates(path : Curve3D, spacing : float = 4, width : float = 3):
 	
 	#Generate the two orange cones per side
 	for i in range(4):
-		var start_cone = coneScene.instantiate()
+		var start_cone:= build_cone()
+		_cones.append(start_cone)
 		start_cone.set_meta("type","blue")
 		start_cone.set_type(start_cone.color.ORANGE)
 		match i:
@@ -42,40 +51,41 @@ func _gen_gates(path : Curve3D, spacing : float = 4, width : float = 3):
 			3:
 				start_cone.translate(start_pos - start_normal * (width / 2)- 0.3*start_tan)
 		start_cone.rotate_y(randf_range(0,PI/4))
-		start_cone.add_to_group("Cones") # Add to group for easy reference
 		add_child(start_cone)
 	# Set car position
-	# SIM.get_vehicle().set_pose(start_pos, start_theta)
+		
 	
 	#Generate each gate
 	for i in range(1,num_gates + 1):
 		var  d = (i * spacing) # Obtiene la distancia de la puerta
 		var pos = path.sample_baked(d)
-		var nextPos = path.sample_baked(d + spacing)
+		var nextPos = path.sample_baked(d + 0.5)
 		var tangent = (nextPos-pos).normalized()
 		var normal = Vector3.UP.cross(tangent).normalized() # Get perpendicular Vector
 
 		#Blue 
-		var cone = coneScene.instantiate()
+		var cone := build_cone()
+		_cones.append(cone)
 		cone.name = "G" + str(i) + "B"
 		cone.set_meta("type","blue")
 		cone.set_type(cone.color.BLUE)
 		cone.translate(pos + normal * (width / 2))
-		cone.rotate_y(randf_range(0,PI/4))
-		cone.add_to_group("Cones") # Add to group for easy reference
+		cone.basis = Basis.looking_at(tangent)
+		#cone.rotate_y(randf_range(-PI/16, PI/16))
 		add_child(cone)
 
 		#Yellow
-		cone = coneScene.instantiate()
+		cone = build_cone()
+		_cones.append(cone)
 		cone.name = "G" + str(i) + "Y"
 		cone.set_meta("type","yellow")
 		cone.set_type(cone.color.YELLOW)
 		cone.translate(pos - normal * (width / 2))
-		cone.rotate_y(randf_range(0,PI/4))
-		cone.add_to_group("Cones") # Add to group for easy reference
+		cone.basis = Basis.looking_at(tangent)
+		#cone.rotate_y(randf_range(-PI/16, PI/16))
 		add_child(cone)
 
-static func _get_path3d_from_file(filepath: String) -> Curve3D:
+static func _get_curve3d_from_file(filepath: String) -> Curve3D:
 	#Get json trackfile
 	var file := FileAccess.open(filepath, FileAccess.READ)
 	if file == null: return null
@@ -87,6 +97,7 @@ static func _get_path3d_from_file(filepath: String) -> Curve3D:
 	var ret := Curve3D.new()
 	for point in loaded_track["path"]:
 		ret.add_point(Vector3(point[0], 0, point[1]))
+	ret.closed = loaded_track["closed"]
 	return ret
 
 func _generate_car_path_mesh(force_rebuild: bool = false):
@@ -112,12 +123,25 @@ func _generate_car_path_mesh(force_rebuild: bool = false):
 
 	for i in range(self._track.get_point_count()):
 		line_mesh.surface_add_vertex(self._track.get_point_position(i))
+	if self._track.closed: line_mesh.surface_add_vertex(self._track.get_point_position(0))
 	line_mesh.surface_end()
 	
 	# Add the mesh to the track
 	self._car_path_mesh.mesh = line_mesh
 	add_child(self._car_path_mesh)
 
+static func on_cone_hit_by_vehicle():
+	SIM.get_stats().set("cones_fallen", SIM.get_stats().get("cones_fallen") + 1)
+
+static func build_cone() -> Cone:
+	var product : Cone = _cone_scene.instantiate()
+	product.collided_with_vehicle.connect(on_cone_hit_by_vehicle, CONNECT_ONE_SHOT)
+	return product
+
+func _publish_ros_debug():
+	if _track != null:
+		ROS.get_ros_publishers().publish_full_track_curve(_track)
+	
 # --------------------------------------------
 # Interface 
 # --------------------------------------------
@@ -130,7 +154,8 @@ func loadTrack(filepath : String) -> void:
 	MirenaLogger.disp_std(["Loading Track:", filepath])
 	
 	# Preprocessing
-	var loaded_track = self._get_path3d_from_file(filepath)
+	var loaded_track = self._get_curve3d_from_file(filepath)
+	print(loaded_track.get_point_position(0), loaded_track.get_point_position(loaded_track.point_count-1))
 	if loaded_track == null: 
 		MirenaLogger.disp_error(["Couldn't load track. Either the file doesn't exist or is in an invalid format"])
 		return
@@ -153,9 +178,12 @@ func loadTrack(filepath : String) -> void:
 ## Clears all track contents
 func clear_track():
 	if not self.has_active_track(): return
-	for cone in get_tree().get_nodes_in_group("Cones"):
+	for cone in _cones:
 		cone.queue_free()
+		if cone.collided_with_vehicle.is_connected(on_cone_hit_by_vehicle):
+			cone.collided_with_vehicle.disconnect(on_cone_hit_by_vehicle)
 	
+	self._cones = []
 	self._car_path.queue_free(); self._car_path = null
 	self._car_path_mesh.queue_free(); self._car_path_mesh = null
 	self._track = null

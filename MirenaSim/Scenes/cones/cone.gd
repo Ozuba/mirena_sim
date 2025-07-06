@@ -1,8 +1,10 @@
 extends Node3D
+class_name Cone
 
-enum color {BIG_ORANGE ,ORANGE, YELLOW, BLUE}
+signal collided_with_vehicle;
+
+enum color {BLUE, YELLOW, ORANGE}
 var type = color.BLUE
-var moved = false # Holds if cone is intact
 
 func set_type(_type : color ):
 		type = _type
@@ -15,6 +17,5 @@ func set_type(_type : color ):
 				$Model.mesh = load("res://Assets/Models/Cone/Meshes/OCone.res")
 
 func _on_body_entered(body: Node) -> void:
-	if body.name == "vehicle" and not moved:
-		moved = true # Cone already moved
-		SIM.get_stats().set("cones_fallen", SIM.get_stats().get("cones_fallen") + 1)
+	if body == SIM.get_vehicle():
+		collided_with_vehicle.emit()
