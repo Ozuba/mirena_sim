@@ -19,11 +19,31 @@ mirena_common::msg::BezierCurve mirena::to_msg(godot::Ref<godot::Curve3D> curve)
     return msg;
 }
 
-geometry_msgs::msg::Point mirena::to_msg(godot::Vector3 native)
+geometry_msgs::msg::Point mirena::to_msg(const godot::Vector3& native)
 {
     geometry_msgs::msg::Point msg;
-    msg.x = native.x;
-    msg.y = native.y;
-    msg.z = native.z;
+    msg.x = native.z;
+    msg.y = native.x;
+    msg.z = native.y;
     return msg;
 }
+
+geometry_msgs::msg::Vector3 mirena::to_msg_vector3(const godot::Vector3 &native)
+{
+    geometry_msgs::msg::Vector3 msg;
+    msg.x = native.z;
+    msg.y = native.x;
+    msg.z = native.y;
+    return msg;
+}
+
+geometry_msgs::msg::Quaternion mirena::to_msg(const godot::Quaternion& native)
+{
+    geometry_msgs::msg::Quaternion msg;
+    msg.w = native.w;
+    msg.x = native.z; 
+    msg.y = native.x;
+    msg.z = native.y;
+    return msg;
+}
+

@@ -1,7 +1,26 @@
 #include "mirena_ros_bridge.hpp"
 
+using std::placeholders::_1;
+using std::placeholders::_2;
+
 using namespace mirena;
 using namespace godot;
+
+void mirena::MirenaRosBridge::_publish_car_state(const Vector3 &position, const Vector3 &rotation, const Vector3 &lin_speed, const Vector3 &ang_speed, const Vector3 &lin_accel, const Vector3 &ang_accel)
+{
+    mirena_common::msg::Car msg;
+    
+    msg.header.frame_id =  FIXED_FRAME_NAME;
+    msg.header.stamp = _ros_node->now();
+
+    msg.pose.set__position(to_msg(position));
+    msg.pose.set__orientation(to_msg(godot::Quaternion(godot::Basis::from_euler(rotation))));
+    msg.velocity.set__linear(to_msg_vector3(lin_speed));
+    msg.velocity.set__angular(to_msg_vector3(ang_speed));
+    msg.acceleration.set__linear(to_msg_vector3(lin_accel));
+    msg.acceleration.set__angular(to_msg_vector3(ang_accel));
+    _debugCarStatePub->publish(msg);
+}
 
 void mirena::MirenaRosBridge::_publish_full_track_curve(godot::Ref<godot::Curve3D> curve)
 {
@@ -11,22 +30,39 @@ void mirena::MirenaRosBridge::_publish_full_track_curve(godot::Ref<godot::Curve3
     _debugFullTrackPub->publish(msg);
 }
 
-void mirena::MirenaRosBridge::_publish_immediate_track_curve(godot::Ref<godot::Curve3D> curve)
+void mirena::MirenaRosBridge::_connect_get_entities_srv(godot::Callable provider)
 {
-    auto msg = to_msg(curve);
-    msg.header.frame_id = FIXED_FRAME_NAME;
-    msg.header.stamp = _ros_node->now();
-    _debugImmediateTrackPub->publish(msg);
+    _get_entities_srv_provider = provider;
+}
+
+void mirena::MirenaRosBridge::_connect_get_car_srv(godot::Callable provider)
+{
+    _get_car_srv_provider = provider;
+}
+
+void mirena::MirenaRosBridge::get_entities_srv(const std::shared_ptr<mirena_common::srv::GetEntities::Request> request, std::shared_ptr<mirena_common::srv::GetEntities::Response> response)
+{
+    godot::Variant result = _get_entities_srv_provider.callv(godot::Array());
+}
+
+void mirena::MirenaRosBridge::get_car_srv(const std::shared_ptr<mirena_common::srv::GetCar::Request> request, std::shared_ptr<mirena_common::srv::GetCar::Response> response)
+{
+    godot::Variant result = _get_car_srv_provider.callv(godot::Array());
 }
 
 MirenaRosBridge::MirenaRosBridge() : _ros_node("mirena_ros_bridge"),
+                                     _debugCarStatePub(_ros_node->create_publisher<mirena_common::msg::Car>(DEBUG_CAR_STATE_PUB_TOPIC, 10)),
                                      _debugFullTrackPub(_ros_node->create_publisher<mirena_common::msg::BezierCurve>(DEBUG_FULL_TRACK_TOPIC, 10)),
-                                     _debugImmediateTrackPub(_ros_node->create_publisher<mirena_common::msg::BezierCurve>(DEBUG_IMMEDIATE_TRACK_TOPIC, 10))
+                                     _debugGetEntitiesSrv(_ros_node->create_service<mirena_common::srv::GetEntities>(DEBUG_GET_ENTITIES_TOPIC, std::bind(&MirenaRosBridge::get_entities_srv, this, _1, _2))),
+                                     _debugGetCarSrv(_ros_node->create_service<mirena_common::srv::GetCar>(DEBUG_GET_CAR_TOPIC, std::bind(&MirenaRosBridge::get_car_srv, this, _1, _2)))
 {
 }
 
 void MirenaRosBridge::_bind_methods()
 {
+    ClassDB::bind_method(D_METHOD("publish_car_state", "pos", "rot", "lin_speed", "ang_speed", "lin_accel", "ang_accel"), &MirenaRosBridge::_publish_car_state);
     ClassDB::bind_method(D_METHOD("publish_full_track_curve", "curve"), &MirenaRosBridge::_publish_full_track_curve);
-    ClassDB::bind_method(D_METHOD("publish_immediate_track_curve", "curve"), &MirenaRosBridge::_publish_immediate_track_curve);
+
+    ClassDB::bind_method(D_METHOD("connect_get_entities_srv", "provider"), &MirenaRosBridge::_connect_get_entities_srv);
+    ClassDB::bind_method(D_METHOD("connect_get_car_srv", "provider"), &MirenaRosBridge::_connect_get_car_srv);
 }
