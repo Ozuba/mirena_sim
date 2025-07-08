@@ -11,8 +11,10 @@
 #include "sim/node3d/mirena_lidar.hpp"
 #include "sim/node3d/mirena_imu.hpp"
 #include "sim/node3d/mirena_gps.hpp"
+
 #include "sim/ref_counted/ros_time.hpp"
 #include "sim/ref_counted/mirena_ros_bridge.hpp"
+#include "sim/ref_counted/service_wrappers.hpp"
 
 using namespace godot;
 

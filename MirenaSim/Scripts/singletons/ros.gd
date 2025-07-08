@@ -8,3 +8,7 @@ func get_ros_publishers() -> MirenaRosBridge:
 
 func get_ros_time() -> RosTime:
 	return _ros_time
+
+func _process(delta: float) -> void:
+	_ros_time.spin()
+	_ros_publishers.spin()

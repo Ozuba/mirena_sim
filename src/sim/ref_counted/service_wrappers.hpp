@@ -1,3 +1,5 @@
+#pragma once
+
 #include <godot_cpp/classes/ref_counted.hpp>
 #include "mirena_common/msg/entity.hpp"
 #include "mirena_common/msg/car.hpp"
@@ -11,7 +13,7 @@ namespace mirena
         GDCLASS(SrvGetEntitiesRequest, godot::RefCounted)
 
         protected:
-        static void bind_methods();
+        static void _bind_methods();
     };
 
     class SrvGetEntitiesResponse : public godot::RefCounted
@@ -24,7 +26,7 @@ namespace mirena
         std::vector<mirena_common::msg::Entity> entities;
 
     protected:
-        static void bind_methods();
+        static void _bind_methods();
     };
 
     class SrvGetCarRequest : public godot::RefCounted
@@ -32,7 +34,7 @@ namespace mirena
         GDCLASS(SrvGetCarRequest, godot::RefCounted)
 
     protected:
-        static void bind_methods();
+        static void _bind_methods();
     };
 
     class SrvGetCarResponse : public godot::RefCounted
@@ -43,11 +45,11 @@ namespace mirena
         void set_car_state(const godot::Vector3 &position, const godot::Vector3 &rotation, const godot::Vector3 &lin_speed, const godot::Vector3 &ang_speed, const godot::Vector3 &lin_accel, const godot::Vector3 &ang_accel);
         mirena_common::msg::Car car_state;
     protected:
-        static void bind_methods();
+        static void _bind_methods();
     };
 }
 
-namespace mirena::service_types
+namespace mirena::service_wrappers
 {
     inline void register_all()
     {

@@ -11,7 +11,7 @@ var drive_mode = ControlMode.ROS
 var _active_pilot: AVehiclePilot = RosPilot.new(self)
 
 # CarStateBroadcaster
-var state_broadcaster:= CarStateBroadcaster.new(self)
+var state_broadcaster:= CarStateBroadcaster.new(self, true)
 
 # Position Wrapping
 var do_pos_wraping: bool = true;

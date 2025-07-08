@@ -3,8 +3,7 @@
 #include <godot_cpp/classes/time.hpp>
 
 #include <rosgraph_msgs/msg/clock.hpp>
-
-#include <ros/active_ros_node.hpp>
+#include "rclcpp/rclcpp.hpp"
 
 #define DEBUG_SIM_CLOCK_TOPIC "/clock"
 
@@ -13,7 +12,7 @@ class RosTime : public godot::RefCounted {
     GDCLASS(RosTime, godot::RefCounted)
 
 private:
-    ActiveRosNode _ros_node;
+    rclcpp::Node::SharedPtr _ros_node;
     rclcpp::Publisher<rosgraph_msgs::msg::Clock>::SharedPtr _debug_sim_clock_pub;
 
     rclcpp::TimerBase::SharedPtr _update_timer;
@@ -22,6 +21,7 @@ private:
     void _publish_sim_clock();
 
     void _update();
+    void spin();
 
 protected:
     static void _bind_methods();

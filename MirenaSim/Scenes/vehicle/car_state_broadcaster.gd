@@ -20,10 +20,12 @@ var owner: MirenaCar:
 	set(value):
 		_owner = weakref(value)
 
-var broadcas_enable: bool = true
+var broadcast_enable: bool = true
 
-func _init(owner: MirenaCar) -> void:
-	self._owner = weakref(owner)
+func _init(owner_: MirenaCar, get_car_srv_provider: bool = false) -> void:
+	self.owner = owner_
+	if get_car_srv_provider:
+		ROS.get_ros_publishers().connect_get_car_srv(_ros_get_car_srv)
 
 func get_owner() -> MirenaCar:
 	return self._owner.get_ref()
@@ -46,4 +48,9 @@ func update(delta: float):
 		ROS.get_ros_publishers().publish_car_state(owner.position, owner.rotation, owner.linear_velocity, owner.angular_velocity, _linear_acceleration, _angular_acceleration)
 
 func set_broadcast_enable(value: bool) -> void:
-	self.broadcas_enable = value
+	self.broadcast_enable = value
+
+func _ros_get_car_srv(_request: SrvGetCarRequest) -> SrvGetCarResponse:
+	var response := SrvGetCarResponse.new()
+	response.set_car_state(owner.position, owner.rotation, owner.linear_velocity, owner.angular_velocity, _linear_acceleration, _angular_acceleration)
+	return response

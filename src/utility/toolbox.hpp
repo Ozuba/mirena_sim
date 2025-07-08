@@ -1,3 +1,5 @@
+#pragma once
+
 #include <godot_cpp/classes/engine.hpp>
 
 namespace mirena

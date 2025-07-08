@@ -70,8 +70,8 @@ set(SOURCES
 
     src/sim/ref_counted/ros_time.cpp
     src/sim/ref_counted/mirena_ros_bridge.cpp
+    src/sim/ref_counted/service_wrappers.cpp
     
-    src/ros/active_ros_node.cpp
     src/ros/ros_conversions.cpp
     
     src/register_types.cpp

@@ -9,7 +9,7 @@
 using namespace mirena;
 using namespace godot;
 
-RosTime::RosTime() : _ros_node("sim_ros_time"),
+RosTime::RosTime() : _ros_node(rclcpp::Node::make_shared("sim_ros_time")),
                      _debug_sim_clock_pub(_ros_node->create_publisher<rosgraph_msgs::msg::Clock>(DEBUG_SIM_CLOCK_TOPIC, 10))
 {
     set_update_period(DEFAULT_PERIOD_MS);
@@ -36,6 +36,10 @@ void mirena::RosTime::_update()
 {
     if (running_on_editor()) {return;}
     _publish_sim_clock();
+}
+
+void mirena::RosTime::spin(){
+    rclcpp::spin_some(_ros_node);
 }
 
 bool mirena::RosTime::has_active_update_timer()
@@ -71,5 +75,7 @@ void RosTime::_bind_methods()
     godot::ClassDB::bind_method(D_METHOD("get_broadcast_period"), &RosTime::get_update_period);
     godot::ClassDB::bind_method(D_METHOD("publish_sim_clock"), &RosTime::_publish_sim_clock);
     godot::ClassDB::bind_method(D_METHOD("pause_broadcast"), &RosTime::cancel_update_timer);
+
+    godot::ClassDB::bind_method(D_METHOD("spin"), &RosTime::spin);
 
 }

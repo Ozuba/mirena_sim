@@ -20,9 +20,7 @@ var track_publishind_paused: bool = false:
 		return _ros_publishing_timer.paused
 
 func _ready() -> void:
-	_ros_publishing_timer.autostart = true
-	_ros_publishing_timer.timeout.connect(self._publish_ros_debug)
-	add_child(_ros_publishing_timer)
+	self._ros_on_ready()
 
 ## Generates the cones along a path with given separation and spacing
 func _gen_gates(path : Curve3D, spacing : float = 4, width : float = 3):
@@ -40,7 +38,7 @@ func _gen_gates(path : Curve3D, spacing : float = 4, width : float = 3):
 		var start_cone:= build_cone()
 		_cones.append(start_cone)
 		start_cone.set_meta("type","blue")
-		start_cone.set_type(start_cone.color.ORANGE)
+		start_cone.type = Cone.ConeColor.ORANGE
 		match i:
 			0:
 				start_cone.translate(start_pos + start_normal * (width / 2) + 0.3*start_tan)
@@ -68,7 +66,7 @@ func _gen_gates(path : Curve3D, spacing : float = 4, width : float = 3):
 		_cones.append(cone)
 		cone.name = "G" + str(i) + "B"
 		cone.set_meta("type","blue")
-		cone.set_type(cone.color.BLUE)
+		cone.type = Cone.ConeColor.BLUE
 		cone.translate(pos + normal * (width / 2))
 		cone.basis = Basis.looking_at(tangent)
 		#cone.rotate_y(randf_range(-PI/16, PI/16))
@@ -79,7 +77,7 @@ func _gen_gates(path : Curve3D, spacing : float = 4, width : float = 3):
 		_cones.append(cone)
 		cone.name = "G" + str(i) + "Y"
 		cone.set_meta("type","yellow")
-		cone.set_type(cone.color.YELLOW)
+		cone.type = Cone.ConeColor.YELLOW
 		cone.translate(pos - normal * (width / 2))
 		cone.basis = Basis.looking_at(tangent)
 		#cone.rotate_y(randf_range(-PI/16, PI/16))
@@ -138,10 +136,23 @@ static func build_cone() -> Cone:
 	product.collided_with_vehicle.connect(on_cone_hit_by_vehicle, CONNECT_ONE_SHOT)
 	return product
 
-func _publish_ros_debug():
+func _ros_on_ready():
+	_ros_publishing_timer.autostart = true
+	_ros_publishing_timer.timeout.connect(self._ros_publish_debug)
+	add_child(_ros_publishing_timer)
+	
+	ROS.get_ros_publishers().connect_get_entities_srv(_ros_get_entities_srv)
+
+func _ros_publish_debug():
 	if _track != null:
 		ROS.get_ros_publishers().publish_full_track_curve(_track)
-	
+
+func _ros_get_entities_srv(_request: SrvGetEntitiesRequest) -> SrvGetEntitiesResponse:
+	var response := SrvGetEntitiesResponse.new()
+	for entity in self._cones:
+		response.add_entity(entity.position, entity.get_type_as_string(), 1.0)
+	return response
+
 # --------------------------------------------
 # Interface 
 # --------------------------------------------

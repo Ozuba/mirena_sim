@@ -6,6 +6,10 @@ using std::placeholders::_2;
 using namespace mirena;
 using namespace godot;
 
+void mirena::MirenaRosBridge::spin(){
+    rclcpp::spin_some(_ros_node);
+}
+
 void mirena::MirenaRosBridge::_publish_car_state(const Vector3 &position, const Vector3 &rotation, const Vector3 &lin_speed, const Vector3 &ang_speed, const Vector3 &lin_accel, const Vector3 &ang_accel)
 {
     mirena_common::msg::Car msg;
@@ -42,15 +46,41 @@ void mirena::MirenaRosBridge::_connect_get_car_srv(godot::Callable provider)
 
 void mirena::MirenaRosBridge::get_entities_srv(const std::shared_ptr<mirena_common::srv::GetEntities::Request> request, std::shared_ptr<mirena_common::srv::GetEntities::Response> response)
 {
-    godot::Variant result = _get_entities_srv_provider.callv(godot::Array());
+    godot::Variant result_var = _get_entities_srv_provider.call(mirena::to_request(request));
+
+    if(result_var.get_type() != Variant::OBJECT){
+        godot::UtilityFunctions::print("Error Occured during call to ", _get_entities_srv_provider.get_method(), " on ros request resolution");
+        return;
+    }
+    auto result_obj = Object::cast_to<mirena::SrvGetEntitiesResponse>(result_var);
+    if(!result_obj){
+        godot::UtilityFunctions::print("Error Occured during call to ", _get_entities_srv_provider.get_method(), " on ros request resolution");
+        return;
+    }
+    mirena::to_response(*result_obj, response);
+    response->response.header.frame_id = FIXED_FRAME_NAME;
+    response->response.header.stamp = _ros_node->now(); 
 }
 
 void mirena::MirenaRosBridge::get_car_srv(const std::shared_ptr<mirena_common::srv::GetCar::Request> request, std::shared_ptr<mirena_common::srv::GetCar::Response> response)
 {
-    godot::Variant result = _get_car_srv_provider.callv(godot::Array());
+    godot::Variant result_var = _get_car_srv_provider.call(mirena::to_request(request));
+
+    if(result_var.get_type() != Variant::OBJECT){
+        godot::UtilityFunctions::print("Error Occured during call to ", _get_car_srv_provider.get_method(), " on ros request resolution");
+        return;
+    }
+    auto result_obj = Object::cast_to<mirena::SrvGetCarResponse>(result_var);
+    if(!result_obj){
+        godot::UtilityFunctions::print("Error Occured during call to ", _get_car_srv_provider.get_method(), " on ros request resolution");
+        return;
+    }
+    mirena::to_response(*result_obj, response);
+    response->response.header.frame_id = FIXED_FRAME_NAME;
+    response->response.header.stamp = _ros_node->now(); 
 }
 
-MirenaRosBridge::MirenaRosBridge() : _ros_node("mirena_ros_bridge"),
+MirenaRosBridge::MirenaRosBridge() : _ros_node(rclcpp::Node::make_shared("mirena_ros_bridge")),
                                      _debugCarStatePub(_ros_node->create_publisher<mirena_common::msg::Car>(DEBUG_CAR_STATE_PUB_TOPIC, 10)),
                                      _debugFullTrackPub(_ros_node->create_publisher<mirena_common::msg::BezierCurve>(DEBUG_FULL_TRACK_TOPIC, 10)),
                                      _debugGetEntitiesSrv(_ros_node->create_service<mirena_common::srv::GetEntities>(DEBUG_GET_ENTITIES_TOPIC, std::bind(&MirenaRosBridge::get_entities_srv, this, _1, _2))),
@@ -60,6 +90,9 @@ MirenaRosBridge::MirenaRosBridge() : _ros_node("mirena_ros_bridge"),
 
 void MirenaRosBridge::_bind_methods()
 {
+
+    ClassDB::bind_method(D_METHOD("spin"), &MirenaRosBridge::spin);
+
     ClassDB::bind_method(D_METHOD("publish_car_state", "pos", "rot", "lin_speed", "ang_speed", "lin_accel", "ang_accel"), &MirenaRosBridge::_publish_car_state);
     ClassDB::bind_method(D_METHOD("publish_full_track_curve", "curve"), &MirenaRosBridge::_publish_full_track_curve);
 

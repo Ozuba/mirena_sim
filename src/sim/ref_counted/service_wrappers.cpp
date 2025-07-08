@@ -5,7 +5,7 @@
 using namespace mirena;
 
 
-void mirena::SrvGetEntitiesRequest::bind_methods()
+void mirena::SrvGetEntitiesRequest::_bind_methods()
 {
 }
 
@@ -18,12 +18,12 @@ void mirena::SrvGetEntitiesResponse::add_entity(const godot::Vector3& pos, const
     entities.push_back(msg);
 }
 
-void mirena::SrvGetEntitiesResponse::bind_methods()
+void mirena::SrvGetEntitiesResponse::_bind_methods()
 {
     godot::ClassDB::bind_method(godot::D_METHOD("add_entity", "pos", "type", "confidence"), &SrvGetEntitiesResponse::add_entity);
 }
 
-void mirena::SrvGetCarRequest::bind_methods()
+void mirena::SrvGetCarRequest::_bind_methods()
 {
 }
 
@@ -39,7 +39,7 @@ void mirena::SrvGetCarResponse::set_car_state(const godot::Vector3 &position, co
     this->car_state = msg;
 }
 
-void mirena::SrvGetCarResponse::bind_methods()
+void mirena::SrvGetCarResponse::_bind_methods()
 {
 	godot::ClassDB::bind_method(godot::D_METHOD("set_car_state", "pos", "rot", "lin_speed", "ang_speed", "lin_accel", "ang_accel"), &SrvGetCarResponse::set_car_state);
 }

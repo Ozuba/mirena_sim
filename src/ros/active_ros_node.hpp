@@ -6,6 +6,7 @@
 #include <atomic>
 
 namespace mirena {
+    // DEPRECATED This fucking shit does not work well with subscribers or services, only publishers
     // Self-spinning ros node
     // Wrapper over rclcpp::Node with composition in mind; Interface is the same as a shared_ptr (operator-> for accessing the node) 
     // Handles the node lifecycle and spinning

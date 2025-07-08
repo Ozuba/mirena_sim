@@ -29,6 +29,8 @@ void mirenasim_init(ModuleInitializationLevel p_level)
 
 	GDREGISTER_CLASS(RosTime);
 	GDREGISTER_CLASS(MirenaRosBridge);
+
+	mirena::service_wrappers::register_all();
 }
 
 void mirenasim_deinit(ModuleInitializationLevel p_level)

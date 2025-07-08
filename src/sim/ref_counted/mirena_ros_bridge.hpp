@@ -3,17 +3,17 @@
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/classes/curve3d.hpp>
 
+#include "rclcpp/rclcpp.hpp"
 #include "mirena_common/srv/get_entities.hpp"
 #include "mirena_common/srv/get_car.hpp"
 
 #include "ros/ros_conversions.hpp"
-#include "ros/active_ros_node.hpp"
 
 #define DEBUG_FULL_TRACK_TOPIC "debug/sim/full_track_path"
 #define DEBUG_CAR_STATE_PUB_TOPIC "debug/sim/car_state"
 
 #define DEBUG_GET_ENTITIES_TOPIC "debug/sim/get_entities"
-#define DEBUG_GET_CAR_TOPIC "debig/sim/get_car"
+#define DEBUG_GET_CAR_TOPIC "debug/sim/get_car"
 
 #define FIXED_FRAME_NAME "world"
 
@@ -25,7 +25,7 @@ namespace mirena
 		GDCLASS(MirenaRosBridge, godot::RefCounted);
 
 	private:
-		ActiveRosNode _ros_node;
+		rclcpp::Node::SharedPtr _ros_node;
 		
 		rclcpp::Publisher<mirena_common::msg::Car>::SharedPtr _debugCarStatePub;
 		rclcpp::Publisher<mirena_common::msg::BezierCurve>::SharedPtr _debugFullTrackPub;
@@ -37,6 +37,8 @@ namespace mirena
 		rclcpp::Service<mirena_common::srv::GetCar>::SharedPtr _debugGetCarSrv;
 
 		// Bindings
+
+		void spin();
 
 		void _publish_car_state(const godot::Vector3 &position, const godot::Vector3 &rotation, const godot::Vector3 &lin_speed, const godot::Vector3 &ang_speed, const godot::Vector3 &lin_accel, const godot::Vector3 &ang_accel);
 		void _publish_full_track_curve(godot::Ref<godot::Curve3D> curve);
