@@ -185,6 +185,9 @@ func loadTrack(filepath : String) -> void:
 	#Show the path curve
 	self.show_path()
 
+func load_default_track() -> void:
+	self.loadTrack("res://TrackFiles/track.json")
+
 ## Clears all track contents
 func clear_track():
 	if not self.has_active_track(): return

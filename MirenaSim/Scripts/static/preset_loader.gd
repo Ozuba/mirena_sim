@@ -7,10 +7,19 @@ static func reset_sim():
 	MirenaLogger.disp_debug(["Not implemented"])
 
 static func load_slam():
-	MirenaLogger.disp_debug(["Not implemented"])
+	var track_manager := SIM.get_track_manager()
+	var vehicle := SIM.get_vehicle()
+	
+	track_manager.load_default_track()
+	vehicle.set_pilot(ManualPilot.new(vehicle))
+	vehicle.reset_car()
 
 static func load_planning():
-	MirenaLogger.disp_debug(["Not implemented"])
+	var track_manager := SIM.get_track_manager()
+	var vehicle := SIM.get_vehicle()
+	
+	track_manager.load_default_track()
+	vehicle.set_pilot(TrackRailPilot.new(vehicle))
 
 static func load_control():
 	MirenaLogger.disp_debug(["Not implemented"])
