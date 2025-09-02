@@ -44,6 +44,16 @@ void mirena::MirenaRosBridge::_connect_get_car_srv(godot::Callable provider)
     _get_car_srv_provider = provider;
 }
 
+void mirena::MirenaRosBridge::_connect_sim_set_pause(godot::Callable provider)
+{
+    _sim_set_pause_srv_provider = provider;
+}
+
+void mirena::MirenaRosBridge::_connect_sim_unpause_for(godot::Callable provider)
+{
+    _sim_unpause_for_srv_provider = provider;
+}
+
 void mirena::MirenaRosBridge::get_entities_srv(const std::shared_ptr<mirena_common::srv::GetEntities::Request> request, std::shared_ptr<mirena_common::srv::GetEntities::Response> response)
 {
     godot::Variant result_var = _get_entities_srv_provider.call(mirena::to_request(request));
@@ -80,6 +90,36 @@ void mirena::MirenaRosBridge::get_car_srv(const std::shared_ptr<mirena_common::s
     response->response.header.stamp = _ros_node->now(); 
 }
 
+void mirena::MirenaRosBridge::sim_set_pause_srv(const std::shared_ptr<mirena_common::srv::SimSetPause::Request> request, std::shared_ptr<mirena_common::srv::SimSetPause::Response> response)
+{
+    godot::Variant result_var = _sim_set_pause_srv_provider.call(mirena::to_request(request));
+
+    if(result_var.get_type() != Variant::OBJECT){
+        godot::UtilityFunctions::print("Error Occured during call to ", _sim_set_pause_srv_provider.get_method(), " on ros request resolution");
+        return;
+    }
+    auto result_obj = Object::cast_to<mirena::SrvGetCarResponse>(result_var);
+    if(!result_obj){
+        godot::UtilityFunctions::print("Error Occured during call to ", _sim_set_pause_srv_provider.get_method(), " on ros request resolution");
+        return;
+    }
+}
+
+void mirena::MirenaRosBridge::sim_unpause_for_srv(const std::shared_ptr<mirena_common::srv::SimUnpauseFor::Request> request, std::shared_ptr<mirena_common::srv::SimUnpauseFor::Response> response)
+{
+    godot::Variant result_var = _sim_unpause_for_srv_provider.call(mirena::to_request(request));
+
+    if(result_var.get_type() != Variant::OBJECT){
+        godot::UtilityFunctions::print("Error Occured during call to ", _sim_unpause_for_srv_provider.get_method(), " on ros request resolution");
+        return;
+    }
+    auto result_obj = Object::cast_to<mirena::SrvGetCarResponse>(result_var);
+    if(!result_obj){
+        godot::UtilityFunctions::print("Error Occured during call to ", _sim_unpause_for_srv_provider.get_method(), " on ros request resolution");
+        return;
+    }
+}
+
 MirenaRosBridge::MirenaRosBridge() : _ros_node(rclcpp::Node::make_shared("mirena_ros_bridge")),
                                      _debugCarStatePub(_ros_node->create_publisher<mirena_common::msg::Car>(DEBUG_CAR_STATE_PUB_TOPIC, 10)),
                                      _debugFullTrackPub(_ros_node->create_publisher<mirena_common::msg::BezierCurve>(DEBUG_FULL_TRACK_TOPIC, 10)),
@@ -98,4 +138,6 @@ void MirenaRosBridge::_bind_methods()
 
     ClassDB::bind_method(D_METHOD("connect_get_entities_srv", "provider"), &MirenaRosBridge::_connect_get_entities_srv);
     ClassDB::bind_method(D_METHOD("connect_get_car_srv", "provider"), &MirenaRosBridge::_connect_get_car_srv);
+    ClassDB::bind_method(D_METHOD("connect_sim_set_pause", "provider"), &MirenaRosBridge::_connect_sim_set_pause);
+    ClassDB::bind_method(D_METHOD("connect_sim_unpause_for", "provider"), &MirenaRosBridge::_connect_sim_unpause_for);
 }

@@ -47,6 +47,18 @@ godot::Ref<mirena::SrvGetCarRequest> mirena::to_request(const std::shared_ptr<mi
     return memnew(mirena::SrvGetCarRequest);
 }
 
+godot::Ref<mirena::SrvSimSetPauseRequest> mirena::to_request(const std::shared_ptr<mirena_common::srv::SimSetPause::Request> request){
+    auto ret = memnew(mirena::SrvSimSetPauseRequest);
+    ret->paused = request->paused;
+    return ret;
+}
+
+godot::Ref<mirena::SrvSimUnpauseForRequest> mirena::to_request(const std::shared_ptr<mirena_common::srv::SimUnpauseFor::Request> request){
+    auto ret = memnew(mirena::SrvSimUnpauseForRequest);
+    ret->unpause_time = request->unpause_sec;
+    return ret;
+}
+
 void mirena::to_response(mirena::SrvGetEntitiesResponse& native_response, std::shared_ptr<mirena_common::srv::GetEntities::Response> ros_response)
 {
     ros_response->response.entities = native_response.entities;

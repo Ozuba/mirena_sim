@@ -47,6 +47,30 @@ namespace mirena
     protected:
         static void _bind_methods();
     };
+
+        class SrvSimSetPauseRequest : public godot::RefCounted
+    {
+        GDCLASS(SrvSimSetPauseRequest, godot::RefCounted)
+        
+        public:
+        bool paused;
+        bool get_paused();
+
+        protected:
+        static void _bind_methods();
+    };
+
+        class SrvSimUnpauseForRequest : public godot::RefCounted
+    {
+        GDCLASS(SrvSimUnpauseForRequest, godot::RefCounted)
+        
+        public:
+        double unpause_time;
+        double get_unpause_time();
+
+        protected:
+        static void _bind_methods();
+    };
 }
 
 namespace mirena::service_wrappers
@@ -57,6 +81,8 @@ namespace mirena::service_wrappers
         GDREGISTER_CLASS(SrvGetEntitiesResponse)
         GDREGISTER_CLASS(SrvGetCarRequest)
         GDREGISTER_CLASS(SrvGetCarResponse)
+        GDREGISTER_CLASS(SrvSimSetPauseRequest)
+        GDREGISTER_CLASS(SrvSimUnpauseForRequest)
     }
 
 }

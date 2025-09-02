@@ -1,15 +1,13 @@
 extends CanvasLayer
 class_name MirenaHud
 
-var timer = 0.0
-
 @onready var fps_label: Label = $PanelContainer/MarginContainer/VBoxContainer/FpsLabel
 @onready var fallen_cones_label: Label = $PanelContainer/MarginContainer/VBoxContainer/TimerLabel
 @onready var timer_label: Label = $PanelContainer/MarginContainer/VBoxContainer/FallenConesLabel
 
-func _process(delta: float):
+func _process(_delta: float):
 	self.process_inputs()
-	self.update_labels(delta)
+	self.update_labels()
 
 func process_inputs():
 	if Input.is_action_just_pressed("open_car_menu"):
@@ -26,12 +24,10 @@ func process_inputs():
 		else:
 			$TrackSelection.popup_centered()
 
-func update_labels(delta: float):
+func update_labels():
 	# Update FPS label
 	fps_label.text = "FPS: %d" % Engine.get_frames_per_second()
 	# Update Timer label
-	self.timer += delta
-	timer_label.text = "Timer: %.2f" % self.timer
-
+	timer_label.text = "Timer: %.2f" % SIM.get_sim_clock()
 	# Update Fallen Cones label
 	fallen_cones_label.text = "Fallen Cones: %d" % SIM.get_stats().get("cones_fallen")

@@ -6,6 +6,8 @@
 #include "rclcpp/rclcpp.hpp"
 #include "mirena_common/srv/get_entities.hpp"
 #include "mirena_common/srv/get_car.hpp"
+#include "mirena_common/srv/sim_set_pause.hpp"
+#include "mirena_common/srv/sim_unpause_for.hpp"
 
 #include "ros/ros_conversions.hpp"
 
@@ -36,6 +38,12 @@ namespace mirena
 		godot::Callable _get_car_srv_provider;
 		rclcpp::Service<mirena_common::srv::GetCar>::SharedPtr _debugGetCarSrv;
 
+		godot::Callable _sim_set_pause_srv_provider;
+		rclcpp::Service<mirena_common::srv::SimSetPause>::SharedPtr _simSetPauseSrv;
+
+		godot::Callable _sim_unpause_for_srv_provider;
+		rclcpp::Service<mirena_common::srv::SimUnpauseFor>::SharedPtr _simUnpauseForSrv;
+
 		// Bindings
 
 		void spin();
@@ -45,11 +53,16 @@ namespace mirena
 
 		void _connect_get_entities_srv(godot::Callable provider);
 		void _connect_get_car_srv(godot::Callable provider);
-
+		void _connect_sim_set_pause(godot::Callable provider);
+		void _connect_sim_unpause_for(godot::Callable provider);
+	
 		// Inner
 
 		void get_entities_srv(const std::shared_ptr<mirena_common::srv::GetEntities::Request> request, std::shared_ptr<mirena_common::srv::GetEntities::Response> response);
 		void get_car_srv(const std::shared_ptr<mirena_common::srv::GetCar::Request> request, std::shared_ptr<mirena_common::srv::GetCar::Response> response);
+		void sim_set_pause_srv(const std::shared_ptr<mirena_common::srv::SimSetPause::Request> request, std::shared_ptr<mirena_common::srv::SimSetPause::Response> response);
+		void sim_unpause_for_srv(const std::shared_ptr<mirena_common::srv::SimUnpauseFor::Request> request, std::shared_ptr<mirena_common::srv::SimUnpauseFor::Response> response);
+
 
 	public:
 		// Constructors

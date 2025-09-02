@@ -15,12 +15,8 @@ private:
     rclcpp::Node::SharedPtr _ros_node;
     rclcpp::Publisher<rosgraph_msgs::msg::Clock>::SharedPtr _debug_sim_clock_pub;
 
-    rclcpp::TimerBase::SharedPtr _update_timer;
-    int64_t _update_period_ms = 0;
+    void publish_sim_clock(double seconds);
 
-    void _publish_sim_clock();
-
-    void _update();
     void spin();
 
 protected:
@@ -30,9 +26,5 @@ public:
     RosTime();
     ~RosTime();
 
-    bool has_active_update_timer();
-    int64_t get_update_period();
-    void set_update_period(int64_t millis);
-    void cancel_update_timer();
 };
 }
