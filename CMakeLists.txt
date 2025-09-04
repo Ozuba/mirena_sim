@@ -109,7 +109,7 @@ add_custom_command(
     COMMENT "Copying the built shared library to godot LibMirena extension folder"
 )
 
-#####################################################[  INSTALL ZONE ]#####################################################################
+#####################################################[ INSTALL ZONE ]#####################################################################
 # Install the simulator for usage with ros2
 
 # Detect architecture
@@ -128,20 +128,35 @@ elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64")
 endif()
 
 
+# Install the export build of the sim 
 
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64|AMD64")
+    set(MIRENA_SIM_ARCH "x86_64")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64|ARM64")
+    set(MIRENA_SIM_ARCH "arm64")
+else()
+    message(WARNING "Unknown architecture ${CMAKE_SYSTEM_PROCESSOR}, defaulting to x86_64")
+    set(MIRENA_SIM_ARCH "x86_64")
+endif()
 
-# Install project files to share directory
 install(DIRECTORY
-    MirenaSim
-    DESTINATION share/${PROJECT_NAME}/
+    "export/${MIRENA_SIM_ARCH}/"
+    DESTINATION share/${PROJECT_NAME}/sim
+    # Set default permissions for all files
+    FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+    # Exclude specific files from permission changes using PATTERN
+    PATTERN "MirenaSim.pck" PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
+    PATTERN "libmirena_sim.so" PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
 )
 
 # Install the launch script as executable
 install(PROGRAMS
-    scripts/launch_sim.sh
-    DESTINATION lib/${PROJECT_NAME}/
-    RENAME MirenaSim
+    "scripts/launch_sim.sh"
+    DESTINATION lib/${PROJECT_NAME}
+    RENAME sim
 )
+
+#####################################################[ FINISH ]#####################################################################
 
 if(BUILD_TESTING)
     find_package(ament_lint_auto REQUIRED)
@@ -156,3 +171,4 @@ if(BUILD_TESTING)
 endif()
 
 ament_package()
+
