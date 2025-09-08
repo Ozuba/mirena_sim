@@ -3,6 +3,8 @@ project(mirena_sim)
 #Compiler options
 add_compile_options("-O3")
 
+find_package(ament_cmake REQUIRED)
+
 option(GD_EDITOR "Build editor-related source files" OFF)
 
 #####################################################[ SIM EXECUTABLE INSTALLATION ]##########################################################
@@ -60,7 +62,6 @@ if(GD_EDITOR)
     # ----------------------------- Build Sim -----------------------------
 
     # Find dependencies
-    find_package(ament_cmake REQUIRED)
     find_package(rclcpp REQUIRED)
     find_package(tf2 REQUIRED)
     find_package(tf2_ros REQUIRED)
