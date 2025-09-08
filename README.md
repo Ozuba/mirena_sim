@@ -10,7 +10,11 @@ Due to reasons, The sim is excluded from the automatic build process of colcon a
 The sim consists of the godot project itself (/MirenaSim) and a GDExtension library (/src)
 
 ### Building the GDE library
-I changes are made to the GDExtension library, it must be rebuilt. Currently, building the package with colcon build automatically rebuilds the library and installs it in MirenaSim, but in the future we want to exclude this process from the main CMakeLists of the package since its stoopid and dumb how its done now
+To install the editor, build the GDE library, etc etc..., the following flag must be supplied to colcon:
+```colcon build --cmake-args -DGD_EDITOR=ON```
+
+Whenever changes are made to the gdextension library, and a rebuild is desired, the command given above also rebuilds the library and installs it in the project directory
+
 
 ### Exporting a new version of the sim
 After making changes to either the project, library, or both, the changes will only be immediately visible in the editor. Other people launchin the sim via other way different from the editor will still use the old version even if they rebuild
