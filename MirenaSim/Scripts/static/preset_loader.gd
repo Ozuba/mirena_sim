@@ -3,8 +3,8 @@ class_name PresetLoader
 
 static func reset_sim():
 	SIM.get_vehicle().reset_car()
-	SIM.get_track_manager()
-	MirenaLogger.disp_debug(["Not implemented"])
+	SIM.get_track_manager().clear_track()
+	MirenaLogger.disp_debug(["Not (fully?) implemented"])
 
 static func load_slam():
 	var track_manager := SIM.get_track_manager()
@@ -19,7 +19,7 @@ static func load_planning():
 	var vehicle := SIM.get_vehicle()
 	
 	track_manager.load_default_track()
-	vehicle.set_pilot(TrackRailPilot.new(vehicle))
+	vehicle.snap_to_track_start()
 
 static func load_control():
 	MirenaLogger.disp_debug(["Not implemented"])

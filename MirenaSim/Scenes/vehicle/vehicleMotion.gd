@@ -53,6 +53,14 @@ func _physics_process(delta: float) -> void:
 	self.state_broadcaster.update(delta)
 
 func set_pose(pos : Vector3, theta : float = 0, reset_vel: bool = false) -> void:
+	#if snap_to_ground:
+	#	var space_state = get_world_3d().direct_space_state
+	#	var query = PhysicsRayQueryParameters3D.new()
+	#	query.from = pos
+	#	query.to = pos + Vector3.DOWN * 100
+	#	var result = space_state.intersect_ray(query)    
+	#	if result:
+	#		pos.y = result.position.y
 	if reset_vel:
 		linear_velocity = Vector3.ZERO
 		angular_velocity = Vector3.ZERO
@@ -128,3 +136,15 @@ func reset_pilot_config() -> void:
 	
 	# Reset attributes
 	self.freeze = false
+
+func snap_to_track_start() -> void:
+	var track_manager := SIM.get_track_manager()
+	if not track_manager.has_active_track():
+		return
+	var track := track_manager.get_track()
+	var start_point := track.sample_baked(0)
+	var looking_normal := track.sample_baked(0.5, true) - start_point
+	var theta := basis.looking_at(looking_normal, Vector3.UP).get_euler().y 
+	
+	set_pose(start_point, theta, true)
+	

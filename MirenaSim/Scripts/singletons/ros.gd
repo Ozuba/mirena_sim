@@ -9,7 +9,7 @@ func get_ros_publishers() -> MirenaRosBridge:
 func get_ros_time() -> RosTime:
 	return _ros_time
 
-func _process(_delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	_spin_all()
 
 func _spin_all() -> void:

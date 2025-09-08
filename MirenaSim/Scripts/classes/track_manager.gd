@@ -137,9 +137,9 @@ static func build_cone() -> Cone:
 	return product
 
 func _ros_on_ready():
-	_ros_publishing_timer.autostart = true
-	_ros_publishing_timer.timeout.connect(self._ros_publish_debug)
 	add_child(_ros_publishing_timer)
+	_ros_publishing_timer.start(0.2) # 5 msg/sec
+	_ros_publishing_timer.timeout.connect(self._ros_publish_debug)
 	
 	ROS.get_ros_publishers().connect_get_entities_srv(_ros_get_entities_srv)
 
@@ -215,3 +215,6 @@ func hide_path():
 
 func get_car_path() -> Path3D:
 	return self._car_path
+
+func get_track() -> Curve3D:
+	return self._track
