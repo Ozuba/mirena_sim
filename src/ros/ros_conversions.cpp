@@ -37,16 +37,6 @@ geometry_msgs::msg::Vector3 mirena::to_msg_vector3(const godot::Vector3 &native)
     return msg;
 }
 
-godot::Ref<mirena::SrvGetEntitiesRequest> mirena::to_request(const std::shared_ptr<mirena_common::srv::GetEntities::Request> request)
-{
-    return memnew(mirena::SrvGetEntitiesRequest);
-}
-
-
-godot::Ref<mirena::SrvGetCarRequest> mirena::to_request(const std::shared_ptr<mirena_common::srv::GetCar::Request> request){
-    return memnew(mirena::SrvGetCarRequest);
-}
-
 godot::Ref<mirena::SrvSimSetPauseRequest> mirena::to_request(const std::shared_ptr<mirena_common::srv::SimSetPause::Request> request){
     auto ret = memnew(mirena::SrvSimSetPauseRequest);
     ret->paused = request->paused;
@@ -57,16 +47,6 @@ godot::Ref<mirena::SrvSimUnpauseForRequest> mirena::to_request(const std::shared
     auto ret = memnew(mirena::SrvSimUnpauseForRequest);
     ret->unpause_time = request->unpause_sec;
     return ret;
-}
-
-void mirena::to_response(mirena::SrvGetEntitiesResponse& native_response, std::shared_ptr<mirena_common::srv::GetEntities::Response> ros_response)
-{
-    ros_response->response.entities = native_response.entities;
-}
-
-void mirena::to_response(mirena::SrvGetCarResponse& native_response, std::shared_ptr<mirena_common::srv::GetCar::Response> ros_response)
-{
-    ros_response->response = native_response.car_state;
 }
 
 geometry_msgs::msg::Quaternion mirena::to_msg(const godot::Quaternion& native)

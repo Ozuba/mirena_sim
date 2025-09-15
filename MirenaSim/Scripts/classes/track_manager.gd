@@ -140,18 +140,11 @@ func _ros_on_ready():
 	add_child(_ros_publishing_timer)
 	_ros_publishing_timer.start(0.2) # 5 msg/sec
 	_ros_publishing_timer.timeout.connect(self._ros_publish_debug)
-	
-	ROS.get_ros_publishers().connect_get_entities_srv(_ros_get_entities_srv)
 
 func _ros_publish_debug():
 	if _track != null:
 		ROS.get_ros_publishers().publish_full_track_curve(_track)
-
-func _ros_get_entities_srv(_request: SrvGetEntitiesRequest) -> SrvGetEntitiesResponse:
-	var response := SrvGetEntitiesResponse.new()
-	for entity in self._cones:
-		response.add_entity(entity.position, entity.get_type_as_string(), 1.0)
-	return response
+		ROS.get_ros_publishers().publish_slam_entities(_cones.map(func(element: Cone): return element.position))
 
 # --------------------------------------------
 # Interface 
