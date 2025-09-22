@@ -5,8 +5,6 @@
 #include "godot_cpp/classes/curve3d.hpp"
 #include "sim/ref_counted/service_wrappers.hpp"
 
-#include "mirena_common/srv/get_entities.hpp"
-#include "mirena_common/srv/get_car.hpp"
 #include "mirena_common/srv/sim_set_pause.hpp"
 #include "mirena_common/srv/sim_unpause_for.hpp"
 

@@ -6,6 +6,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "mirena_common/srv/sim_set_pause.hpp"
 #include "mirena_common/srv/sim_unpause_for.hpp"
+#include "mirena_common/msg/entity_list.hpp"
 
 #include "ros/ros_conversions.hpp"
 

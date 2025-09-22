@@ -22,7 +22,7 @@ namespace godot
             String node_name = get_name();
             // Obligamos al nodo a usar el tiempo simulado
             rclcpp::NodeOptions options;
-            options.parameter_overrides().push_back(rclcpp::Parameter("use_sim_time", true));
+            options.parameter_overrides().push_back(rclcpp::Parameter("use_sim_time", false));
 
             ros_node = std::make_shared<rclcpp::Node>(node_name.utf8().get_data(), options);
             tf_broadcaster = std::make_unique<tf2_ros::TransformBroadcaster>(*ros_node);
