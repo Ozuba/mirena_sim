@@ -11,7 +11,7 @@ var drive_mode = ControlMode.ROS
 var _active_pilot: AVehiclePilot = RosPilot.new(self)
 
 # CarStateBroadcaster
-var state_broadcaster:= CarStateBroadcaster.new(self, true)
+var state_broadcaster:= CarStateBroadcaster.new(self)
 
 # Position Wrapping
 var do_pos_wraping: bool = true;
@@ -133,9 +133,6 @@ func get_current_pilot() -> AVehiclePilot:
 func reset_pilot_config() -> void:
 	# Set the pilot to no pilot
 	self._active_pilot = NoPilot.new(self)
-	
-	# Reset attributes
-	self.freeze = false
 
 func snap_to_track_start() -> void:
 	var track_manager := SIM.get_track_manager()
@@ -144,7 +141,7 @@ func snap_to_track_start() -> void:
 	var track := track_manager.get_track()
 	var start_point := track.sample_baked(0)
 	var looking_normal := track.sample_baked(0.5, true) - start_point
-	var theta := basis.looking_at(looking_normal, Vector3.UP).get_euler().y 
+	var theta := Basis.looking_at(looking_normal, Vector3.UP).get_euler().y 
 	
 	set_pose(start_point, theta, true)
 	

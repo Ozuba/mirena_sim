@@ -2,7 +2,7 @@ extends AVehiclePilot
 class_name TrackRailPilot
 
 var _path: Path3D
-var _path_follow: PathFollow3D
+var _path_follow: PathFollow3D = null
 
 var finished: bool = false
 
@@ -21,19 +21,17 @@ func on_take_control() -> void:
 	
 	owner.reset_car()
 	owner.reset_pilot_config()
-	owner.freeze = true
 
 func on_lose_control() -> void:
 	self.on_track_cleared()
 
 func pilot(delta: float):
-	var speed = 10
 	if self.finished: return
+	var speed = 10
 	
 	# Follow the path until completion
 	# Move forward along the path
 	_path_follow.progress += speed * delta
-	_path_follow.progress_ratio = clamp(_path_follow.progress_ratio, 0.0, 1.0)
 	# Update vehicle position and orientation
 	owner.global_position = _path_follow.global_position
 	# Adjust orientation to follow the path's direction
@@ -46,8 +44,9 @@ func pilot(delta: float):
 		self.on_track_cleared()
 
 func on_track_cleared() -> void:
-	self._path = null
-	if self._path_follow != null:
+	if self._path != null:
+		self._path.remove_child(self._path_follow)
 		self._path_follow.queue_free(); 
 		self._path_follow = null
+		self._path = null
 	self.finished = true

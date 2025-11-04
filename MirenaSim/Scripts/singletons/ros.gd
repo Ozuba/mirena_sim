@@ -2,9 +2,34 @@ extends Node
 
 var _ros_time := RosTime.new()
 var _ros_publishers := MirenaRosBridge.new()
+var _ros_publishers_disable : Dictionary[PublisherType, bool]
 
-func get_ros_publishers() -> MirenaRosBridge:
-	return _ros_publishers
+enum PublisherType {
+	CarState,
+	FullTrackCurve,
+	SlamEntities
+}
+
+func set_publisher_enabled(pub: PublisherType, enable: bool) -> void:
+	_ros_publishers_disable.set(pub, not enable)
+
+func is_publisher_enabled(pub: PublisherType) -> bool:
+	return _ros_publishers_disable.get(pub) != true
+
+func enable_all_pub() -> void:
+	_ros_publishers_disable.clear()
+
+func publish_car_state(pos: Vector3, rot: Vector3, lin_speed: Vector3, ang_speed: Vector3, lin_accel: Vector3, ang_accel: Vector3) -> void:
+	if is_publisher_enabled(PublisherType.CarState):
+		_ros_publishers.publish_car_state(pos, rot, lin_speed, ang_speed, lin_accel, ang_accel)
+
+func publish_full_track_curve(curve: Curve3D) -> void:
+	if is_publisher_enabled(PublisherType.FullTrackCurve):
+		_ros_publishers.publish_full_track_curve(curve)
+
+func publish_slam_entities(entity_array: Array) -> void:
+	if is_publisher_enabled(PublisherType.SlamEntities):
+		_ros_publishers.publish_slam_entities(entity_array)
 
 func get_ros_time() -> RosTime:
 	return _ros_time

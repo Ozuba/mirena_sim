@@ -22,7 +22,7 @@ var owner: MirenaCar:
 
 var broadcast_enable: bool = true
 
-func _init(owner_: MirenaCar, get_car_srv_provider: bool = false) -> void:
+func _init(owner_: MirenaCar) -> void:
 	self.owner = owner_
 
 func get_owner() -> MirenaCar:
@@ -43,7 +43,7 @@ func update(delta: float):
 	self._car_broadcast_accumulator += delta
 	if self._car_broadcast_accumulator >= self._car_broadcast_period:
 		self._car_broadcast_accumulator = fmod(self._car_broadcast_accumulator, self._car_broadcast_period)
-		ROS.get_ros_publishers().publish_car_state(owner.position, owner.rotation, owner.linear_velocity, owner.angular_velocity, _linear_acceleration, _angular_acceleration)
+		ROS.publish_car_state(owner.position, owner.rotation, owner.linear_velocity, owner.angular_velocity, _linear_acceleration, _angular_acceleration)
 
 func set_broadcast_enable(value: bool) -> void:
 	self.broadcast_enable = value
