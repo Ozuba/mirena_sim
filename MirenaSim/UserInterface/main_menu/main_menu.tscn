@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://d11pn6ulabdj"]
+[gd_scene load_steps=17 format=3 uid="uid://d11pn6ulabdj"]
 
 [ext_resource type="Script" uid="uid://tf8c8bvbsfiy" path="res://UserInterface/main_menu/main_menu.gd" id="1_0tiax"]
 [ext_resource type="Script" uid="uid://dooq1p86put6u" path="res://UserInterface/main_menu/reset_car_button.gd" id="2_36byi"]
@@ -11,6 +11,8 @@
 [ext_resource type="Script" uid="uid://jcfmiw54pkkg" path="res://UserInterface/main_menu/planning_preset_button.gd" id="7_7xacn"]
 [ext_resource type="Script" uid="uid://diekbqtarsxb0" path="res://UserInterface/main_menu/control_preset_button.gd" id="8_igje0"]
 [ext_resource type="Script" uid="uid://cvi013pe17nkx" path="res://UserInterface/main_menu/39_button.gd" id="9_lmtxd"]
+[ext_resource type="Script" uid="uid://dgd1pc15ff4y5" path="res://UserInterface/main_menu/full_pipeline_preset.gd" id="11_87pkt"]
+[ext_resource type="Script" uid="uid://bh4vtxguobdna" path="res://UserInterface/main_menu/pub_enable_list.gd" id="11_rs2j6"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_0tiax"]
 font_size = 22
@@ -21,7 +23,7 @@ font_color = Color(0.744876, 0.999331, 1, 1)
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_val13"]
 
 [node name="MainMenu" type="PanelContainer"]
-custom_minimum_size = Vector2(300, 400)
+custom_minimum_size = Vector2(300, 500)
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
@@ -50,9 +52,10 @@ label_settings = SubResource("LabelSettings_0tiax")
 [node name="TabContainer" type="TabContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-current_tab = 0
+current_tab = 1
 
 [node name="General" type="TabBar" parent="MarginContainer/VBoxContainer/TabContainer"]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 0
 
@@ -150,7 +153,6 @@ text = "Clear Track"
 script = ExtResource("6_ltbmu")
 
 [node name="Ros2" type="TabBar" parent="MarginContainer/VBoxContainer/TabContainer"]
-visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
@@ -192,6 +194,21 @@ layout_mode = 2
 theme_override_styles/focus = SubResource("StyleBoxEmpty_val13")
 text = "Control"
 script = ExtResource("8_igje0")
+
+[node name="FullPipelinePreset" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Ros2/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_val13")
+text = "Full Pipeline"
+script = ExtResource("11_87pkt")
+
+[node name="Padding2" type="Label" parent="MarginContainer/VBoxContainer/TabContainer/Ros2/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Debug Publishers On/Off"
+horizontal_alignment = 1
+
+[node name="PubEnableList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Ros2/MarginContainer/VBoxContainer"]
+layout_mode = 2
+script = ExtResource("11_rs2j6")
 
 [node name="Other" type="TabBar" parent="MarginContainer/VBoxContainer/TabContainer"]
 visible = false

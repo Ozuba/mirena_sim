@@ -19,6 +19,10 @@ func is_publisher_enabled(pub: PublisherType) -> bool:
 func enable_all_pub() -> void:
 	_ros_publishers_disable.clear()
 
+func disable_all_pub() -> void:
+	for pub in PublisherType.values():
+		set_publisher_enabled(pub, false)
+
 func publish_car_state(pos: Vector3, rot: Vector3, lin_speed: Vector3, ang_speed: Vector3, lin_accel: Vector3, ang_accel: Vector3) -> void:
 	if is_publisher_enabled(PublisherType.CarState):
 		_ros_publishers.publish_car_state(pos, rot, lin_speed, ang_speed, lin_accel, ang_accel)
