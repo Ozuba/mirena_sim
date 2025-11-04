@@ -7,7 +7,8 @@ var _ros_publishers_disable : Dictionary[PublisherType, bool]
 enum PublisherType {
 	CarState,
 	FullTrackCurve,
-	SlamEntities
+	SlamEntities,
+	InferredControl
 }
 
 func set_publisher_enabled(pub: PublisherType, enable: bool) -> void:
@@ -34,6 +35,10 @@ func publish_full_track_curve(curve: Curve3D) -> void:
 func publish_slam_entities(entity_array: Array) -> void:
 	if is_publisher_enabled(PublisherType.SlamEntities):
 		_ros_publishers.publish_slam_entities(entity_array)
+
+func publish_inferred_control(longitudinal_accel: float, steer: float) -> void:
+	if is_publisher_enabled(PublisherType.InferredControl):
+		_ros_publishers.publish_inferred_control(longitudinal_accel, steer)
 
 func get_ros_time() -> RosTime:
 	return _ros_time

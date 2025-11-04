@@ -47,8 +47,18 @@ void mirena::MirenaRosBridge::_publish_slam_entities(Array entities)
     }
     msg.header.frame_id = FIXED_FRAME_NAME;
     msg.header.stamp = _ros_node->now();
-    _debugSlamEntitiesPub->publish(msg); // Aqui se raya lmaoooo???
+    _debugSlamEntitiesPub->publish(msg);
 }
+
+void mirena::MirenaRosBridge::_publish_inferred_control(double longitudinal_accel, double steer){
+    mirena_common::msg::CarControl msg;
+    msg.acceleration = longitudinal_accel;
+    msg.steer_angle = steer;
+    msg.header.frame_id = FIXED_FRAME_NAME;
+    msg.header.stamp = _ros_node->now();
+    _debugInferredControlPub->publish(msg); 
+}
+
 
 void mirena::MirenaRosBridge::_connect_sim_set_pause(godot::Callable provider)
 {
@@ -84,6 +94,7 @@ MirenaRosBridge::MirenaRosBridge() : _ros_node(rclcpp::Node::make_shared("mirena
                                      _debugCarStatePub(_ros_node->create_publisher<mirena_common::msg::Car>(DEBUG_CAR_STATE_PUB_TOPIC, 10)),
                                      _debugFullCenterlinePub(_ros_node->create_publisher<mirena_common::msg::BezierCurve>(DEBUG_FULL_CENTERLINE_PUB_TOPIC, 10)),
                                      _debugSlamEntitiesPub(_ros_node->create_publisher<mirena_common::msg::EntityList>(DEBUG_SLAM_ENTITIES_PUB_TOPIC, 10)),
+                                     _debugInferredControlPub(_ros_node->create_publisher<mirena_common::msg::CarControl>(DEBUG_INFERRED_CONTROL_PUB_TOPIC, 10)),
                                      _simSetPauseSrv(_ros_node->create_service<mirena_common::srv::SimSetPause>(SIM_SET_PAUSE_SRV_TOPIC, std::bind(&MirenaRosBridge::sim_set_pause_srv, this, _1, _2))),
                                      _simUnpauseForSrv(_ros_node->create_service<mirena_common::srv::SimUnpauseFor>(SIM_UNPAUSE_FOR_SRV_TOPIC, std::bind(&MirenaRosBridge::sim_unpause_for_srv, this, _1, _2)))
 {
@@ -97,6 +108,7 @@ void MirenaRosBridge::_bind_methods()
     ClassDB::bind_method(D_METHOD("publish_car_state", "pos", "rot", "lin_speed", "ang_speed", "lin_accel", "ang_accel"), &MirenaRosBridge::_publish_car_state);
     ClassDB::bind_method(D_METHOD("publish_full_track_curve", "curve"), &MirenaRosBridge::_publish_full_centerline_curve);
     ClassDB::bind_method(D_METHOD("publish_slam_entities", "entity_array"), &MirenaRosBridge::_publish_slam_entities);
+    ClassDB::bind_method(D_METHOD("publish_inferred_control", "longitudinal_accel", "steer"), &MirenaRosBridge::_publish_inferred_control);
 
     ClassDB::bind_method(D_METHOD("connect_sim_set_pause", "provider"), &MirenaRosBridge::_connect_sim_set_pause);
     ClassDB::bind_method(D_METHOD("connect_sim_unpause_for", "provider"), &MirenaRosBridge::_connect_sim_unpause_for);
