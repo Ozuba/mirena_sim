@@ -66,22 +66,6 @@ void mirena::MirenaRosBridge::_publish_perception_entities(Array entities)
     _debugPerceptionEntitiesPub->publish(msg);
 }
 
-void mirena::MirenaRosBridge::_publish_perception_entities(Array entities)
-{
-    mirena_common::msg::EntityList msg;
-    for(int i = 0; i < entities.size(); i++){
-        Variant item = entities.get(i);
-        if(item.get_type() != Variant::VECTOR3) {continue;}
-        Vector3 position = (Vector3)item;
-        mirena_common::msg::Entity ros_entity;
-        ros_entity.position = to_msg(position);
-        msg.entities.push_back(ros_entity);
-    }
-    msg.header.frame_id = FIXED_FRAME_NAME;
-    msg.header.stamp = _ros_node->now();
-    _debugPerceptionEntitiesPub->publish(msg);
-}
-
 
 void mirena::MirenaRosBridge::_publish_inferred_control(double gas, double steer){
     mirena_common::msg::CarControl msg;
