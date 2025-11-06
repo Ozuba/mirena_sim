@@ -144,4 +144,6 @@ func snap_to_track_start() -> void:
 	var theta := Basis.looking_at(looking_normal, Vector3.UP).get_euler().y 
 	
 	set_pose(start_point, theta, true)
-	
+
+func get_perception_area() -> PerceptionArea:
+	return $PerceptionArea

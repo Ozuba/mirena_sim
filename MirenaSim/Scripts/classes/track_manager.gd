@@ -12,6 +12,8 @@ var _cones : Array[Cone]
 var _car_path : Path3D
 var _car_path_mesh: MeshInstance3D
 
+const cone_group : StringName = &"cones"
+
 var _ros_publishing_timer: Timer = Timer.new()
 var track_publishind_paused: bool = false: 
 	set(value):
@@ -133,6 +135,7 @@ static func on_cone_hit_by_vehicle():
 
 static func build_cone() -> Cone:
 	var product : Cone = _cone_scene.instantiate()
+	product.add_to_group(cone_group)
 	product.collided_with_vehicle.connect(on_cone_hit_by_vehicle, CONNECT_ONE_SHOT)
 	return product
 
@@ -185,6 +188,7 @@ func load_default_track() -> void:
 func clear_track():
 	if not self.has_active_track(): return
 	for cone in _cones:
+		cone.remove_from_group(cone_group)
 		cone.queue_free()
 		if cone.collided_with_vehicle.is_connected(on_cone_hit_by_vehicle):
 			cone.collided_with_vehicle.disconnect(on_cone_hit_by_vehicle)

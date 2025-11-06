@@ -8,7 +8,8 @@ enum PublisherType {
 	CarState,
 	FullTrackCurve,
 	SlamEntities,
-	InferredControl
+	InferredControl,
+	PerceptionCones
 }
 
 func set_publisher_enabled(pub: PublisherType, enable: bool) -> void:
@@ -39,6 +40,10 @@ func publish_slam_entities(entity_array: Array) -> void:
 func publish_inferred_control(longitudinal_accel: float, steer: float) -> void:
 	if is_publisher_enabled(PublisherType.InferredControl):
 		_ros_publishers.publish_inferred_control(longitudinal_accel, steer)
+
+func publish_perception_entities(entity_array: Array) -> void:
+	if is_publisher_enabled(PublisherType.PerceptionCones):
+		_ros_publishers.publish_perception_entities(entity_array)
 
 func get_ros_time() -> RosTime:
 	return _ros_time

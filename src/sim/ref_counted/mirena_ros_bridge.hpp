@@ -15,6 +15,7 @@
 #define DEBUG_CAR_STATE_PUB_TOPIC "debug/sim/car_state"
 #define DEBUG_SLAM_ENTITIES_PUB_TOPIC "debug/sim/slam_entities"
 #define DEBUG_INFERRED_CONTROL_PUB_TOPIC "debug/sim/inferred_control"
+#define DEBUG_PERCEPTION_ENTITIES_PUB_TOPIC "debug/sim/perception_entities"
 
 #define SIM_SET_PAUSE_SRV_TOPIC "sim/set_pause"
 #define SIM_UNPAUSE_FOR_SRV_TOPIC "sim/unpause_for"
@@ -35,6 +36,7 @@ namespace mirena
 		rclcpp::Publisher<mirena_common::msg::BezierCurve>::SharedPtr _debugFullCenterlinePub;
 		rclcpp::Publisher<mirena_common::msg::EntityList>::SharedPtr _debugSlamEntitiesPub;
 		rclcpp::Publisher<mirena_common::msg::CarControl>::SharedPtr _debugInferredControlPub;
+		rclcpp::Publisher<mirena_common::msg::EntityList>::SharedPtr _debugPerceptionEntitiesPub;
 
 		godot::Callable _sim_set_pause_srv_provider;
 		rclcpp::Service<mirena_common::srv::SimSetPause>::SharedPtr _simSetPauseSrv;
@@ -50,6 +52,7 @@ namespace mirena
 		void _publish_full_centerline_curve(godot::Ref<godot::Curve3D> curve);
 		void _publish_slam_entities(godot::Array entities);
 		void _publish_inferred_control(double longoitudinal_accel, double steer);
+		void _publish_perception_entities(godot::Array entities);
 
 		void _connect_sim_set_pause(godot::Callable provider);
 		void _connect_sim_unpause_for(godot::Callable provider);
