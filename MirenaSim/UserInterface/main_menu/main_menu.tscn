@@ -52,10 +52,9 @@ label_settings = SubResource("LabelSettings_0tiax")
 [node name="TabContainer" type="TabContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-current_tab = 1
+current_tab = 0
 
 [node name="General" type="TabBar" parent="MarginContainer/VBoxContainer/TabContainer"]
-visible = false
 layout_mode = 2
 metadata/_tab_index = 0
 
@@ -153,6 +152,7 @@ text = "Clear Track"
 script = ExtResource("6_ltbmu")
 
 [node name="Ros2" type="TabBar" parent="MarginContainer/VBoxContainer/TabContainer"]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
