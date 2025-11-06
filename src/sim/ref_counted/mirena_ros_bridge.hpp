@@ -51,7 +51,7 @@ namespace mirena
 		void _publish_car_state(const godot::Vector3 &position, const godot::Vector3 &rotation, const godot::Vector3 &lin_speed, const godot::Vector3 &ang_speed, const godot::Vector3 &lin_accel, const godot::Vector3 &ang_accel);
 		void _publish_full_centerline_curve(godot::Ref<godot::Curve3D> curve);
 		void _publish_slam_entities(godot::Array entities);
-		void _publish_inferred_control(double longoitudinal_accel, double steer);
+		void _publish_inferred_control(double gas, double steer);
 		void _publish_perception_entities(godot::Array entities);
 
 		void _connect_sim_set_pause(godot::Callable provider);

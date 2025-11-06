@@ -37,9 +37,9 @@ func publish_slam_entities(entity_array: Array) -> void:
 	if is_publisher_enabled(PublisherType.SlamEntities):
 		_ros_publishers.publish_slam_entities(entity_array)
 
-func publish_inferred_control(longitudinal_accel: float, steer: float) -> void:
+func publish_inferred_control(gas: float, steer: float) -> void:
 	if is_publisher_enabled(PublisherType.InferredControl):
-		_ros_publishers.publish_inferred_control(longitudinal_accel, steer)
+		_ros_publishers.publish_inferred_control(gas, steer)
 
 func publish_perception_entities(entity_array: Array) -> void:
 	if is_publisher_enabled(PublisherType.PerceptionCones):

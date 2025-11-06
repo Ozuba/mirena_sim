@@ -47,11 +47,11 @@ func update(delta: float):
 		self._car_broadcast_accumulator = fmod(self._car_broadcast_accumulator, self._car_broadcast_period)
 		ROS.publish_car_state(owner.position, owner.rotation, owner.linear_velocity, owner.angular_velocity, _linear_acceleration, _angular_acceleration)
 		
-	########### INFERRED CONTROL BROADCASTING #############
+	########### CONTROL BROADCASTING #############
 	self._control_broadcast_accumulator += delta
-	if self._control_broadcast_accumulator >= self._control_broadcast_period:
-		self._control_broadcast_accumulator = fmod(self._control_broadcast_accumulator, self._control_broadcast_period)
-		ROS.publish_inferred_control(owner.to_local(_linear_acceleration).x, owner.steering)
+	if self._control_broadcast_accumulator >= self._car_broadcast_period:
+		self._control_broadcast_accumulator = fmod(self._car_broadcast_accumulator, self._car_broadcast_period)
+		ROS.publish_inferred_control(owner.gas, owner.steering)
 	
 	########### PERCEPTION CONES BROADCASTING #############
 	self._perception_cones_broadcast_accumulator += delta

@@ -1,7 +1,11 @@
 extends VehicleBody3D
 class_name MirenaCar
 
-const ENGINE_F = 900
+
+const POWER_LIM = 80000 # W
+const MOTOR_PEAK_TRQ = 100 # Nm
+const GEAR_RATIO = 5 # 1:5
+const WHEEL_RADIUS = 0.23 # m
 const BRAKE_F = 20
 const MAX_STEER = deg_to_rad(30)
 
@@ -10,6 +14,9 @@ enum ControlMode {ROS, STEERING_WHEEL}
 var drive_mode = ControlMode.ROS
 var _active_pilot: AVehiclePilot = RosPilot.new(self)
 
+# Overloaded longitudinal actuator GAS
+@export var gas: float
+	
 # CarStateBroadcaster
 var state_broadcaster:= CarStateBroadcaster.new(self)
 
@@ -41,6 +48,16 @@ func _process(_delta):
 	
 	if self.do_pos_wraping: self._perform_pos_wrapping()
 	
+	# Execute control action
+	var max_fx_power = POWER_LIM/abs(to_local(linear_velocity).x)
+	var max_fx_motor = MOTOR_PEAK_TRQ*GEAR_RATIO/WHEEL_RADIUS
+	# Set wheel torques
+	$RL_WHEEL.engine_force = min(max(gas,0)*max_fx_motor,max_fx_power) # Set engine force according to gas
+	$RR_WHEEL.engine_force = min(max(gas,0)*max_fx_motor,max_fx_power) # Set engine force according to gas
+	# Set brake command
+	brake = abs(min(gas,0))*BRAKE_F # Set brake force according to gas
+
+
 	$MirenaCarBase.set_wheels_speed(
 		$RL_WHEEL.get_rpm()*PI/30,
 		$RR_WHEEL.get_rpm()*PI/30,
@@ -69,6 +86,8 @@ func set_pose(pos : Vector3, theta : float = 0, reset_vel: bool = false) -> void
 	set_deferred("global_transform", Transform3D(Basis(Vector3.UP, theta), pos))
 	set_deferred("global_transform", Transform3D(Basis(Vector3.UP, theta), pos))
 
+
+	
 func _perform_pos_wrapping():
 	if self.is_outside_boundaries():
 		#print("IS outside", self.position)

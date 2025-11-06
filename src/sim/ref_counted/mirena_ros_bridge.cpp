@@ -66,9 +66,26 @@ void mirena::MirenaRosBridge::_publish_perception_entities(Array entities)
     _debugPerceptionEntitiesPub->publish(msg);
 }
 
-void mirena::MirenaRosBridge::_publish_inferred_control(double longitudinal_accel, double steer){
+void mirena::MirenaRosBridge::_publish_perception_entities(Array entities)
+{
+    mirena_common::msg::EntityList msg;
+    for(int i = 0; i < entities.size(); i++){
+        Variant item = entities.get(i);
+        if(item.get_type() != Variant::VECTOR3) {continue;}
+        Vector3 position = (Vector3)item;
+        mirena_common::msg::Entity ros_entity;
+        ros_entity.position = to_msg(position);
+        msg.entities.push_back(ros_entity);
+    }
+    msg.header.frame_id = FIXED_FRAME_NAME;
+    msg.header.stamp = _ros_node->now();
+    _debugPerceptionEntitiesPub->publish(msg);
+}
+
+
+void mirena::MirenaRosBridge::_publish_inferred_control(double gas, double steer){
     mirena_common::msg::CarControl msg;
-    msg.acceleration = longitudinal_accel;
+    msg.gas = gas;
     msg.steer_angle = steer;
     msg.header.frame_id = FIXED_FRAME_NAME;
     msg.header.stamp = _ros_node->now();
@@ -125,7 +142,7 @@ void MirenaRosBridge::_bind_methods()
     ClassDB::bind_method(D_METHOD("publish_car_state", "pos", "rot", "lin_speed", "ang_speed", "lin_accel", "ang_accel"), &MirenaRosBridge::_publish_car_state);
     ClassDB::bind_method(D_METHOD("publish_full_track_curve", "curve"), &MirenaRosBridge::_publish_full_centerline_curve);
     ClassDB::bind_method(D_METHOD("publish_slam_entities", "entity_array"), &MirenaRosBridge::_publish_slam_entities);
-    ClassDB::bind_method(D_METHOD("publish_inferred_control", "longitudinal_accel", "steer"), &MirenaRosBridge::_publish_inferred_control);
+    ClassDB::bind_method(D_METHOD("publish_inferred_control", "gas", "steer"), &MirenaRosBridge::_publish_inferred_control);
     ClassDB::bind_method(D_METHOD("publish_perception_entities", "entity_array"), &MirenaRosBridge::_publish_perception_entities);
 
     ClassDB::bind_method(D_METHOD("connect_sim_set_pause", "provider"), &MirenaRosBridge::_connect_sim_set_pause);

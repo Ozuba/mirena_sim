@@ -10,10 +10,7 @@ void MirenaCarBase::_bind_methods()
 	ClassDB::bind_method(D_METHOD("get_gas"), &MirenaCarBase::get_gas);
 	ClassDB::bind_method(D_METHOD("set_gas", "_gas"), &MirenaCarBase::set_gas);
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "gas"), "set_gas", "get_gas");
-	// BRAKE
-	ClassDB::bind_method(D_METHOD("get_brake"), &MirenaCarBase::get_brake);
-	ClassDB::bind_method(D_METHOD("set_brake", "_brake"), &MirenaCarBase::set_brake);
-	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "brake"), "set_brake", "get_brake");
+
 	// STEER_ANGLE
 	ClassDB::bind_method(D_METHOD("get_steer_angle"), &MirenaCarBase::get_steer_angle);
 	ClassDB::bind_method(D_METHOD("set_steer_angle", "_steer_angle"), &MirenaCarBase::set_steer_angle);
@@ -37,10 +34,9 @@ void MirenaCarBase::_ros_ready()
 {
 	// Zero internal variables
 	gas = 0;
-	brake = 0;
 	steer_angle = 0;
-	rosSub = ros_node->create_subscription<mirena_common::msg::CarInput>(
-		CAR_INPUT_SUB_TOPIC, 10, std::bind(&MirenaCarBase::topic_callback, this, std::placeholders::_1));
+	rosSub = ros_node->create_subscription<mirena_common::msg::CarControl>(
+		CAR_CONTROL_SUB_TOPIC, 10, std::bind(&MirenaCarBase::topic_callback, this, std::placeholders::_1));
 	wheelSpeedPub = ros_node->create_publisher<mirena_common::msg::WheelSpeeds>(
 		WSS_PUB_TOPIC, 10);
 }
@@ -54,14 +50,7 @@ float MirenaCarBase::get_gas()
 {
 	return gas;
 }
-void MirenaCarBase::set_brake(float _brake)
-{
-	brake = _brake;
-}
-float MirenaCarBase::get_brake()
-{
-	return brake;
-}
+
 void MirenaCarBase::set_steer_angle(float _steer_angle)
 {
 	steer_angle = _steer_angle;
@@ -80,10 +69,9 @@ void MirenaCarBase::set_wheels_speed(float rl, float rr, float fl, float fr)
 }
 
 //------------------------------------------------------------ ROS ---------------------------------------------------------//
-void MirenaCarBase::topic_callback(const mirena_common::msg::CarInput::SharedPtr msg)
+void MirenaCarBase::topic_callback(const mirena_common::msg::CarControl::SharedPtr msg)
 {
 	gas = msg->gas;
-	brake = msg->brake;
 	steer_angle = msg->steer_angle;
 }
 

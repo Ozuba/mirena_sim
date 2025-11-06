@@ -6,18 +6,15 @@ func on_take_control():
 	owner.reset_pilot_config()
 
 func pilot(delta: float):
-	var steering_input := 0
-	if Input.is_action_pressed("manual_steer_l"):
-		steering_input = 1
-	elif Input.is_action_pressed("manual_steer_r"):
-		steering_input = -1
-	var accelerator_input := Input.get_action_strength("manual_accel")
+	
+	var	steering_input := Input.get_action_strength("manual_steer_l") - Input.get_action_strength("manual_steer_r")
+	var gas_input := Input.get_action_strength("manual_gas")
 	var brake_input := Input.get_action_strength("manual_brake")
 
 	# Move Car
 	owner.steering = owner.MAX_STEER * smooth_steer(owner.steering/owner.MAX_STEER, steering_input, delta, 2)
-	owner.engine_force = owner.ENGINE_F * accelerator_input;
-	owner.brake = owner.BRAKE_F * brake_input
+	owner.gas = gas_input - brake_input
+
 
 
 
