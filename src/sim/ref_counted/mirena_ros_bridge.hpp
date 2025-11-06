@@ -21,6 +21,7 @@
 #define SIM_UNPAUSE_FOR_SRV_TOPIC "sim/unpause_for"
 
 #define FIXED_FRAME_NAME "world"
+#define CAR_FRAME_NAME "MirenaCarDebug"
 
 namespace mirena
 {

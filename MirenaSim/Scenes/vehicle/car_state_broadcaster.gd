@@ -49,12 +49,12 @@ func update(delta: float):
 		
 	########### CONTROL BROADCASTING #############
 	self._control_broadcast_accumulator += delta
-	if self._control_broadcast_accumulator >= self._car_broadcast_period:
-		self._control_broadcast_accumulator = fmod(self._car_broadcast_accumulator, self._car_broadcast_period)
+	if self._control_broadcast_accumulator >= self._control_broadcast_period:
+		self._control_broadcast_accumulator = fmod(self._control_broadcast_accumulator, self._control_broadcast_period)
 		ROS.publish_inferred_control(owner.gas, owner.steering)
 	
 	########### PERCEPTION CONES BROADCASTING #############
 	self._perception_cones_broadcast_accumulator += delta
 	if self._perception_cones_broadcast_accumulator >= self._perception_cones_broadcast_period:
 		self._perception_cones_broadcast_accumulator = fmod(self._perception_cones_broadcast_accumulator, self._perception_cones_broadcast_period)
-		ROS.publish_perception_entities(owner.get_perception_area().get_cones_in_sigth().map(func (cone: Node3D): return cone.position))
+		ROS.publish_perception_entities(owner.get_perception_area().get_cones_in_sigth().map(func (cone: Node3D): return owner.to_local(cone.position)))

@@ -61,7 +61,7 @@ void mirena::MirenaRosBridge::_publish_perception_entities(Array entities)
         ros_entity.position = to_msg(position);
         msg.entities.push_back(ros_entity);
     }
-    msg.header.frame_id = FIXED_FRAME_NAME;
+    msg.header.frame_id = CAR_FRAME_NAME;
     msg.header.stamp = _ros_node->now();
     _debugPerceptionEntitiesPub->publish(msg);
 }
