@@ -13,15 +13,18 @@ func process_inputs():
 	if Input.is_action_just_pressed("open_car_menu"):
 		if $MainMenuNode.visible:
 			$MainMenuNode.hide()
+			SIM.get_camera_manager().set_camera_focus(true)
 		else:
 			$MainMenuNode.show()
+			SIM.get_camera_manager().set_camera_focus(false)
 			# Check if the "m" key is pressed
 	if Input.is_action_just_pressed("load_track"):
 		# Show the FileDialog
-		print("pressedlmao")
 		if $TrackSelection.visible:
+			SIM.get_camera_manager().set_camera_focus(true)
 			$TrackSelection.hide()
 		else:
+			SIM.get_camera_manager().set_camera_focus(false)
 			$TrackSelection.popup_centered()
 
 func update_labels():

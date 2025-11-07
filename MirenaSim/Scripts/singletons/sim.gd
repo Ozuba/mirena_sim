@@ -2,8 +2,11 @@ extends Node
 
 var _current_scene: SimEnviroment
 
+var _camera_manager : CameraManager
+
 var _vehicle: MirenaCar
 var _hud: MirenaHud
+var _free_camera: Freecam3D
 
 var _sim_paused_mode: bool = false
 var _unpause_timer: SceneTreeTimer
@@ -14,11 +17,15 @@ var _stats: Dictionary = {
 }
 
 func _ready() -> void:
+	self._camera_manager = CameraManager.new()
 	var vehicle_scene = preload("res://Scenes/vehicle/mirena_car.tscn")
 	self._vehicle = vehicle_scene.instantiate()
 	var hud_scene = preload("res://UserInterface/hud/mirena_hud.tscn")
 	self._hud = hud_scene.instantiate()
-	
+	self._free_camera = Freecam3D.new()
+	self._free_camera.position = Vector3(0, 7.1, -8)
+	self._free_camera.rotation = Vector3(-deg_to_rad(30), deg_to_rad(180), 0)
+	self.add_child(self._camera_manager)
 	#ROS.get_ros_publishers()
 	
 	self._start_sim()
@@ -31,6 +38,9 @@ func _start_sim() -> void:
 	self._current_scene = get_tree().current_scene
 	self._current_scene.add_child(self._vehicle)
 	self._current_scene.add_child(self._hud)
+	self._current_scene.add_child(self._free_camera)
+	self._camera_manager.register_camera(CameraManager.Names.FreeCam, self._free_camera)
+	self._camera_manager.focus_camera(CameraManager.Names.FreeCam)
 	self._sim_paused_mode = false
 
 func _update_sim_clock(delta: float):
@@ -78,6 +88,9 @@ func get_env() -> SimEnviroment:
 ## Shortcut for SIM.get_env().get_track_manager()
 func get_track_manager() -> TrackManager:
 	return self._current_scene.get_track_manager()
+
+func get_camera_manager() -> CameraManager:
+	return _camera_manager
 
 func get_sim_clock() -> float:
 	return _sim_clock

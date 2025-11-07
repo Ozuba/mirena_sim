@@ -14,7 +14,7 @@ class_name Freecam3D
 ## Speed up / down by scrolling the mouse whell down / up
 @export var invert_speed_controls: bool = false
 
-@export var overlay_text: bool = true
+@export var overlay_text: bool = false
 
 ## Pivot node for camera looking around
 @onready var pivot := Node3D.new()
@@ -34,6 +34,7 @@ var movement_active := false:
 		movement_active = val
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED if movement_active else Input.MOUSE_MODE_VISIBLE)
 		display_message("[Movement ON]" if movement_active else "[Movement OFF]")
+var focused := false
 
 ## The current maximum speed. Lower or higher it by scrolling the mouse wheel.
 var target_speed := MIN_SPEED
@@ -70,7 +71,7 @@ func _process(delta: float) -> void:
 	if Input.is_action_just_released("__debug_camera_toggle"):
 		movement_active = not movement_active
 	
-	if movement_active:
+	if movement_active && focused:
 		var dir = Vector3.ZERO
 		if Input.is_action_pressed("__debug_camera_forward"): 	dir.z -= 1
 		if Input.is_action_pressed("__debug_camera_back"): 		dir.z += 1
@@ -85,9 +86,13 @@ func _process(delta: float) -> void:
 		velocity = lerp(velocity, dir * target_speed, ACCELERATION)
 		pivot.position += velocity
 
+func set_focus(value: bool) -> void:
+	focused = value
+	if not value:
+		movement_active = false
 
 func _input(event: InputEvent) -> void:
-	if movement_active:
+	if movement_active and focused:
 		# Turn around
 		if event is InputEventMouseMotion:
 			pivot.rotate_y(-event.relative.x * MOUSE_SENSITIVITY)

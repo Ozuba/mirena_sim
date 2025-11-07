@@ -34,6 +34,7 @@ static func load_control():
 	track_manager.load_default_track()
 	vehicle.snap_to_track_start()
 	vehicle.set_pilot(RosPilot.new(vehicle))
+	SIM.get_camera_manager().focus_camera(CameraManager.Names.TPCam)
 
 static func load_full_pipeline():
 	var track_manager := SIM.get_track_manager()

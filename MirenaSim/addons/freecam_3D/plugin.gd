@@ -6,8 +6,6 @@ extends EditorPlugin
 ##
 
 func _enter_tree() -> void:
-	print("[Freecam3D Plugin] Loaded.")
-	
 	add_custom_type(
 			"Freecam3D", 
 			"Camera3D", 

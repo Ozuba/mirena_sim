@@ -9,9 +9,6 @@ const WHEEL_RADIUS = 0.23 # m
 const BRAKE_F = 20
 const MAX_STEER = deg_to_rad(30)
 
-#Control Mode
-enum ControlMode {ROS, STEERING_WHEEL}
-var drive_mode = ControlMode.ROS
 var _active_pilot: AVehiclePilot = RosPilot.new(self)
 
 # Overloaded longitudinal actuator GAS
@@ -22,30 +19,18 @@ var state_broadcaster:= CarStateBroadcaster.new(self)
 
 # Position Wrapping
 var do_pos_wraping: bool = true;
-var x_limits: Vector2 = Vector2i(-45, 45)
-var z_limits: Vector2 = Vector2i(-45, 45)
+var x_limits: Vector2 = Vector2i(-60, 60)
+var z_limits: Vector2 = Vector2i(-60, 60)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	# Doing this ensures that all dumps are calculated righfully
 	RenderingServer.frame_post_draw.connect(_on_post_render)
+	SIM.get_camera_manager().register_camera(CameraManager.Names.FPCam, $FPCam)
+	SIM.get_camera_manager().register_camera(CameraManager.Names.TPCam, $TPCam)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
-	#Handle all inputs
-	if Input.is_action_just_pressed("driving_mode"):
-		if self.drive_mode == ControlMode.ROS:
-			self.drive_mode = ControlMode.STEERING_WHEEL
-			$UserCam.current = true
-			self.set_pilot(ManualPilot.new(self))
-		else:
-			self.drive_mode = ControlMode.STEERING_WHEEL
-			$UserCam.current = false
-			self.set_pilot(RosPilot.new(self))
-
-	if Input.is_action_just_pressed("autofollow"):
-		self.set_pilot(TrackRailPilot.new(self))
-	
 	if self.do_pos_wraping: self._perform_pos_wrapping()
 	
 	# Execute control action
@@ -156,8 +141,8 @@ func reset_pilot_config() -> void:
 	# Set the pilot to no pilot
 	self._active_pilot = NoPilot.new(self)
 
-func snap_to_track_start(reset_car: bool = true) -> void:
-	if reset_car: reset_car()
+func snap_to_track_start(reset_car_: bool = true) -> void:
+	if reset_car_: reset_car()
 	var track_manager := SIM.get_track_manager()
 	if not track_manager.has_active_track():
 		return
