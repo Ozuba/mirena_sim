@@ -2,6 +2,7 @@
 #define MIRENACAR_H
 
 #include <godot_cpp/classes/node.hpp>
+#include <godot_cpp/variant/vector2.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
 // ROS
@@ -31,9 +32,9 @@ namespace godot
 		// WSS Weel speed sensor publisher
 		rclcpp::Publisher<mirena_common::msg::WheelSpeeds>::SharedPtr wheelSpeedPub;
 
-		// Internal Car Inputs
-		float gas;
-		float steer_angle;
+		bool has_control_buffered;
+		float gas_buffer;
+		float steer_angle_buffer;
 
 		// Internal Car Outputs
 		float w_rl, w_rr, w_fl, w_fr; // Wheel speeds rad/s
@@ -42,14 +43,10 @@ namespace godot
 		static void _bind_methods();
 
 	public:
-		// Constructors
 		MirenaCarBase();
-		~MirenaCarBase();
 		// Getters and setters
-		void set_gas(float _gas);
-		float get_gas();
-		void set_steer_angle(float _steer_angle);
-		float get_steer_angle();
+		bool has_control_input();
+		Vector2 consume_control_input();
 
 		void set_wheels_speed(float rl, float rr, float fl, float fr);
 

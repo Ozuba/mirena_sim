@@ -134,6 +134,9 @@ func toggle_do_position_wrapping() -> void:
 
 func reset_car() -> void:
 	set_pose(Vector3(0, 0.1, 0), 0, true)
+	self.gas = 0;
+	self.steering = 0;
+	self.brake = 0;
 
 func get_ros_car_base() -> MirenaCarBase:
 	return $MirenaCarBase
@@ -153,7 +156,8 @@ func reset_pilot_config() -> void:
 	# Set the pilot to no pilot
 	self._active_pilot = NoPilot.new(self)
 
-func snap_to_track_start() -> void:
+func snap_to_track_start(reset_car: bool = true) -> void:
+	if reset_car: reset_car()
 	var track_manager := SIM.get_track_manager()
 	if not track_manager.has_active_track():
 		return
