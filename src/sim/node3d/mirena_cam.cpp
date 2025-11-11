@@ -152,6 +152,7 @@ void MirenaCam::_ros_process(double delta)
     frame.step = img->get_width() * 3;
 
     // Copy image data
+    img->convert(Image::FORMAT_RGB8); //Convert for safety
     PackedByteArray data = img->get_data();
     frame.data.resize(data.size());
     std::memcpy(frame.data.data(), data.ptrw(), data.size());
