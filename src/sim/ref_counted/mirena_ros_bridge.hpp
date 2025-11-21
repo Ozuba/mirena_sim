@@ -8,6 +8,7 @@
 #include "mirena_common/srv/sim_unpause_for.hpp"
 #include "mirena_common/msg/entity_list.hpp"
 #include "mirena_common/msg/car_control.hpp"
+#include "mirena_common/msg/track.hpp"
 
 #include "ros/ros_conversions.hpp"
 
@@ -16,6 +17,7 @@
 #define DEBUG_SLAM_ENTITIES_PUB_TOPIC "debug/sim/slam_entities"
 #define DEBUG_INFERRED_CONTROL_PUB_TOPIC "debug/sim/inferred_control"
 #define DEBUG_PERCEPTION_ENTITIES_PUB_TOPIC "debug/sim/perception_entities"
+#define DEBUG_TRACK_TOPIC "debug/sim/track"
 
 #define SIM_SET_PAUSE_SRV_TOPIC "sim/set_pause"
 #define SIM_UNPAUSE_FOR_SRV_TOPIC "sim/unpause_for"
@@ -38,6 +40,8 @@ namespace mirena
 		rclcpp::Publisher<mirena_common::msg::EntityList>::SharedPtr _debugSlamEntitiesPub;
 		rclcpp::Publisher<mirena_common::msg::CarControl>::SharedPtr _debugInferredControlPub;
 		rclcpp::Publisher<mirena_common::msg::EntityList>::SharedPtr _debugPerceptionEntitiesPub;
+		rclcpp::Publisher<mirena_common::msg::Track>::SharedPtr _debugTrackPub;
+
 
 		godot::Callable _sim_set_pause_srv_provider;
 		rclcpp::Service<mirena_common::srv::SimSetPause>::SharedPtr _simSetPauseSrv;
@@ -54,6 +58,9 @@ namespace mirena
 		void _publish_slam_entities(godot::Array entities);
 		void _publish_inferred_control(double gas, double steer);
 		void _publish_perception_entities(godot::Array entities);
+		void _publish_track(godot::Array gates, bool is_closed);
+
+
 
 		void _connect_sim_set_pause(godot::Callable provider);
 		void _connect_sim_unpause_for(godot::Callable provider);

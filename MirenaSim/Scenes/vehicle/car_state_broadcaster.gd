@@ -16,6 +16,10 @@ var _control_broadcast_accumulator: float = 0
 var _control_broadcast_period: float = 0.1 # seconds
 var _perception_cones_broadcast_accumulator: float = 0
 var _perception_cones_broadcast_period: float = 0.1 # seconds
+var _track_broadcast_period: float = 0.1 # seconds
+var _track_broadcast_accumulator: float = 0 
+
+
 
 var _owner: WeakRef
 var owner: MirenaCar: 
@@ -58,3 +62,9 @@ func update(delta: float):
 	if self._perception_cones_broadcast_accumulator >= self._perception_cones_broadcast_period:
 		self._perception_cones_broadcast_accumulator = fmod(self._perception_cones_broadcast_accumulator, self._perception_cones_broadcast_period)
 		ROS.publish_perception_entities(owner.get_perception_area().get_cones_in_sigth().map(func (cone: Node3D): return owner.to_local(cone.position)))
+		
+	########### TRACK BROADCASTING #############
+	self._track_broadcast_accumulator += delta
+	if self._track_broadcast_accumulator >= self._track_broadcast_period:
+		self._track_broadcast_accumulator = fmod(self._track_broadcast_accumulator, self._track_broadcast_period)
+		ROS.publish_track(SIM.get_track_manager().get_gates_array(),SIM.get_track_manager().is_closed())

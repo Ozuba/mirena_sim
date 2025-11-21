@@ -84,6 +84,59 @@ func _gen_gates(path : Curve3D, spacing : float = 4, width : float = 3):
 		cone.basis = Basis.looking_at(tangent)
 		#cone.rotate_y(randf_range(-PI/16, PI/16))
 		add_child(cone)
+		
+func get_gates_array(path : Curve3D = _track, spacing : float = 4):
+	var gates_data = []
+	if not _track:
+		return gates_data
+	var length = path.get_baked_length()
+	
+	# We include the start line (d=0) and all subsequent gates.
+	var num_gates = int(length / spacing) + 1 
+
+	# Check for minimal path length
+	if length < spacing:
+		# If the path is too short to even generate one gate spaced at 'spacing', 
+		# we can still add the start line if the path exists.
+		num_gates = 1
+		
+	var lookahead_dist = 0.5 # Using a fixed lookahead distance for tangent calculation
+		
+	# Iterate through the start line (i=0) and all subsequent gates
+	for i in range(num_gates):
+		var d = (i * spacing) 
+		
+		# Clamp d to the curve length for the last gate
+		if d > length:
+			d = length 
+			
+		var pos = path.sample_baked(d)
+		
+		# --- REVERTED TANGENT CALCULATION ---
+		# Calculate tangent using finite difference (two points)
+		var nextPos = path.sample_baked(min(d + lookahead_dist, length))
+		var tangent = (nextPos - pos).normalized()
+		
+		# Check for zero tangent (prevents error if curve has no length/no movement)
+		if tangent.length_squared() < 0.001:
+			continue
+			
+		# Calculate the yaw angle (rotation around the Y-axis).
+		# atan2(x, z) gives the angle (in radians) from the +Z axis, 
+		# which is the standard yaw in Godot/physics for movement in the XZ plane.
+		var angle = atan2(tangent.x, tangent.z)
+		
+		# Store the gate data as Vector3(X, Z, Angle_Radians)
+		var gate_vector = Vector3(pos.z, pos.x, angle)
+		
+		gates_data.append(gate_vector)
+
+	return gates_data
+
+func is_closed():
+	if not _track:
+		return false
+	return _track.closed
 
 static func _get_curve3d_from_file(filepath: String) -> Curve3D:
 	#Get json trackfile

@@ -17,12 +17,20 @@ void mirena::MirenaRosBridge::_publish_car_state(const Vector3 &position, const 
     msg.header.frame_id =  FIXED_FRAME_NAME;
     msg.header.stamp = _ros_node->now();
 
-    msg.pose.set__position(to_msg(position));
-    msg.pose.set__orientation(to_msg(godot::Quaternion(godot::Basis::from_euler(rotation))));
-    msg.velocity.set__linear(to_msg_vector3(lin_speed));
-    msg.velocity.set__angular(to_msg_vector3(ang_speed));
-    msg.acceleration.set__linear(to_msg_vector3(lin_accel));
-    msg.acceleration.set__angular(to_msg_vector3(ang_accel));
+    //Perform coordinate frame conversions
+    auto pos = to_msg(position);
+    auto rot = to_msg(rotation);
+    auto l_speed = to_msg(lin_speed);
+    auto a_speed = to_msg(ang_speed);
+
+    // Fill state vector 
+    msg.x = pos.x;
+    msg.y = pos.y;
+    msg.theta = rot.z;
+    msg.u = l_speed.x;
+    msg.v = l_speed.y;
+    msg.omega = a_speed.z;
+   
     _debugCarStatePub->publish(msg);
 }
 
@@ -76,6 +84,33 @@ void mirena::MirenaRosBridge::_publish_inferred_control(double gas, double steer
     _debugInferredControlPub->publish(msg); 
 }
 
+void mirena::MirenaRosBridge::_publish_track(Array gates, bool is_closed){
+
+    mirena_common::msg::Track msg;
+
+    if(gates.size() <= 0) return;
+    //Fill gates
+    for (int i = 0; i < gates.size(); i++)
+    {
+        //Cover array
+        Variant item = gates.get(i);
+        if(item.get_type() != Variant::VECTOR3) {continue;}
+        Vector3 gate_in = (Vector3)item;
+        mirena_common::msg::Gate gate;
+        gate.x = gate_in.x;
+        gate.y = gate_in.y;
+        gate.psi = gate_in.z;
+        msg.gates.push_back(gate);
+    }
+    //IsClosed
+    msg.is_closed = is_closed;
+
+    //Fill header
+    msg.header.frame_id = FIXED_FRAME_NAME;
+    msg.header.stamp = _ros_node->now();
+    _debugTrackPub->publish(msg); 
+}
+
 
 void mirena::MirenaRosBridge::_connect_sim_set_pause(godot::Callable provider)
 {
@@ -113,6 +148,7 @@ MirenaRosBridge::MirenaRosBridge() : _ros_node(rclcpp::Node::make_shared("mirena
                                      _debugSlamEntitiesPub(_ros_node->create_publisher<mirena_common::msg::EntityList>(DEBUG_SLAM_ENTITIES_PUB_TOPIC, 10)),
                                      _debugInferredControlPub(_ros_node->create_publisher<mirena_common::msg::CarControl>(DEBUG_INFERRED_CONTROL_PUB_TOPIC, 10)),
                                      _debugPerceptionEntitiesPub(_ros_node->create_publisher<mirena_common::msg::EntityList>(DEBUG_PERCEPTION_ENTITIES_PUB_TOPIC, 10)),
+                                     _debugTrackPub(_ros_node->create_publisher<mirena_common::msg::Track>(DEBUG_TRACK_TOPIC, 10)),
                                      _simSetPauseSrv(_ros_node->create_service<mirena_common::srv::SimSetPause>(SIM_SET_PAUSE_SRV_TOPIC, std::bind(&MirenaRosBridge::sim_set_pause_srv, this, _1, _2))),
                                      _simUnpauseForSrv(_ros_node->create_service<mirena_common::srv::SimUnpauseFor>(SIM_UNPAUSE_FOR_SRV_TOPIC, std::bind(&MirenaRosBridge::sim_unpause_for_srv, this, _1, _2)))
 {
@@ -128,6 +164,7 @@ void MirenaRosBridge::_bind_methods()
     ClassDB::bind_method(D_METHOD("publish_slam_entities", "entity_array"), &MirenaRosBridge::_publish_slam_entities);
     ClassDB::bind_method(D_METHOD("publish_inferred_control", "gas", "steer"), &MirenaRosBridge::_publish_inferred_control);
     ClassDB::bind_method(D_METHOD("publish_perception_entities", "entity_array"), &MirenaRosBridge::_publish_perception_entities);
+    ClassDB::bind_method(D_METHOD("publish_track", "gates","is_closed"), &MirenaRosBridge::_publish_track);
 
     ClassDB::bind_method(D_METHOD("connect_sim_set_pause", "provider"), &MirenaRosBridge::_connect_sim_set_pause);
     ClassDB::bind_method(D_METHOD("connect_sim_unpause_for", "provider"), &MirenaRosBridge::_connect_sim_unpause_for);

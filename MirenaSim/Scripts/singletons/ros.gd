@@ -9,7 +9,8 @@ enum PublisherType {
 	FullTrackCurve,
 	SlamEntities,
 	InferredControl,
-	PerceptionCones
+	PerceptionCones,
+	Track
 }
 
 func set_publisher_enabled(pub: PublisherType, enable: bool) -> void:
@@ -44,6 +45,10 @@ func publish_inferred_control(gas: float, steer: float) -> void:
 func publish_perception_entities(entity_array: Array) -> void:
 	if is_publisher_enabled(PublisherType.PerceptionCones):
 		_ros_publishers.publish_perception_entities(entity_array)
+
+func publish_track(gates: Array, is_closed : bool) -> void:
+	if is_publisher_enabled(PublisherType.Track):
+		_ros_publishers.publish_track(gates,is_closed)
 
 func get_ros_time() -> RosTime:
 	return _ros_time

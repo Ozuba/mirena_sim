@@ -37,6 +37,7 @@ sdfgi_read_sky_light = false
 script = ExtResource("1_ux211")
 
 [node name="TrackManager" type="Node3D" parent="."]
+unique_name_in_owner = true
 script = ExtResource("2_bp587")
 
 [node name="Ground" type="StaticBody3D" parent="."]
