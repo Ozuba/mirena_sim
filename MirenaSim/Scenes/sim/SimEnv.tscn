@@ -9,13 +9,13 @@
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_ok5qf"]
 
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_gnuhh"]
-points = PackedVector3Array(-50, 0, -50, -50, 0, 50, 50, 0, -50, 50, 0, 50)
+points = PackedVector3Array(-100, 0, -100, -100, 0, 100, 100, 0, -100, 100, 0, 100)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_uv2q3"]
-lightmap_size_hint = Vector2i(652, 652)
+lightmap_size_hint = Vector2i(1002, 1002)
 material = ExtResource("1_ahvmt")
 add_uv2 = true
-size = Vector2(130, 130)
+size = Vector2(200, 200)
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_0sr3w"]
 panorama = ExtResource("7_hccvn")

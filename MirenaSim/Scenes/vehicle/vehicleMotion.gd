@@ -35,7 +35,7 @@ func _process(_delta):
 	
 	# Execute control action
 	var max_fx_power = POWER_LIM/abs(to_local(linear_velocity).x)
-	var max_fx_motor = MOTOR_PEAK_TRQ*GEAR_RATIO/WHEEL_RADIUS
+	var max_fx_motor = MOTOR_PEAK_TRQ*GEAR_RATIO/(WHEEL_RADIUS*4)
 	# Set wheel torques
 	$RL_WHEEL.engine_force = min(max(gas,0)*max_fx_motor,max_fx_power) # Set engine force according to gas
 	$RR_WHEEL.engine_force = min(max(gas,0)*max_fx_motor,max_fx_power) # Set engine force according to gas
