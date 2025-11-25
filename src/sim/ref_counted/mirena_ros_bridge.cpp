@@ -26,7 +26,7 @@ void mirena::MirenaRosBridge::_publish_car_state(const Vector3 &position, const 
     // Fill state vector 
     msg.x = pos.x;
     msg.y = pos.y;
-    msg.theta = rot.z;
+    msg.psi = rot.z;
     msg.u = l_speed.x;
     msg.v = l_speed.y;
     msg.omega = a_speed.z;
