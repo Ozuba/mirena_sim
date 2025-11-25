@@ -8,12 +8,13 @@ func on_take_control():
 func pilot(delta: float):
 	
 	var	steering_input := Input.get_action_strength("manual_steer_l") - Input.get_action_strength("manual_steer_r")
-	var gas_input := Input.get_action_strength("manual_gas")
-	var brake_input := Input.get_action_strength("manual_brake")
-
+	var gas_input_pos := Input.get_action_strength("manual_gas_pos")
+	var gas_input_neg := Input.get_action_strength("manual_gas_neg")
+	var ebs  := Input.get_action_strength("EBS")
 	# Move Car
 	owner.steering = owner.MAX_STEER * smooth_steer(owner.steering/owner.MAX_STEER, steering_input, delta, 2)
-	owner.gas = gas_input - brake_input
+	owner.gas = gas_input_pos - gas_input_neg
+	owner.brake = ebs * owner.BRAKE_F
 
 
 

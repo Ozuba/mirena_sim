@@ -33,14 +33,21 @@ func _ready():
 func _process(_delta):
 	if self.do_pos_wraping: self._perform_pos_wrapping()
 	
-	# Execute control action
-	var max_fx_power = POWER_LIM/abs(to_local(linear_velocity).x)
-	var max_fx_motor = MOTOR_PEAK_TRQ*GEAR_RATIO/(WHEEL_RADIUS*4)
+	# Execute control action (This mimics the low level controller)
+	
+	# Ensure power limit
+	var u = (global_transform.basis.inverse() * linear_velocity).z # Get longitudinal speed
+	
+	# Force limits
+	var max_fx_motor = MOTOR_PEAK_TRQ*GEAR_RATIO/(WHEEL_RADIUS)
+	
+	# Regen controller (Prevents going backwards)
+	var max_fx_regen = 0.5*(1+tanh(u/0.01))*max_fx_motor
+	
+	var fx = min(gas,0)* max_fx_regen + max(gas,0)*max_fx_motor
 	# Set wheel torques
-	$RL_WHEEL.engine_force = min(max(gas,0)*max_fx_motor,max_fx_power) # Set engine force according to gas
-	$RR_WHEEL.engine_force = min(max(gas,0)*max_fx_motor,max_fx_power) # Set engine force according to gas
-	# Set brake command
-	brake = abs(min(gas,0))*BRAKE_F # Set brake force according to gas
+	$RL_WHEEL.engine_force = fx/2
+	$RR_WHEEL.engine_force = fx/2
 
 
 	$MirenaCarBase.set_wheels_speed(
