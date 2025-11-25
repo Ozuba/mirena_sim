@@ -4,6 +4,19 @@
 
 using namespace godot;
 
+// Obtains the true change of a_pos negating pikes caused by angle wrapping 
+Vector3 get_effective_a_pos_change(Vector3 new_orientation, Vector3 old_orientation){
+    Vector3 diff = new_orientation - old_orientation;
+    for(int i = 0; i < 3; i++){
+        if (diff[i] > M_PI){
+            diff[i] -= 2*M_PI;
+        } else if (diff[i] < -M_PI){
+            diff[i] += 2*M_PI;
+        }
+    }
+    return diff;
+}
+
 void MirenaImu::_bind_methods()
 {
 }
@@ -29,23 +42,17 @@ void MirenaImu::_ros_process(double delta)
 
     Transform3D global_tf = get_global_transform();
 
-    // Update Angular Measures
+    // ANGULAR MEASURES
     a_pos = global_tf.basis.get_euler();
     aq_pos = global_tf.basis.get_quaternion();
-    // Speed
-    a_speed = (a_pos - a_prev_pos) / delta;
-    // Accel
-    a_accel = (a_speed - a_prev_speed) / delta;
+    a_speed = (get_effective_a_pos_change(a_pos, a_prev_pos)) / delta;
+    
     // Update prevs
     a_prev_pos = a_pos;
-    a_prev_speed = a_speed;
 
-    // Update Linear Measures (In IMU frame)
+    // LINEAL MEASURES IN IMU FRAME
     l_pos = global_tf.origin;
-    //Process inertial data in local frame
-    // Speed (In local frame)
     l_speed = global_tf.basis.xform_inv((l_pos - l_prev_pos) / delta);
-    // Accel
     l_accel = (l_speed - l_prev_speed) / delta;
     // Update prevs
     l_prev_pos = l_pos;

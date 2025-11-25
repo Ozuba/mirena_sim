@@ -40,8 +40,6 @@ namespace godot
         Vector3 a_pos;
         Vector3 a_prev_pos;
         Vector3 a_speed;
-        Vector3 a_prev_speed;
-        Vector3 a_accel;
 
     protected:
         static void _bind_methods();
