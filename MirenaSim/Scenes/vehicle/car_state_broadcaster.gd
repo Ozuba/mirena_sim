@@ -11,7 +11,7 @@ var _angular_acceleration: Vector3 = Vector3.ZERO
 
 # Broadcast
 var _car_broadcast_accumulator: float = 0
-var _car_broadcast_period: float = 0.1 # seconds
+var _car_broadcast_period: float = 0.01 # seconds
 var _control_broadcast_accumulator: float = 0
 var _control_broadcast_period: float = 0.1 # seconds
 var _perception_cones_broadcast_accumulator: float = 0
