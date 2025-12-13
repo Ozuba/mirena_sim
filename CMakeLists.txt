@@ -5,59 +5,68 @@ add_compile_options("-O3")
 
 find_package(ament_cmake REQUIRED)
 
-option(GD_EDITOR "Build editor-related source files" OFF)
-
-#####################################################[ SIM EXECUTABLE INSTALLATION ]##########################################################
-
-# Install the export build of the sim 
-
-if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64|AMD64")
-    set(MIRENA_SIM_ARCH "x86_64")
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64|ARM64")
-    set(MIRENA_SIM_ARCH "arm64")
-else()
-    message(WARNING "Unknown architecture ${CMAKE_SYSTEM_PROCESSOR}, defaulting to x86_64")
-    set(MIRENA_SIM_ARCH "x86_64")
-endif()
-
-install(DIRECTORY
-    "export/${MIRENA_SIM_ARCH}/"
-    DESTINATION share/${PROJECT_NAME}/sim
-    # Set default permissions for all files
-    FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-    # Exclude specific files from permission changes using PATTERN
-    PATTERN "MirenaSim.pck" PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
-    PATTERN "libmirena_sim.so" PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
-)
-
-# Install the launch script as executable
-install(PROGRAMS
-    "scripts/launch_sim.sh"
-    DESTINATION lib/${PROJECT_NAME}
-    RENAME sim
-)
 
 
 #####################################################[ EDITOR BUILD ]###########################################################
 
-if(GD_EDITOR)
 
-    # ------------------ Install Godot ----------------------
+    # ------------------ Auto Install Godot ----------------------#
 
-    set(GODOT_EXE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/bin")
-    set(GODOT_INSTALLER "${CMAKE_CURRENT_SOURCE_DIR}/scripts/install_godot.bash")
+    # 1. Determine the Godot executable's architecture suffix
+    if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+        set(ARCH_SUFFIX "x86_64")
+    elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64")
+        set(ARCH_SUFFIX "arm64")
+    else()
+        message(FATAL_ERROR "Unsupported architecture: ${CMAKE_SYSTEM_PROCESSOR}. Cannot download Godot.")
+    endif()
 
     execute_process(
-        COMMAND "${GODOT_INSTALLER}" "${GODOT_EXE_DIR}"
+        COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/scripts/install_godot.bash" "${CMAKE_BINARY_DIR}" "${ARCH_SUFFIX}"
         RESULT_VARIABLE GD_INSTALL_RESULT
+        OUTPUT_VARIABLE GD_INSTALL_OUTPUT
+        ERROR_VARIABLE GD_INSTALL_ERROR
     )
 
     if(NOT GD_INSTALL_RESULT EQUAL 0)
-        message(FATAL_ERROR "Failed to install godot. Aborting build.\n")
+    message(FATAL_ERROR "Failed to install godot (Error Code: ${GD_INSTALL_RESULT}).\nOutput: ${GD_INSTALL_OUTPUT}\nError: ${GD_INSTALL_ERROR}")
     else()
-        message(WARNING "Successfully installed godot\n")
+        message(STATUS "Godot Installation Script Output: ${GD_INSTALL_OUTPUT}")
     endif()
 
+    set(GODOT_EXE "${CMAKE_BINARY_DIR}/godot")
+
+    # ------------------- Godot project Automatic export of resources ----------------------#
+    # GODOT project files
+    file(GLOB_RECURSE GODOT_ASSET_FILES
+        RELATIVE "${CMAKE_SOURCE_DIR}/MirenaSim"
+        CONFIGURE_DEPENDS
+        "${CMAKE_SOURCE_DIR}/MirenaSim/*"
+    )
+
+    # Filter the .godot folder itself (Avoids loop re-export target)
+    list(FILTER GODOT_ASSET_FILES EXCLUDE REGEX "^\\.godot/.*")
+
+    # 3. Use the list of clean, filtered files for dependencies
+    set(GODOT_ASSET_DEPENDENCIES)
+    foreach(FILE IN ITEMS ${GODOT_ASSET_FILES})
+        list(APPEND GODOT_ASSET_DEPENDENCIES "${CMAKE_SOURCE_DIR}/MirenaSim/${FILE}")
+    endforeach()
+
+    add_custom_target(
+        godot_import_resources
+        ALL
+        COMMAND
+        ${GODOT_EXE}
+            --editor                # Run in editor mode to trigger the import logic
+            --headless              # Do not render the GUI (essential for CI/CLI builds)
+            --quit-after 2          # Run for 2 frames, then quit. (Crucial for full import)
+            --path ${CMAKE_SOURCE_DIR}/MirenaSim # Path to the project.godot file's directory
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        DEPENDS 
+            ${GODOT_ASSET_DEPENDENCIES} # Must run if some file has changed in the project
+        COMMENT "Forcing Godot editor to run headless for resource re-import and GDExtension registration."
+    )
 
     # ----------------------------- Build Sim -----------------------------
 
@@ -125,7 +134,7 @@ if(GD_EDITOR)
         std_msgs
         sensor_msgs
         geometry_msgs
-        mirena_common
+        mirena_common 
     )
 
     # Link Godot GDExtension, Godot CPP bindings, ROS 2 libraries
@@ -146,30 +155,26 @@ if(GD_EDITOR)
         COMMENT "Copying the built shared library to godot LibMirena extension folder"
     )
 
+
+
     # Install the simulator for usage with ros2
-
-    # Detect architecture
-    if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
-        # Install the godot engine as executable to lib
-        install(PROGRAMS bin/Godot_v4.4.1-stable_linux.x86_64
-            DESTINATION lib/${PROJECT_NAME}
-            RENAME godot
-        )
-    elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64")
-        # Install the godot engine as executable to lib
-        install(PROGRAMS bin/Godot_v4.4.1-stable_linux.arm64
-            DESTINATION lib/${PROJECT_NAME}
-            RENAME godot
-        )
-    endif()
-
-else()
-    install(PROGRAMS
-        "scripts/editor_unbuilt_message.sh"
+    install(PROGRAMS ${CMAKE_BINARY_DIR}/godot
         DESTINATION lib/${PROJECT_NAME}
-        RENAME godot
     )
-endif()
+
+    # Install project files to share directory
+    install(DIRECTORY
+        MirenaSim
+        DESTINATION share/${PROJECT_NAME}/
+    )
+
+    # Install the launch script as executable
+    install(PROGRAMS
+        scripts/launch_sim.sh
+        DESTINATION lib/${PROJECT_NAME}/
+        RENAME MirenaSim
+    )
+
 
 #####################################################[ FINISH ]#####################################################################
 
