@@ -39,7 +39,7 @@ echo "Downloading Godot ${ARCH_SUFFIX} from ${URL}..."
 # === Step 2: Download, Extract, and Rename ===
 
 # Download the zip file
-curl -fSLv "$URL" -o "$ZIP_PATH" || { echo "Download failed for $URL"; exit 1; }
+curl -fSL "$URL" -o "$ZIP_PATH" || { echo "Download failed for $URL"; exit 1; }
 
 # Unzip into the target directory
 unzip -q "$ZIP_PATH" -d "$GODOT_EXE_DIR" || { echo "Extraction failed for $ZIP_PATH"; exit 1; }

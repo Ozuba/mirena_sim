@@ -64,6 +64,7 @@ find_package(ament_cmake REQUIRED)
             --path ${CMAKE_SOURCE_DIR}/MirenaSim # Path to the project.godot file's directory
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         DEPENDS 
+            mirena_ros
             ${GODOT_ASSET_DEPENDENCIES} # Must run if some file has changed in the project
         COMMENT "Forcing Godot editor to run headless for resource re-import and GDExtension registration."
     )

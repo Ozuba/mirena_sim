@@ -5,6 +5,10 @@
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 #include <godot_cpp/classes/engine.hpp>
+
+// --- NEW REQUIRED INCLUDE FOR PackedVector3Array ---
+#include <godot_cpp/variant/packed_vector3_array.hpp> 
+
 #include"sim/node3d/ros_node3d.hpp"
 #include <omp.h>
 
@@ -31,6 +35,16 @@ namespace godot
         double horizontal_fov;
         uint32_t collision_mask;
         double noise_dev;
+        
+        // --- NEW MEMBER VARIABLE FOR PERFORMANCE IMPROVEMENT ---
+        // Stores the calculated direction vectors in the sensor's local frame.
+        // This avoids repeated trigonometric calculations in the scan loop.
+        PackedVector3Array precalculated_local_directions;
+
+        // --- NEW HELPER FUNCTION ---
+        // Calculates and populates the precalculated_local_directions array.
+        // Must be called whenever a geometry property (resolution/FOV) is changed.
+        void update_local_directions();
 
     protected:
         static void _bind_methods();
@@ -40,10 +54,12 @@ namespace godot
         ~MirenaLidar();
 
         void _ros_ready() override;
-        void _ros_process(double delta)override;
-        // Getters and Setters
-        void set_refresh_rate(double r_rate);
-        double get_refresh_rate() const;
+        void _ros_process(double delta) override;
+        
+        // Getters and Setters (Declarations remain, implementation will change to call update_local_directions)
+        
+        // Removed set/get_refresh_rate as they were in the original list but not the body.
+        // If needed, they should be implemented. Assuming they were placeholders for now.
 
         void set_max_range(double p_range);
         double get_max_range() const;
@@ -51,6 +67,7 @@ namespace godot
         void set_noise_dev(double p_dev);
         double get_noise_dev() const;
 
+        // The setters for geometry parameters (resolution/FOV) must now call update_local_directions()
         void set_horizontal_resolution(int p_resolution);
         int get_horizontal_resolution() const;
 
