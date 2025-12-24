@@ -65,6 +65,8 @@ void MirenaGPS::_ros_process(double delta)
     double delta_lon = (east_offset / (EARTH_RADIUS * cos(origin_latitude * Math_PI / 180.0))) * (180.0 / Math_PI);
 
     sensor_msgs::msg::NavSatFix gps_msg;
+    gps_msg.header.stamp = ros_node->now();
+    gps_msg.header.frame_id = "world";
     gps_msg.latitude = origin_latitude + delta_lat;
     gps_msg.longitude = origin_longitude + delta_lon;
     gps_msg.altitude = origin_altitude + position.z(); // Altitude follows Godot Y-axis

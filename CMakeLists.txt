@@ -173,7 +173,7 @@ find_package(ament_cmake REQUIRED)
     install(PROGRAMS
         scripts/launch_sim.sh
         DESTINATION lib/${PROJECT_NAME}/
-        RENAME MirenaSim
+        RENAME sim
     )
 
 
