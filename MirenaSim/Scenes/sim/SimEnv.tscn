@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://chw8dsw3ii7qg" path="res://Scenes/sim/sim_env.gd" id="1_ux211"]
 [ext_resource type="Script" uid="uid://b6mrnpficaxpj" path="res://Scripts/classes/track_manager.gd" id="2_bp587"]
 [ext_resource type="Script" uid="uid://diysurgbljif6" path="res://addons/freecam_3D/freecam.gd" id="3_dglw2"]
-[ext_resource type="Texture2D" uid="uid://cxqco7urmdbgq" path="res://addons/kloofendal_48d_partly_cloudy_puresky_2k.exr" id="7_hccvn"]
+[ext_resource type="Texture2D" uid="uid://d2sohta4a0brk" path="res://Assets/Textures/Sky/kloofendal_48d_partly_cloudy_puresky_2k.exr" id="7_hccvn"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_ok5qf"]
 

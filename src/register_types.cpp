@@ -2,57 +2,66 @@
 #include <gdextension_interface.h>
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/godot.hpp>
+#include <godot_cpp/templates/vector.hpp>
+#include <godot_cpp/classes/engine.hpp>
 
 using namespace godot;
-using namespace mirena;
+
+//Singleton instance
+static rclgd *_rclgd_singleton = nullptr;
+
 // Modules initialization
-void mirenasim_init(ModuleInitializationLevel p_level)
+void rclgd_init(ModuleInitializationLevel p_level)
 {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE)
 	{
 		return;
 	}
 	
-	// Launch The ROS2 Context
-	if (!rclcpp::ok())
-	{
-		rclcpp::init(0, nullptr); // Initialize ROS2, if not already initialized
-		godot::UtilityFunctions::print("ROS2 Context Launched");
-	}
+	//Registration of ros runtime
+	GDREGISTER_CLASS(rclgd)
+	GDREGISTER_CLASS(RosNode)
+	GDREGISTER_CLASS(RosPublisher)
+	GDREGISTER_CLASS(RosSubscriber)
+	GDREGISTER_CLASS(RosClient)
+	GDREGISTER_CLASS(RosService)
+	GDREGISTER_CLASS(RosMsg) //Instance Ros2 Type Creator
 
-	GDREGISTER_CLASS(RosNode3D);
-	GDREGISTER_CLASS(MirenaCarBase);
-	GDREGISTER_CLASS(MirenaCam);
-	GDREGISTER_CLASS(MirenaLidar);
-	GDREGISTER_CLASS(MirenaImu);
-	GDREGISTER_CLASS(MirenaGPS);
 
-	GDREGISTER_CLASS(RosTime);
-	GDREGISTER_CLASS(MirenaRosBridge);
+	//TF2 Helpers
+	GDREGISTER_CLASS(RosNode3D)
 
-	mirena::service_wrappers::register_all();
+
+
+	//Create the rclgd singleton
+	_rclgd_singleton = memnew(rclgd);
+    Engine::get_singleton()->register_singleton("rclgd", rclgd::get_singleton());
 }
 
-void mirenasim_deinit(ModuleInitializationLevel p_level)
+void rclgd_deinit(ModuleInitializationLevel p_level)
 {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE)
 	{
 		return;
 	}
+	// Remove the global name
+    Engine::get_singleton()->unregister_singleton("rclgd");
 
-	godot::UtilityFunctions::print("ROS2 Context Shut down");
-	rclcpp::shutdown(); 
+    // Delete the instance (this triggers the destructor ~rclgd() where we join the thread)
+    if (_rclgd_singleton) {
+        memdelete(_rclgd_singleton);
+    }
 }
 
 extern "C"
 {
 	// Initialization.
-	GDExtensionBool GDE_EXPORT mirenaros_init(GDExtensionInterfaceGetProcAddress p_get_proc_address, const GDExtensionClassLibraryPtr p_library, GDExtensionInitialization *r_initialization)
+	GDExtensionBool GDE_EXPORT rclgd_init(GDExtensionInterfaceGetProcAddress p_get_proc_address, const GDExtensionClassLibraryPtr p_library, GDExtensionInitialization *r_initialization)
 	{
 		godot::GDExtensionBinding::InitObject init_obj(p_get_proc_address, p_library, r_initialization);
 
-		init_obj.register_initializer(mirenasim_init);
-		init_obj.register_terminator(mirenasim_deinit);
+		init_obj.register_initializer(rclgd_init);
+		init_obj.register_terminator(rclgd_deinit);
 		init_obj.set_minimum_library_initialization_level(MODULE_INITIALIZATION_LEVEL_SCENE);
 
 		return init_obj.init();

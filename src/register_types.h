@@ -5,20 +5,21 @@
 //ROS2 for context init
 #include <rclcpp/rclcpp.hpp>
 //Modules
-#include "sim/node3d/ros_node3d.hpp"
-#include "sim/node3d/mirena_car.hpp"
-#include "sim/node3d/mirena_cam.hpp"
-#include "sim/node3d/mirena_lidar.hpp"
-#include "sim/node3d/mirena_imu.hpp"
-#include "sim/node3d/mirena_gps.hpp"
+// RCLGD
+#include "rclgd/rclgd.hpp"
+#include "rclgd/ros_msg.hpp"
+#include "rclgd/ros_node.hpp"
+#include "rclgd/ros_publisher.hpp"
+#include "rclgd/ros_subscriber.hpp"
+#include "rclgd/ros_client.hpp"
+#include "rclgd/ros_service.hpp"
 
-#include "sim/ref_counted/ros_time.hpp"
-#include "sim/ref_counted/mirena_ros_bridge.hpp"
-#include "sim/ref_counted/service_wrappers.hpp"
+//TF2 Helpers
+#include "tf2gd/ros_node_3d.hpp"
 
 using namespace godot;
 
-void mirenasim_init(ModuleInitializationLevel p_level);
-void mirenasim_deinit(ModuleInitializationLevel p_level);
+void rclgd_init(ModuleInitializationLevel p_level);
+void rclgd_deinit(ModuleInitializationLevel p_level);
 
 #endif // GDEXAMPLE_REGISTER_TYPES_H

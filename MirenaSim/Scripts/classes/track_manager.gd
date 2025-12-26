@@ -199,8 +199,9 @@ func _ros_on_ready():
 
 func _ros_publish_debug():
 	if _track != null:
-		ROS.publish_full_track_curve(_track)
-		ROS.publish_slam_entities(_cones.map(func(element: Cone): return element.position))
+		pass
+		#ROS.publish_full_track_curve(_track)
+		#ROS.publish_slam_entities(_cones.map(func(element: Cone): return element.position))
 
 # --------------------------------------------
 # Interface 

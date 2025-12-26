@@ -14,8 +14,6 @@ var _active_pilot: AVehiclePilot = RosPilot.new(self)
 # Overloaded longitudinal actuator GAS
 @export var gas: float
 	
-# CarStateBroadcaster
-var state_broadcaster:= CarStateBroadcaster.new(self)
 
 # Position Wrapping
 var do_pos_wraping: bool = true;
@@ -24,17 +22,19 @@ var z_limits: Vector2 = Vector2i(-60, 60)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+		
 	# Doing this ensures that all dumps are calculated righfully
 	RenderingServer.frame_post_draw.connect(_on_post_render)
 	SIM.get_camera_manager().register_camera(CameraManager.Names.FPCam, $FPCam)
 	SIM.get_camera_manager().register_camera(CameraManager.Names.TPCam, $TPCam)
+	
+	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
 	if self.do_pos_wraping: self._perform_pos_wrapping()
 	
 	# Execute control action (This mimics the low level controller)
-	
 	# Ensure power limit
 	var u = (global_transform.basis.inverse() * linear_velocity).z # Get longitudinal speed
 	
@@ -50,26 +50,17 @@ func _process(_delta):
 	$RR_WHEEL.engine_force = fx/2
 
 
-	$MirenaCarBase.set_wheels_speed(
-		$RL_WHEEL.get_rpm()*PI/30,
-		$RR_WHEEL.get_rpm()*PI/30,
-		$FL_WHEEL.get_rpm()*PI/30,
-		$FL_WHEEL.get_rpm()*PI/30
-	)
+	#$MirenaCarBase.set_wheels_speed(
+		#$RL_WHEEL.get_rpm()*PI/30,
+		#$RR_WHEEL.get_rpm()*PI/30,
+		#$FL_WHEEL.get_rpm()*PI/30,
+		#$FL_WHEEL.get_rpm()*PI/30
+	#)
 
 func _physics_process(delta: float) -> void:
 	self._active_pilot.pilot(delta)
-	self.state_broadcaster.update(delta)
 
 func set_pose(pos : Vector3, theta : float = 0, reset_vel: bool = false) -> void:
-	#if snap_to_ground:
-	#	var space_state = get_world_3d().direct_space_state
-	#	var query = PhysicsRayQueryParameters3D.new()
-	#	query.from = pos
-	#	query.to = pos + Vector3.DOWN * 100
-	#	var result = space_state.intersect_ray(query)    
-	#	if result:
-	#		pos.y = result.position.y
 	if reset_vel:
 		linear_velocity = Vector3.ZERO
 		angular_velocity = Vector3.ZERO
@@ -79,7 +70,6 @@ func set_pose(pos : Vector3, theta : float = 0, reset_vel: bool = false) -> void
 	set_deferred("global_transform", Transform3D(Basis(Vector3.UP, theta), pos))
 
 
-	
 func _perform_pos_wrapping():
 	if self.is_outside_boundaries():
 		#print("IS outside", self.position)
@@ -95,10 +85,10 @@ func is_outside_boundaries() -> bool:
 
 func _on_post_render():
 	if Input.is_action_just_pressed("dump_yolo"):
-		$MirenaCarBase/MirenaCam.dump_group_bbox_to_yolo("Cones")
+		pass
 	
 	if Input.is_action_just_pressed("dump_keypoints"):
-		$MirenaCarBase/MirenaCam.dump_group_keypoints("Cones")
+		pass
 
 # -----------------------------------------
 # Static
@@ -130,8 +120,6 @@ func reset_car() -> void:
 	self.steering = 0;
 	self.brake = 0;
 
-func get_ros_car_base() -> MirenaCarBase:
-	return $MirenaCarBase
 
 func set_pilot(other_pilot: AVehiclePilot) -> void:
 	if self._active_pilot == other_pilot: return
@@ -159,6 +147,3 @@ func snap_to_track_start(reset_car_: bool = true) -> void:
 	var theta := Basis.looking_at(looking_normal, Vector3.UP).get_euler().y 
 	
 	set_pose(start_point, theta, true)
-
-func get_perception_area() -> PerceptionArea:
-	return $PerceptionArea

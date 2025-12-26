@@ -46,7 +46,7 @@ func _start_sim() -> void:
 func _update_sim_clock(delta: float):
 	if not self.get_sim_pause():
 		_sim_clock += delta
-		ROS.get_ros_time().publish_sim_clock(_sim_clock)
+		#ROS.get_ros_time().publish_sim_clock(_sim_clock)
 
 # -------------------------------------------------
 # Other

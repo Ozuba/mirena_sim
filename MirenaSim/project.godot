@@ -22,7 +22,7 @@ config/icon="res://icon.png"
 
 SIM="*res://Scripts/singletons/sim.gd"
 MirenaLogger="*res://Scripts/singletons/mirena_logger.gd"
-ROS="*res://Scripts/singletons/ros.gd"
+ROS="*res://addons/rclgd/ros_init.gd"
 
 [display]
 
@@ -30,7 +30,7 @@ window/size/mode=2
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/freecam_3D/plugin.cfg")
+enabled=PackedStringArray("res://addons/freecam_3D/plugin.cfg", "res://addons/rclgd/plugin.cfg")
 
 [filesystem]
 
