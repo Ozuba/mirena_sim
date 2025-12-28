@@ -10,7 +10,7 @@ func _init(owner_: MirenaCar) -> void:
 	super._init(owner_)
 	_node = RosNode.new()
 	_node.init("ControlSubscriber")
-	_control_sub = _node.create_subscriber("control/car_control","mirena_common/msg/CarControl",_control_callback)
+	_control_sub = _node.create_subscriber("/sim/debug/car_control","mirena_common/msg/CarControl",_control_callback)
 	_control = RosMirenaCommonCarControl.new() as RosMsg
 	
 func _control_callback(msg):

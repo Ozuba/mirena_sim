@@ -1,5 +1,4 @@
 extends Node3D
-class_name CarStateBroadcaster 
 
 # Constants
 var CAR_FRAME = "MirenaCar"
@@ -26,9 +25,9 @@ func _init() -> void:
 	_node = RosNode.new()
 	_node.init("DebugNode") 
 	_car_pub = _node.create_publisher("/sim/debug/car","mirena_common/msg/Car")
-	_control_pub = _node.create_publisher("/sim/debug/CarControl","mirena_common/msg/CarControl")
+	_control_pub = _node.create_publisher("/sim/debug/car_control_infered","mirena_common/msg/CarControl")
 	_cones_pub = _node.create_publisher("/sim/debug/perception_cones","mirena_common/msg/EntityList")
-	_track_pub = _node.create_publisher("/sim/debug/Track","mirena_common/msg/Track")
+	_track_pub = _node.create_publisher("/sim/debug/track","mirena_common/msg/Track")
 	
 	# Setup the timer
 	_publish_timer = Timer.new()
@@ -63,11 +62,10 @@ func _on_timer_timeout():
 	_publish_perception_entities(cones_in_sight)
 		
 	########### STATE BROADCASTING #############
-	_publish_car_state(target_car.global_position, target_car.global_rotation, target_car.linear_velocity, target_car.angular_velocity, _linear_acceleration, _angular_acceleration)
+	_publish_car_state(target_car.global_position, target_car.global_rotation, target_car.basis.inverse() * target_car.linear_velocity, target_car.angular_velocity, _linear_acceleration, _angular_acceleration)
 		
 	########### CONTROL BROADCASTING #############
 	_publish_inferred_control(target_car.gas, target_car.steering)
-
 
 	########### TRACK BROADCASTING #############
 	var track_manager = SIM.get_track_manager()
@@ -80,15 +78,15 @@ func _publish_car_state(position: Vector3, rotation: Vector3, lin_speed: Vector3
 	msg.header.stamp = _node.now()
 	
 	# --- POSITION (Strictly following your C++ header) ---
-	msg.x = -position.z
-	msg.y = -position.x
+	msg.x = position.z
+	msg.y = position.x
 
 	msg.psi = rotation.y 
 	
 	# --- VELOCITIES (u = longitudinal, v = lateral) ---
 	# Based on ROS X being Forward (Godot Z) and ROS Y being Left (Godot X)
-	msg.u = -lin_speed.z
-	msg.v = -lin_speed.x
+	msg.u = lin_speed.z
+	msg.v = lin_speed.x
 	
 	# --- OMEGA (Yaw Rate) ---
 	# Rotation rate around the vertical (Godot Y) axis
