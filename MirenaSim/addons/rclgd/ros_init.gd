@@ -1,6 +1,6 @@
 extends Node
 
-func _enter_tree() -> void:
+static func _static_init() -> void:
 	# 1. Guard against running ROS logic in the Editor.
 	if Engine.is_editor_hint():
 		return

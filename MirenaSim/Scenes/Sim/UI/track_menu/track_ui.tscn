@@ -1,0 +1,49 @@
+[gd_scene load_steps=3 format=3 uid="uid://dnb1tjkanfwqj"]
+
+[ext_resource type="Script" uid="uid://t2c8u12dg5bk" path="res://Scenes/Sim/UI/track_menu/track_ui.gd" id="1_mcri0"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_ghe6x"]
+
+[node name="TrackUI" type="PanelContainer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -319.5
+offset_top = -256.0
+offset_right = 319.5
+offset_bottom = 256.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_mcri0")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+
+[node name="RegenNoise" type="Button" parent="HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "RegenNoise
+"
+
+[node name="Prev" type="Button" parent="HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "Prev"
+
+[node name="Next" type="Button" parent="HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "Next"
+
+[node name="GenerateTrack" type="Button" parent="HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "GenerateTrack
+"
+
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer"]
+layout_mode = 2
+texture = SubResource("NoiseTexture2D_ghe6x")
+
+[node name="Line2D" type="Line2D" parent="HBoxContainer/TextureRect"]
