@@ -25,13 +25,6 @@ const MIN_SPEED := 0.1
 const ACCELERATION := 0.1
 const MOUSE_SENSITIVITY := 0.002
 
-## Whether or not the camera can move.
-var movement_active := false:
-	set(val):
-		movement_active = val
-		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED if movement_active else Input.MOUSE_MODE_VISIBLE)
-		print("[Movement ON]" if movement_active else "[Movement OFF]")
-
 ## The current maximum speed. Lower or higher it by scrolling the mouse wheel.
 var target_speed := MIN_SPEED
 ## Movement velocity.
@@ -59,11 +52,8 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	if not current: return
-	if Input.is_action_just_pressed("__debug_camera_toggle"):
-		movement_active = not movement_active
-	
-	if movement_active:
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED if current else Input.MOUSE_MODE_VISIBLE)
+	if current:
 		var dir = Vector3.ZERO
 		if Input.is_action_pressed("__debug_camera_forward"): 	dir.z -= 1
 		if Input.is_action_pressed("__debug_camera_back"): 		dir.z += 1
@@ -80,7 +70,7 @@ func _process(delta: float) -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if movement_active:
+	if current:
 		# Turn around
 		if event is InputEventMouseMotion:
 			pivot.rotate_y(-event.relative.x * MOUSE_SENSITIVITY)

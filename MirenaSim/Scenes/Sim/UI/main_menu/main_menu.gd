@@ -23,4 +23,6 @@ func _on_pilot_mode_item_selected(index: int) -> void:
 			pilot = RosPilot.new(Sim.car)
 		"FollowTrack":
 			pilot = TrackRailPilot.new(Sim.car)
+		"NoPilot":
+			pilot = NoPilot.new(Sim.car)
 	Sim.car.set_pilot(pilot)

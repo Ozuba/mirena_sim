@@ -69,7 +69,7 @@ func _on_timer_timeout():
 
 	########### TRACK BROADCASTING #############
 	#var track_manager = SIM.get_track_manager()
-	#_publish_track(track_manager.get_gates_array(), track_manager.is_closed())
+	_publish_track(Sim.track.get_gate_positions(), Sim.track.track_curve.closed)
 
 
 func _publish_car_state(position: Vector3, rotation: Vector3, lin_speed: Vector3, ang_speed: Vector3, lin_accel: Vector3, ang_accel: Vector3) -> void:
@@ -137,9 +137,9 @@ func _publish_track(gates: Array, is_closed: bool) -> void:
 	
 	for gate_pos in gates:
 		var gate = RosMirenaCommonGate.new()
-		gate.x = gate_pos.x
-		gate.y = gate_pos.y
-		gate.psi = gate_pos.z
+		gate.x = gate_pos.z
+		gate.y = gate_pos.x
+		gate.psi = gate_pos.phi
 		
 		# 2. Append to the local GDScript list (Fast)
 		temp_gates.append(gate)

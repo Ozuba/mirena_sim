@@ -40,6 +40,10 @@ func _process(_delta):
 	# Set wheel torques
 	$RL_WHEEL.engine_force = fx/2
 	$RR_WHEEL.engine_force = fx/2
+	
+	# Reset position if falling out of track
+	if position.y < -1:
+		reset_position()
 
 
 func _physics_process(delta: float) -> void:

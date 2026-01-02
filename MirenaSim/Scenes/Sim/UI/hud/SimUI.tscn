@@ -1,9 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://ne6yuaaeiar8"]
+[gd_scene load_steps=4 format=3 uid="uid://ne6yuaaeiar8"]
 
 [ext_resource type="Script" uid="uid://dl0k82cq0p7ky" path="res://Scenes/Sim/UI/hud/mirena_hud.gd" id="1_lfjlq"]
 [ext_resource type="Script" uid="uid://ba6w2edq6k5dp" path="res://Scenes/Sim/UI/hud/controls_label.gd" id="2_hox2s"]
 [ext_resource type="PackedScene" uid="uid://d11pn6ulabdj" path="res://Scenes/Sim/UI/main_menu/main_menu.tscn" id="3_gcfw8"]
-[ext_resource type="PackedScene" uid="uid://dnb1tjkanfwqj" path="res://Scenes/Sim/UI/track_menu/track_ui.tscn" id="5_te3d4"]
 
 [node name="SimUI" type="Control"]
 layout_mode = 3
@@ -57,10 +56,6 @@ offset_bottom = -10.0
 grow_vertical = 0
 text = "Initializing..."
 script = ExtResource("2_hox2s")
-
-[node name="TrackMenu" parent="." instance=ExtResource("5_te3d4")]
-visible = false
-layout_mode = 1
 
 [node name="MainMenu" parent="." instance=ExtResource("3_gcfw8")]
 visible = false

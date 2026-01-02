@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://d11pn6ulabdj"]
+[gd_scene load_steps=6 format=3 uid="uid://d11pn6ulabdj"]
 
 [ext_resource type="Script" uid="uid://tf8c8bvbsfiy" path="res://Scenes/Sim/UI/main_menu/main_menu.gd" id="1_0tiax"]
+[ext_resource type="PackedScene" uid="uid://dnb1tjkanfwqj" path="res://Scenes/Sim/UI/main_menu/track_menu/track_ui.tscn" id="2_pw44m"]
 [ext_resource type="Script" uid="uid://cvi013pe17nkx" path="res://Scenes/Sim/UI/main_menu/39_button.gd" id="9_lmtxd"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_0tiax"]
@@ -70,13 +71,15 @@ size_flags_horizontal = 3
 mouse_force_pass_scroll_events = false
 selected = 0
 allow_reselect = true
-item_count = 3
+item_count = 4
 popup/item_0/text = "Manual"
 popup/item_0/id = 0
 popup/item_1/text = "ROS2"
 popup/item_1/id = 1
 popup/item_2/text = "FollowTrack"
 popup/item_2/id = 2
+popup/item_3/text = "NoPilot"
+popup/item_3/id = 3
 
 [node name="ResetcarButton" type="Button" parent="MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Panel/Vehicle"]
 layout_mode = 2
@@ -92,39 +95,8 @@ theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 metadata/_tab_index = 1
 
-[node name="Panel" type="ScrollContainer" parent="MarginContainer/VBoxContainer/MenuTabs/TRACK"]
+[node name="TrackUI" parent="MarginContainer/VBoxContainer/MenuTabs/TRACK" instance=ExtResource("2_pw44m")]
 layout_mode = 2
-
-[node name="Vehicle" type="VBoxContainer" parent="MarginContainer/VBoxContainer/MenuTabs/TRACK/Panel"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 10
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/VBoxContainer/MenuTabs/TRACK/Panel/Vehicle"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 10
-
-[node name="Padding2" type="Label" parent="MarginContainer/VBoxContainer/MenuTabs/TRACK/Panel/Vehicle"]
-layout_mode = 2
-text = "----- Track -----"
-horizontal_alignment = 1
-
-[node name="OpenTrackLoader" type="Button" parent="MarginContainer/VBoxContainer/MenuTabs/TRACK/Panel/Vehicle"]
-layout_mode = 2
-theme_override_styles/focus = SubResource("StyleBoxEmpty_val13")
-text = "Open Track Loader"
-
-[node name="QuickLoadTrack" type="Button" parent="MarginContainer/VBoxContainer/MenuTabs/TRACK/Panel/Vehicle"]
-layout_mode = 2
-theme_override_styles/focus = SubResource("StyleBoxEmpty_val13")
-text = "Quick Load Track"
-
-[node name="ClearTrack" type="Button" parent="MarginContainer/VBoxContainer/MenuTabs/TRACK/Panel/Vehicle"]
-layout_mode = 2
-theme_override_styles/focus = SubResource("StyleBoxEmpty_val13")
-text = "Clear Track"
 
 [node name="ROS2" type="MarginContainer" parent="MarginContainer/VBoxContainer/MenuTabs"]
 visible = false
