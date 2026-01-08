@@ -28,7 +28,7 @@ void RosNode3D::_ensure_registration()
     }
 }
 
-void RosNode3D::_process(double delta)
+void RosNode3D::_physics_process(double delta)
 {
     if (Engine::get_singleton()->is_editor_hint())
         return;

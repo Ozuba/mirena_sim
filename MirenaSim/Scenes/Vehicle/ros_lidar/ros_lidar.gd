@@ -2,7 +2,8 @@ extends RosNode3D
 
 # --- Configuration ---
 const TEXTURE_SIZE = Vector2i(600, 125)
-
+@export var lidar_topic: String = "/sim/LIDAR"
+@export var noise_std_dev : float = 0.005
 # --- Internal ROS & RD Variables ---
 var _node: RosNode
 var _lidar_pub: RosPublisher
@@ -16,7 +17,7 @@ var is_sampling: bool = false
 func _ready() -> void:
 	_node = RosNode.new()
 	_node.init("GPULidarNode")
-	_lidar_pub = _node.create_publisher("/gpu_lidar", "sensor_msgs/msg/PointCloud2")
+	_lidar_pub = _node.create_publisher(lidar_topic, "sensor_msgs/msg/PointCloud2")
 	
 	# 2. Setup Rendering Device
 	_rd = RenderingServer.get_rendering_device()
@@ -41,6 +42,7 @@ func _ready() -> void:
 		var effect = compositor.compositor_effects[0]
 		effect.target_tex = _texture_rid
 		effect.texture_size = TEXTURE_SIZE
+		effect.std_dev = noise_std_dev
 	
 	# 5. Prepare ROS Message Template
 	_prepare_msg_template()
@@ -84,7 +86,7 @@ func _on_timer_timeout():
 	# Request data from GPU asynchronously.
 	# The Main Rendering Device handles the submission for you.
 	var err = _rd.texture_get_data_async(_texture_rid, 0, _on_texture_data_ready)
-	
+	_cached_msg.header.stamp = _node.now() 
 	if err != OK:
 		is_sampling = false
 		push_error("GPULidar: Async request failed with error: ", err)
@@ -99,7 +101,7 @@ func _on_texture_data_ready(raw_bytes: PackedByteArray):
 	_cached_msg.width = raw_bytes.size() / 16
 	_cached_msg.row_step = raw_bytes.size()
 	_cached_msg.data = raw_bytes 
-	_cached_msg.header.stamp = _node.now() 
+
 	
 	_lidar_pub.publish(_cached_msg)
 

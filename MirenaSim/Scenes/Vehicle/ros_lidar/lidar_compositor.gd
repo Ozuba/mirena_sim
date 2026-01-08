@@ -3,7 +3,7 @@ class_name RenderingEffectDepthCapture
 
 # --- Configuration (Set by the Lidar node externally) ---
 var texture_size: Vector2 = Vector2(512, 512) 
-
+var std_dev : float = 0.0
 # --- RIDs ---
 var target_tex: RID # The texture we output to 
 var rd: RenderingDevice
@@ -138,9 +138,9 @@ func _render_callback(p_effect_callback_type: int, p_render_data: RenderData) ->
 			])
 
 			# 2. PADDING - CRITICAL: 2 floats (8 bytes) to align the following mat4 to a 16-byte boundary
-			var padding_array = PackedFloat32Array([
-				0.0,
-				0.0,
+			var noise_array = PackedFloat32Array([
+				randf(), # Seed
+				std_dev, # Std Dev 5cm
 			])
 
 			# 3. Inverse Projection Matrix (M_P^(-1)) - 16 floats
@@ -171,7 +171,7 @@ func _render_callback(p_effect_callback_type: int, p_render_data: RenderData) ->
 
 
 			# --- Final Concatenation ---
-			var params = resolution_array + padding_array + inv_proj_array + inv_view_array
+			var params = resolution_array + noise_array + inv_proj_array + inv_view_array
 			var params_byte_array = params.to_byte_array()
 			var params_buffer: RID = rd.storage_buffer_create(params_byte_array.size(), params_byte_array)
 			
