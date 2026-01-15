@@ -64,7 +64,13 @@ func set_pose(pos : Vector3, theta : float = 0, reset_vel: bool = false) -> void
 # -----------------------------------------
 
 func reset_position() -> void:
-	set_pose(Vector3(0, 0.1, 0), 0, true)
+	var pos = Vector3(0, 0.1, 0)
+	var phi = 0
+	if Sim.track.track_curve:
+		var start_gate = Sim.track.get_gate_positions()[0]
+		pos = Vector3(start_gate["x"],start_gate["y"],start_gate["z"])
+		phi = start_gate["phi"]
+	set_pose(pos, phi, true)
 	self.gas = 0;
 	self.steering = 0;
 	self.brake = 0;

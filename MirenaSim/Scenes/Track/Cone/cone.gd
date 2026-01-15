@@ -4,10 +4,11 @@ class_name Cone
 
 signal collided_with_vehicle;
 
-enum ConeColor {BLUE, YELLOW, ORANGE}
+enum ConeColor {BLUE, YELLOW, ORANGE, BIG_ORANGE}
 static var blue_mesh = preload("res://Assets/Models/Cone/Meshes/BCone.res")
 static var yellow_mesh = preload("res://Assets/Models/Cone/Meshes/YCone.res")
 static var orange_mesh = preload("res://Assets/Models/Cone/Meshes/OCone.res")
+static var big_orange_mesh = preload("res://Assets/Models/Cone/Meshes/BOCone.res")
 
 @export var type : ConeColor = ConeColor.BLUE:
 	set(_type):
@@ -19,6 +20,9 @@ static var orange_mesh = preload("res://Assets/Models/Cone/Meshes/OCone.res")
 				$Model.mesh = yellow_mesh
 			ConeColor.ORANGE:
 				$Model.mesh = orange_mesh
+			ConeColor.BIG_ORANGE:
+				$Model.mesh = big_orange_mesh
+
 
 func get_type_as_string() -> String:
 	match type:

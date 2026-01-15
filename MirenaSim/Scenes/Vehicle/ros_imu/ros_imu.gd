@@ -4,11 +4,8 @@ extends RigidBody3D
 @export var imu_topic: String = "/sim/IMU"
 @export var frame_id: String = "IMU"
 @export var imu_rate: float = 100.0 # Target publishing rate in Hz
-@export var gravity_constant: float = 9.80665
+@export var gravity_constant: float = 0
 
-# --- Noise Configuration (Matches standard MEMS IMU) ---
-@export var accel_noise_std: float = 0.01 # m/s^2
-@export var gyro_noise_std: float = 0.001 # rad/s
 
 # --- Internal State ---
 var _imu_node: RosNode
@@ -48,9 +45,6 @@ func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 		var local_accel = current_basis.inverse() * proper_accel_g
 		var local_ang_vel = current_basis.inverse() * global_ang_vel
 		
-		# 5. Add Gaussian Noise (Box-Muller)
-		local_accel += _get_vec3_noise(accel_noise_std)
-		local_ang_vel += _get_vec3_noise(gyro_noise_std)
 		
 		# 6. Publish
 		_publish_imu_data(local_accel, local_ang_vel, state.transform.basis.get_rotation_quaternion())

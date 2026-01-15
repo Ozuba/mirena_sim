@@ -39,8 +39,8 @@ func _update_layout():
 			$LeftCone.type = Cone.ConeColor.BLUE
 			$RightCone.type = Cone.ConeColor.YELLOW
 		GateType.EVENT:
-			$LeftCone.type = Cone.ConeColor.ORANGE
-			$RightCone.type = Cone.ConeColor.ORANGE
+			$LeftCone.type = Cone.ConeColor.BIG_ORANGE
+			$RightCone.type = Cone.ConeColor.BIG_ORANGE
 
 	# Size the collision box
 	$CollisionShape3D.shape.size = Vector3(gate_width, 3.0, 0.25)

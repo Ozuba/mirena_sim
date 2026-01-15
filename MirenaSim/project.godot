@@ -22,7 +22,6 @@ config/icon="res://icon.png"
 
 ROS="*res://addons/rclgd/ros_init.gd"
 Sim="*res://Scenes/Sim/sim.gd"
-MirenaLogger="*res://Scripts/singletons/mirena_logger.gd"
 
 [display]
 

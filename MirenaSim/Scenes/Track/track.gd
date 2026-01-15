@@ -52,6 +52,7 @@ func create_track(path: Curve3D):
 		# Handle orientation
 		if current_pos.distance_to(next_pos) > 0.1:
 			gate.look_at(next_pos, Vector3.UP)
+			gate.rotate_object_local(Vector3.UP, PI)
 		else:
 			# Fallback: Sample the up vector/tangent provided by the curve
 			var transform = path.sample_baked_with_rotation(d)
