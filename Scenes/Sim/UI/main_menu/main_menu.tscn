@@ -1,0 +1,164 @@
+[gd_scene load_steps=6 format=3 uid="uid://d11pn6ulabdj"]
+
+[ext_resource type="Script" uid="uid://tf8c8bvbsfiy" path="res://Scenes/Sim/UI/main_menu/main_menu.gd" id="1_0tiax"]
+[ext_resource type="PackedScene" uid="uid://dnb1tjkanfwqj" path="res://Scenes/Sim/UI/main_menu/track_menu/track_ui.tscn" id="2_pw44m"]
+[ext_resource type="Script" uid="uid://cvi013pe17nkx" path="res://Scenes/Sim/UI/main_menu/39_button.gd" id="9_lmtxd"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_0tiax"]
+font_size = 22
+font_color = Color(0.744876, 0.999331, 1, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_val13"]
+
+[node name="MainMenu" type="PanelContainer"]
+custom_minimum_size = Vector2(300, 500)
+offset_right = 300.0
+offset_bottom = 500.0
+script = ExtResource("1_0tiax")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Options Menu"
+label_settings = SubResource("LabelSettings_0tiax")
+
+[node name="MenuTabs" type="TabContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+current_tab = 0
+
+[node name="VEHICLE" type="MarginContainer" parent="MarginContainer/VBoxContainer/MenuTabs"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+metadata/_tab_index = 0
+
+[node name="Panel" type="ScrollContainer" parent="MarginContainer/VBoxContainer/MenuTabs/VEHICLE"]
+layout_mode = 2
+
+[node name="Vehicle" type="VBoxContainer" parent="MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Panel"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="PilotList" type="HBoxContainer" parent="MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Panel/Vehicle"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Panel/Vehicle/PilotList"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "Pilot:"
+
+[node name="PilotMode" type="OptionButton" parent="MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Panel/Vehicle/PilotList"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_force_pass_scroll_events = false
+selected = 0
+allow_reselect = true
+item_count = 4
+popup/item_0/text = "Manual"
+popup/item_0/id = 0
+popup/item_1/text = "ROS2"
+popup/item_1/id = 1
+popup/item_2/text = "FollowTrack"
+popup/item_2/id = 2
+popup/item_3/text = "NoPilot"
+popup/item_3/id = 3
+
+[node name="ResetcarButton" type="Button" parent="MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Panel/Vehicle"]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_val13")
+text = "Reset Car Position"
+
+[node name="TRACK" type="MarginContainer" parent="MarginContainer/VBoxContainer/MenuTabs"]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+metadata/_tab_index = 1
+
+[node name="TrackUI" parent="MarginContainer/VBoxContainer/MenuTabs/TRACK" instance=ExtResource("2_pw44m")]
+layout_mode = 2
+
+[node name="ROS2" type="MarginContainer" parent="MarginContainer/VBoxContainer/MenuTabs"]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+metadata/_tab_index = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/MenuTabs/ROS2"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Padding1" type="Label" parent="MarginContainer/VBoxContainer/MenuTabs/ROS2/VBoxContainer"]
+layout_mode = 2
+text = "Presets"
+horizontal_alignment = 1
+
+[node name="SlamPreset" type="Button" parent="MarginContainer/VBoxContainer/MenuTabs/ROS2/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_val13")
+text = "Slam"
+
+[node name="PlanningPreset" type="Button" parent="MarginContainer/VBoxContainer/MenuTabs/ROS2/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_val13")
+text = "Planning"
+
+[node name="ControlPreset" type="Button" parent="MarginContainer/VBoxContainer/MenuTabs/ROS2/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_val13")
+text = "Control"
+
+[node name="FullPipelinePreset" type="Button" parent="MarginContainer/VBoxContainer/MenuTabs/ROS2/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_val13")
+text = "Full Pipeline"
+
+[node name="Padding2" type="Label" parent="MarginContainer/VBoxContainer/MenuTabs/ROS2/VBoxContainer"]
+layout_mode = 2
+text = "Debug Publishers On/Off"
+horizontal_alignment = 1
+
+[node name="EXTRA" type="MarginContainer" parent="MarginContainer/VBoxContainer/MenuTabs"]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+metadata/_tab_index = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/MenuTabs/EXTRA"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="39" type="Button" parent="MarginContainer/VBoxContainer/MenuTabs/EXTRA/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_val13")
+text = "39"
+script = ExtResource("9_lmtxd")
+
+[connection signal="item_selected" from="MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Panel/Vehicle/PilotList/PilotMode" to="." method="_on_pilot_mode_item_selected"]
+[connection signal="button_up" from="MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Panel/Vehicle/ResetcarButton" to="." method="_on_resetcar_button_button_up"]

@@ -1,0 +1,131 @@
+[gd_scene load_steps=6 format=3 uid="uid://bgdafh7stxdw8"]
+
+[ext_resource type="PackedScene" uid="uid://ne6yuaaeiar8" path="res://Scenes/Sim/UI/hud/SimUI.tscn" id="2_gdscb"]
+[ext_resource type="Script" uid="uid://diysurgbljif6" path="res://Scenes/FreeCam/freecam.gd" id="3_dglw2"]
+[ext_resource type="PackedScene" uid="uid://bdosnwuuwheyu" path="res://Scenes/Track/Track.tscn" id="3_gdscb"]
+[ext_resource type="PackedScene" uid="uid://lnlv7w6dktqx" path="res://Scenes/Vehicle/mirena_car.tscn" id="6_ohqor"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ucprf"]
+height = 5.0
+
+[node name="SimScene" type="Node"]
+
+[node name="Track" parent="." instance=ExtResource("3_gdscb")]
+
+[node name="MirenaCar" parent="." instance=ExtResource("6_ohqor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.411332, 0)
+
+[node name="SimUI" parent="." instance=ExtResource("2_gdscb")]
+
+[node name="Freecam3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.61482, 7.76996)
+script = ExtResource("3_dglw2")
+metadata/_custom_type_script = "uid://diysurgbljif6"
+
+[node name="Node3D" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.4408, 7.91666, 0)
+
+[node name="Pilar2" type="MeshInstance3D" parent="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -33.4254, -4.84982, 0)
+mesh = SubResource("CylinderMesh_ucprf")
+skeleton = NodePath("../..")
+
+[node name="Pilar" type="MeshInstance3D" parent="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.76027, 0)
+mesh = SubResource("CylinderMesh_ucprf")
+skeleton = NodePath("../Pilar2")
+
+[node name="Pilar3" type="MeshInstance3D" parent="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -7.52054, 11.5475)
+mesh = SubResource("CylinderMesh_ucprf")
+skeleton = NodePath("../Pilar4")
+
+[node name="Pilar5" type="MeshInstance3D" parent="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -7.52054, -11.3675)
+mesh = SubResource("CylinderMesh_ucprf")
+skeleton = NodePath("../Pilar4")
+
+[node name="Pilar6" type="MeshInstance3D" parent="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.5186, -7.52054, -11.3675)
+mesh = SubResource("CylinderMesh_ucprf")
+skeleton = NodePath("../Pilar4")
+
+[node name="Pilar7" type="MeshInstance3D" parent="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.5186, -7.52054, -0.341261)
+mesh = SubResource("CylinderMesh_ucprf")
+skeleton = NodePath("../Pilar4")
+
+[node name="Pilar10" type="MeshInstance3D" parent="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.3918, -7.52054, -25.0479)
+mesh = SubResource("CylinderMesh_ucprf")
+skeleton = NodePath("../Pilar4")
+
+[node name="Pilar11" type="MeshInstance3D" parent="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.3918, -7.52054, 3.72098)
+mesh = SubResource("CylinderMesh_ucprf")
+skeleton = NodePath("../Pilar4")
+
+[node name="Pilar12" type="MeshInstance3D" parent="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.09088, -7.52054, 3.72098)
+mesh = SubResource("CylinderMesh_ucprf")
+skeleton = NodePath("../Pilar4")
+
+[node name="Pilar13" type="MeshInstance3D" parent="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.09088, -7.52054, -24.4755)
+mesh = SubResource("CylinderMesh_ucprf")
+skeleton = NodePath("../Pilar4")
+
+[node name="Pilar14" type="MeshInstance3D" parent="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -34.7183, -7.52054, -24.4755)
+mesh = SubResource("CylinderMesh_ucprf")
+skeleton = NodePath("../Pilar4")
+
+[node name="Pilar15" type="MeshInstance3D" parent="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -34.7183, -7.52054, -10.2612)
+mesh = SubResource("CylinderMesh_ucprf")
+skeleton = NodePath("../Pilar4")
+
+[node name="Pilar16" type="MeshInstance3D" parent="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.4403, -7.52054, -10.2612)
+mesh = SubResource("CylinderMesh_ucprf")
+skeleton = NodePath("../Pilar4")
+
+[node name="Pilar17" type="MeshInstance3D" parent="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27.1179, -7.52054, 5.36197)
+mesh = SubResource("CylinderMesh_ucprf")
+skeleton = NodePath("../Pilar4")
+
+[node name="Pilar18" type="MeshInstance3D" parent="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.8367, -7.52054, 5.36197)
+mesh = SubResource("CylinderMesh_ucprf")
+skeleton = NodePath("../Pilar4")
+
+[node name="Pilar19" type="MeshInstance3D" parent="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.8367, -7.52054, -13.4237)
+mesh = SubResource("CylinderMesh_ucprf")
+skeleton = NodePath("../Pilar4")
+
+[node name="Pilar20" type="MeshInstance3D" parent="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.8367, -7.52054, -26.335)
+mesh = SubResource("CylinderMesh_ucprf")
+skeleton = NodePath("../Pilar4")
+
+[node name="Pilar21" type="MeshInstance3D" parent="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27.8784, -7.52054, -26.335)
+mesh = SubResource("CylinderMesh_ucprf")
+skeleton = NodePath("../Pilar4")
+
+[node name="Pilar8" type="MeshInstance3D" parent="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.7378, -7.52054, -0.341261)
+mesh = SubResource("CylinderMesh_ucprf")
+skeleton = NodePath("../Pilar4")
+
+[node name="Pilar9" type="MeshInstance3D" parent="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.6986, -7.52054, 13.1802)
+mesh = SubResource("CylinderMesh_ucprf")
+skeleton = NodePath("../Pilar4")
+
+[node name="Pilar4" type="MeshInstance3D" parent="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32.5623, -7.52054, 11.5475)
+mesh = SubResource("CylinderMesh_ucprf")
+skeleton = NodePath(".")
