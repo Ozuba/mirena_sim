@@ -2,7 +2,7 @@ extends Node3D
 
 # Constants
 var CAR_FRAME = "MirenaCar"
-@export var publish_rate: float = 20.0
+@export var publish_rate: float = 1000.0
 @export var target_car: MirenaCar
 var _publish_timer: Timer
 
@@ -55,9 +55,7 @@ func _process(delta: float) -> void:
 func _on_timer_timeout():
 	if not target_car: return
 	########### PERCEPTION CONES BROADCASTING #############
-	var cones_in_sight = $PerceptionArea.get_cones_in_sigth().map(
-		func (cone: Node3D): return target_car.to_local(cone.global_position)
-	)
+	var cones_in_sight = $PerceptionArea.get_cones_in_sigth()
 	_publish_perception_entities(cones_in_sight)
 		
 	########### STATE BROADCASTING #############
@@ -73,7 +71,7 @@ func _on_timer_timeout():
 
 func _publish_car_state(position: Vector3, rotation: Vector3, lin_speed: Vector3, ang_speed: Vector3, lin_accel: Vector3, ang_accel: Vector3) -> void:
 	var msg = RosMirenaCommonCar.new()
-	msg.header.frame_id = "world"
+	msg.header.frame_id = "map"
 	msg.header.stamp = _node.now()
 	
 	# --- POSITION (Strictly following your C++ header) ---
@@ -98,11 +96,13 @@ func _publish_perception_entities(entities: Array) -> void:
 	# 1. Initialize the message list
 	var msg = RosMirenaCommonEntityList.new()
 	# 2. Iterate through provided entities
-	msg.entities = entities.map(func(pos: Vector3):
+	msg.entities = entities.map(func(cone):
 		var entity = RosMirenaCommonEntity.new()
-		entity.position.x = pos.z # ROS Swizzle
+		var pos = to_local(cone.global_position)
+		entity.position.x = pos.z 
 		entity.position.y = pos.x
 		entity.position.z = pos.y
+		entity.type = cone.get_type_as_string()
 		return entity
 		)
 	# 5. Set header information
