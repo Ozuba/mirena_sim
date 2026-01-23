@@ -35,9 +35,10 @@ label_settings = SubResource("LabelSettings_0tiax")
 [node name="MenuTabs" type="TabContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-current_tab = 0
+current_tab = 1
 
 [node name="VEHICLE" type="MarginContainer" parent="MarginContainer/VBoxContainer/MenuTabs"]
+visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
@@ -87,7 +88,6 @@ theme_override_styles/focus = SubResource("StyleBoxEmpty_val13")
 text = "Reset Car Position"
 
 [node name="TRACK" type="MarginContainer" parent="MarginContainer/VBoxContainer/MenuTabs"]
-visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10

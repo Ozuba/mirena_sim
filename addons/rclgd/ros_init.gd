@@ -18,5 +18,4 @@ static func _static_init() -> void:
 func _exit_tree() -> void:
 	# 3. Clean up when the game or scene closes.
 	if not Engine.is_editor_hint() and rclgd:
-		rclgd.shutdown()
 		print("[ROS] Context shut down safely.")

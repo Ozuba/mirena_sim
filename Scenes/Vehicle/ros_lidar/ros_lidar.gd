@@ -11,6 +11,9 @@ var _rd: RenderingDevice
 var _texture_rid: RID
 var _cached_msg: RosSensorMsgsPointCloud2
 
+# -- Dataset Builder --
+const DATASET_DIR = "user://dataset/"
+var sample_index : int = 0
 # --- State ---
 var is_sampling: bool = false
 @export var lidar_rate = 10.0
@@ -18,7 +21,8 @@ func _ready() -> void:
 	_node = RosNode.new()
 	_node.init("GPULidarNode")
 	_lidar_pub = _node.create_publisher(lidar_topic, "sensor_msgs/msg/PointCloud2")
-	
+	# Init dataset
+	_initialize_sample_index() 
 	# 2. Setup Rendering Device
 	_rd = RenderingServer.get_rendering_device()
 	if not _rd:
@@ -101,7 +105,6 @@ func _on_texture_data_ready(raw_bytes: PackedByteArray):
 	_cached_msg.width = raw_bytes.size() / 16
 	_cached_msg.row_step = raw_bytes.size()
 	_cached_msg.data = raw_bytes 
-
 	
 	_lidar_pub.publish(_cached_msg)
 
@@ -109,3 +112,90 @@ func _on_texture_data_ready(raw_bytes: PackedByteArray):
 func _exit_tree():
 	if _texture_rid.is_valid():
 		_rd.free_rid(_texture_rid)
+		
+
+## Dataset Generation
+func _initialize_sample_index():
+	# 1. Aseguramos que existan las carpetas (Godot 4 permite rutas absolutas directas)
+	DirAccess.make_dir_recursive_absolute(DATASET_DIR + "points")
+	DirAccess.make_dir_recursive_absolute(DATASET_DIR + "labels")
+	DirAccess.make_dir_recursive_absolute(DATASET_DIR + "calib")
+
+	# 2. Obtenemos los archivos de la subcarpeta 'points' (donde realmente están)
+	var files = DirAccess.get_files_at(DATASET_DIR + "points")
+	
+	# 3. El índice será simplemente la cantidad de archivos encontrados.
+	# Ej: Si hay 10 archivos (0 a 9), el size es 10, así que el próximo será el 10.
+	sample_index = files.size()
+	
+	print("GPULidar: Dataset initialized. Next frame index: ", sample_index)
+		
+func save_snapshot():
+	var file_id = "%06d" % sample_index
+	
+	# Save .bin (Points)
+	var f_bin = FileAccess.open(DATASET_DIR + "points/" + file_id + ".bin", FileAccess.WRITE)
+	if f_bin:
+		f_bin.store_buffer(_cached_msg.data)
+	# Save .txt (Labels)
+	save_kitti_labels(file_id)
+
+	# Save .txt (Dummy Calib - essential for PointPillars loaders)
+	save_dummy_calib(file_id)
+	
+	sample_index += 1 
+
+func save_kitti_labels(file_id: String):
+	var label_path = DATASET_DIR + "labels/" + file_id + ".txt"
+	var f = FileAccess.open(label_path, FileAccess.WRITE)
+	
+	var cones = get_tree().get_nodes_in_group("Cones")
+	
+	for cone in cones:
+		var global_cone_pos = cone.global_position
+		
+		# 1. Frustum Check: Is the cone inside the camera's viewing pyramid?
+		if not $LidarViewport/LidarCamera.is_position_in_frustum(global_cone_pos):
+			continue
+		
+		# 2. Distance Check (Optional but recommended for Lidar limits)
+		var local_pos = global_transform.affine_inverse() * global_cone_pos
+		if local_pos.length() > 20.0:
+			continue
+			
+		# 3. Coordinate Swap for KITTI (X-Forward, Y-Left, Z-Up)
+		var kitti_x = local_pos.z
+		var kitti_y = local_pos.x
+		var kitti_z = local_pos.y
+		
+		# 4. Format and save
+		var line = "%s 0 0 0 0 0 0 0 0.325 0.2 0.2 %f %f %f 0" % [cone.get_type_as_string(), kitti_x, kitti_y, kitti_z]
+		f.store_line(line)
+	
+	f.close()
+	
+func save_dummy_calib(file_id: String):
+	var path = DATASET_DIR + "calib/" + file_id + ".txt"
+	var f = FileAccess.open(path, FileAccess.WRITE)
+	if not f:
+		return
+
+	# P0-P3 are Camera Projection matrices (4x3)
+	# R0_rect is Rectification matrix (3x3)
+	# Tr_velo_to_cam is Lidar-to-Camera (3x4)
+	
+	# We use identity values so the coordinates stay exactly as they are in the .bin file
+	f.store_line("P0: 1 0 0 0 0 1 0 0 0 0 1 0")
+	f.store_line("P1: 1 0 0 0 0 1 0 0 0 0 1 0")
+	f.store_line("P2: 1 0 0 0 0 1 0 0 0 0 1 0")
+	f.store_line("P3: 1 0 0 0 0 1 0 0 0 0 1 0")
+	f.store_line("R0_rect: 1 0 0 0 1 0 0 0 1")
+	f.store_line("Tr_velo_to_cam: 1 0 0 0 0 1 0 0 0 0 1 0")
+	f.store_line("Tr_imu_to_velo: 1 0 0 0 0 1 0 0 0 0 1 0")
+	
+	f.close()
+	
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("point_pillar_snapshot"):
+		save_snapshot()
+		print("GPULidar: Snapshot saved as index ", sample_index - 1)

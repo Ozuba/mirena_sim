@@ -37,8 +37,22 @@ text = "Generate Track
 layout_mode = 2
 text = "Clear Track"
 
+[node name="OpenTrack" type="Button" parent="HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "Open Track"
+
 [node name="TextureRect" type="TextureRect" parent="HBoxContainer"]
 layout_mode = 2
 texture = SubResource("NoiseTexture2D_ghe6x")
 
 [node name="Line2D" type="Line2D" parent="HBoxContainer/TextureRect"]
+
+[node name="FileDialog" type="FileDialog" parent="."]
+oversampling_override = 1.0
+title = "Open a File"
+initial_position = 2
+file_mode = 0
+display_mode = 1
+root_subfolder = "TrackFiles"
+
+[connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]

@@ -11,13 +11,13 @@ var track_curve : Curve3D = Curve3D.new()
 
 # Internal Refs
 static var _gate_scene = preload("res://Scenes/Track/Gate/gate.tscn")
-
+static var _cone_scene = preload("res://Scenes/Track/Cone/cone.tscn")
 func _ready() -> void:
 	Sim.track = self
 
 ## Pass a Curve3D here instead of Curve2D
 func create_track(path: Curve3D):
-	_clear_track()
+	clear_track()
 	track_curve = path
 	track_path.curve = path # No conversion needed anymore
 	
@@ -57,8 +57,37 @@ func create_track(path: Curve3D):
 			# Fallback: Sample the up vector/tangent provided by the curve
 			var transform = path.sample_baked_with_rotation(d)
 			gate.global_transform = transform
-
-func _clear_track():
+			
+func load_track(path : String):
+	clear_track()
+	var file = FileAccess.open(path, FileAccess.READ)
+	var content = file.get_as_text()
+	var json = JSON.new()
+	var error = json.parse(content)
+	var data = json.data
+	# Load Cones
+	if data.has("cones"):
+		for cone_data in data["cones"]:
+			var cone = _cone_scene.instantiate() as Cone
+			cone.position = Vector3(cone_data["x"], 0.0, cone_data["y"])
+			match cone_data["type"]:
+				"cone_blue":
+					cone.type = Cone.ConeColor.BLUE
+				"cone_yellow":
+					cone.type = Cone.ConeColor.YELLOW
+				"cone_orange":
+					cone.type = Cone.ConeColor.ORANGE
+				"cone_big_orange":
+					cone.type = Cone.ConeColor.BIG_ORANGE
+			cone.add_to_group("Cones") # Vital para el Lidar
+			cone.rotation.y = randf_range(0,PI/2)
+			$Gates.add_child(cone)
+	# Set car to start position
+	var pose = data["setup"]["car_start_pose"]
+	Sim.car.set_pose(Vector3(pose["x"],0,pose["y"]),pose["heading"])
+			
+			
+func clear_track():
 	for n in $Gates.get_children(): n.queue_free()
 
 func get_gate_positions() -> Array[Dictionary]:

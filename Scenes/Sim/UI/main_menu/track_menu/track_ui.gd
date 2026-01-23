@@ -21,6 +21,9 @@ func _ready():
 	$HBoxContainer/VBoxContainer/Next.pressed.connect(_on_next_pressed)
 	$HBoxContainer/VBoxContainer/Prev.pressed.connect(_on_prev_pressed)
 	$HBoxContainer/VBoxContainer/GenerateTrack.pressed.connect(_on_generate_curve_pressed)
+	$HBoxContainer/VBoxContainer/OpenTrack.pressed.connect(_on_open_track_pressed)
+	$HBoxContainer/VBoxContainer/ClearTrack.pressed.connect(_on_clear_track_pressed)
+
 	
 	noise = FastNoiseLite.new()
 	noise.noise_type = FastNoiseLite.TYPE_PERLIN
@@ -28,6 +31,15 @@ func _ready():
 	noise.fractal_type = FastNoiseLite.FRACTAL_NONE 
 	
 	_on_generate_new_map()
+	
+func _on_open_track_pressed():
+	$FileDialog.visible = true
+	
+func _on_clear_track_pressed():
+	Sim.track.clear_track()
+
+func _on_file_dialog_file_selected(path: String):    
+		Sim.track.load_track(path)
 
 func _on_generate_new_map():
 	noise.seed = randi()

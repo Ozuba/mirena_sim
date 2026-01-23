@@ -8,7 +8,7 @@
 friction = 0.4
 bounce = 0.4
 
-[node name="Cone" type="RigidBody3D"]
+[node name="Cone" type="RigidBody3D" groups=["Cones"]]
 mass = 0.3
 physics_material_override = SubResource("PhysicsMaterial_qppwo")
 center_of_mass_mode = 1

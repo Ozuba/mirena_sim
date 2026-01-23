@@ -27,11 +27,13 @@ static var big_orange_mesh = preload("res://Assets/Models/Cone/Meshes/BOCone.res
 func get_type_as_string() -> String:
 	match type:
 		ConeColor.BLUE:
-			return "Cone/Blue"
+			return "cone_blue"
 		ConeColor.YELLOW:
-			return "Cone/Yellow"
+			return "cone_yellow"
 		ConeColor.ORANGE:
-			return "Cone/Orange"
+			return "cone_orange"
+		ConeColor.BIG_ORANGE:
+			return "cone_big_orange"
 		_:
 			return "Cone"
 	

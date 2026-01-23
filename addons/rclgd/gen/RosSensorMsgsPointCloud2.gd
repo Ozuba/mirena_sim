@@ -39,4 +39,3 @@ var data : PackedByteArray:
 var is_dense : int:
 	get: return get_member(&"is_dense")
 	set(v): set_member(&"is_dense", v)
-
