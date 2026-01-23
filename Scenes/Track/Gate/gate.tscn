@@ -14,8 +14,7 @@ shape = SubResource("BoxShape3D_beijk")
 
 [node name="LeftCone" parent="." instance=ExtResource("2_h0ktl")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 0)
-type = 2
 
 [node name="RightCone" parent="." instance=ExtResource("2_h0ktl")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 0)
-type = 2
+type = 1

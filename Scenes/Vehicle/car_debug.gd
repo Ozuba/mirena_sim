@@ -21,12 +21,12 @@ var _angular_acceleration: Vector3 = Vector3.ZERO
 
 func _init() -> void:
 	
-	# Setup Node and publishers
+	# Setup Node and publishers	
 	_node = RosNode.new()
 	_node.init("DebugNode") 
 	_car_pub = _node.create_publisher("/sim/debug/car","mirena_common/msg/Car")
 	_control_pub = _node.create_publisher("/sim/debug/car_control_infered","mirena_common/msg/CarControl")
-	_cones_pub = _node.create_publisher("/sim/debug/perception_cones","mirena_common/msg/EntityList")
+	_cones_pub = _node.create_publisher("/sim/debug/perception_entities","mirena_common/msg/EntityList")
 	_track_pub = _node.create_publisher("/sim/debug/track","mirena_common/msg/Track")
 	
 	# Setup the timer
@@ -53,11 +53,10 @@ func _process(delta: float) -> void:
 
 
 func _on_timer_timeout():
-	# This function now runs at exactly 20Hz (or your set publish_rate)
 	if not target_car: return
 	########### PERCEPTION CONES BROADCASTING #############
 	var cones_in_sight = $PerceptionArea.get_cones_in_sigth().map(
-		func (cone: Node3D): return target_car.to_local(cone.position)
+		func (cone: Node3D): return target_car.to_local(cone.global_position)
 	)
 	_publish_perception_entities(cones_in_sight)
 		

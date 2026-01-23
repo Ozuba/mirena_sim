@@ -7,7 +7,7 @@ class_name PerceptionArea
 @onready var colision_shape = $CollisionShape3D
 
 func _ready() -> void:
-	self.regenerate_frustum(4, 50, deg_to_rad(30), deg_to_rad(60))
+	self.regenerate_frustum(4, 12, deg_to_rad(30), deg_to_rad(60))
 
 func get_cones_in_sigth() -> Array[Node3D]:
 	return self.get_overlapping_bodies().filter(func (x : Node3D): return x.is_in_group("Cones"))

@@ -13,7 +13,6 @@ mass = 0.3
 physics_material_override = SubResource("PhysicsMaterial_qppwo")
 center_of_mass_mode = 1
 center_of_mass = Vector3(0, 0.2, 0)
-contact_monitor = true
 max_contacts_reported = 1
 script = ExtResource("1_0u5f0")
 

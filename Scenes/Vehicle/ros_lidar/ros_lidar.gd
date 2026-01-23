@@ -4,6 +4,8 @@ extends RosNode3D
 const TEXTURE_SIZE = Vector2i(600, 125)
 @export var lidar_topic: String = "/sim/LIDAR"
 @export var noise_std_dev : float = 0.005
+
+@export var train_split_ratio : float = 0.8 # 80% Train, 20% Val
 # --- Internal ROS & RD Variables ---
 var _node: RosNode
 var _lidar_pub: RosPublisher
@@ -116,34 +118,72 @@ func _exit_tree():
 
 ## Dataset Generation
 func _initialize_sample_index():
-	# 1. Aseguramos que existan las carpetas (Godot 4 permite rutas absolutas directas)
+	# 1. Crear carpetas (Incluyendo la nueva ImageSets)
 	DirAccess.make_dir_recursive_absolute(DATASET_DIR + "points")
 	DirAccess.make_dir_recursive_absolute(DATASET_DIR + "labels")
 	DirAccess.make_dir_recursive_absolute(DATASET_DIR + "calib")
+	DirAccess.make_dir_recursive_absolute(DATASET_DIR + "ImageSets") # <--- NUEVO
 
-	# 2. Obtenemos los archivos de la subcarpeta 'points' (donde realmente están)
+	# 2. Calcular índice
 	var files = DirAccess.get_files_at(DATASET_DIR + "points")
-	
-	# 3. El índice será simplemente la cantidad de archivos encontrados.
-	# Ej: Si hay 10 archivos (0 a 9), el size es 10, así que el próximo será el 10.
 	sample_index = files.size()
 	
-	print("GPULidar: Dataset initialized. Next frame index: ", sample_index)
+	# LIMPIEZA DE SEGURIDAD:
+	# Si estamos empezando desde 0, borramos los txt viejos para no mezclar datos
+	if sample_index == 0:
+		var dir = DirAccess.open(DATASET_DIR + "ImageSets")
+		if dir:
+			dir.remove("train.txt")
+			dir.remove("val.txt")
+			dir.remove("trainval.txt")
+	
+	print("GPULidar: Dataset initialized. Next frame: ", sample_index)
 		
 func save_snapshot():
 	var file_id = "%06d" % sample_index
 	
-	# Save .bin (Points)
+	# 1. Guardar Datos Binarios y Etiquetas (Tu código existente)
 	var f_bin = FileAccess.open(DATASET_DIR + "points/" + file_id + ".bin", FileAccess.WRITE)
 	if f_bin:
 		f_bin.store_buffer(_cached_msg.data)
-	# Save .txt (Labels)
+		
 	save_kitti_labels(file_id)
-
-	# Save .txt (Dummy Calib - essential for PointPillars loaders)
 	save_dummy_calib(file_id)
 	
-	sample_index += 1 
+	# 2. ASIGNAR A TRAIN O VAL (NUEVO)
+	_assign_to_split(file_id)
+	
+	sample_index += 1
+	
+func _assign_to_split(id: String):
+	# Decisión aleatoria: ¿Entrenamiento o Validación?
+	var is_train = randf() < train_split_ratio
+	
+	# Archivo destino
+	var filename = "train.txt" if is_train else "val.txt"
+	
+	# 1. Guardar en su lista específica
+	_append_to_file(DATASET_DIR + "ImageSets/" + filename, id)
+	
+	# 2. Guardar SIEMPRE en trainval.txt (el conjunto total)
+	# Muchos modelos (como PointPillars) a veces usan este archivo para calcular estadísticas globales
+	_append_to_file(DATASET_DIR + "ImageSets/trainval.txt", id)
+
+func _append_to_file(path: String, line_content: String):
+	var f: FileAccess
+	
+	if FileAccess.file_exists(path):
+		# Si existe, abrimos en modo LECTURA_ESCRITURA
+		f = FileAccess.open(path, FileAccess.READ_WRITE)
+		if f:
+			f.seek_end() # Saltamos al final del archivo para no sobrescribir
+	else:
+		# Si no existe, creamos nuevo
+		f = FileAccess.open(path, FileAccess.WRITE)
+	
+	if f:
+		f.store_line(line_content)
+		f.close()
 
 func save_kitti_labels(file_id: String):
 	var label_path = DATASET_DIR + "labels/" + file_id + ".txt"
