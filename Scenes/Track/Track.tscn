@@ -37,6 +37,8 @@ sdfgi_read_sky_light = false
 script = ExtResource("1_0ld5s")
 
 [node name="Ground" type="StaticBody3D" parent="."]
+collision_layer = 32769
+collision_mask = 32769
 physics_material_override = SubResource("PhysicsMaterial_0do6f")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]

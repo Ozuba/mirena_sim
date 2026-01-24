@@ -12,6 +12,14 @@ var track_curve : Curve3D = Curve3D.new()
 # Internal Refs
 static var _gate_scene = preload("res://Scenes/Track/Gate/gate.tscn")
 static var _cone_scene = preload("res://Scenes/Track/Cone/cone.tscn")
+
+signal track_loaded
+var origin : Dictionary = {
+	"x": 0.0,
+	"y": 0.0,
+	"psi": 0.0
+}
+
 func _ready() -> void:
 	Sim.track = self
 
@@ -57,6 +65,9 @@ func create_track(path: Curve3D):
 			# Fallback: Sample the up vector/tangent provided by the curve
 			var transform = path.sample_baked_with_rotation(d)
 			gate.global_transform = transform
+		# Dirty change to a track start position + signal
+		origin = get_gate_positions()[-1]
+		track_loaded.emit()
 			
 func load_track(path : String):
 	clear_track()
@@ -83,8 +94,8 @@ func load_track(path : String):
 			cone.rotation.y = randf_range(0,PI/2)
 			$Gates.add_child(cone)
 	# Set car to start position
-	var pose = data["setup"]["car_start_pose"]
-	Sim.car.set_pose(Vector3(pose["x"],0,pose["y"]),pose["heading"])
+	origin = data["setup"]["car_start_pose"]
+	track_loaded.emit()
 			
 			
 func clear_track():
@@ -98,9 +109,8 @@ func get_gate_positions() -> Array[Dictionary]:
 			# Standard 3D coordinates
 			data.append({
 				"x": gate.global_position.x,
-				"y": gate.global_position.y, # Vertical height
-				"z": gate.global_position.z, # Depth
-				"phi": gate.global_rotation.y # Yaw
+				"y": gate.global_position.z, # Vertical height
+				"psi": gate.global_rotation.y # Yaw
 			})
 			
 	return data

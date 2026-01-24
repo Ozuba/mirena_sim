@@ -6,8 +6,9 @@ static func _static_init() -> void:
 		return
 
 	# 2. Initialize the ROS 2 context.
-	var args = OS.get_cmdline_args()
-	
+	var args = OS.get_cmdline_user_args()
+	print(args)	
+
 	# Assuming 'rclgd' is the name registered in register_types.cpp
 	if rclgd:
 		rclgd.init(args)

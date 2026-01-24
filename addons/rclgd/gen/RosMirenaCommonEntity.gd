@@ -15,4 +15,3 @@ var type : String:
 var confidence : float:
 	get: return get_member(&"confidence")
 	set(v): set_member(&"confidence", v)
-

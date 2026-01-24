@@ -8,7 +8,7 @@
     "car_start_pose": {
       "x": -53.0,
       "y": 0.0,
-      "heading": 1.57
+      "psi": 1.57
     }
   },
   "cones": [

@@ -21,6 +21,9 @@ func _ready():
 	Sim.register_camera("FPCam",$FPCam)
 	# Register car in Sim
 	Sim.car = self
+	
+	# Connect reset positoin to new track
+	connect("track_loaded", reset_position)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -49,14 +52,15 @@ func _process(_delta):
 func _physics_process(delta: float) -> void:
 	self._active_pilot.pilot(delta)
 
-func set_pose(pos : Vector3, theta : float = 0, reset_vel: bool = false) -> void:
+func set_pose(pose, reset_vel: bool = false) -> void:
+	var pos = Vector3(pose["x"],0.1,pose["y"])
 	if reset_vel:
 		linear_velocity = Vector3.ZERO
 		angular_velocity = Vector3.ZERO
 	await get_tree().process_frame #Let the phisics state propagate
 	#Update transform
-	set_deferred("global_transform", Transform3D(Basis(Vector3.UP, theta), pos))
-	set_deferred("global_transform", Transform3D(Basis(Vector3.UP, theta), pos))
+	set_deferred("global_transform", Transform3D(Basis(Vector3.UP, pose["psi"]), pos))
+	set_deferred("global_transform", Transform3D(Basis(Vector3.UP, pose["psi"]), pos))
 
 
 # -----------------------------------------
@@ -64,13 +68,7 @@ func set_pose(pos : Vector3, theta : float = 0, reset_vel: bool = false) -> void
 # -----------------------------------------
 
 func reset_position() -> void:
-	var pos = Vector3(0, 0.1, 0)
-	var phi = 0
-	if Sim.track.track_curve:
-		var start_gate = Sim.track.get_gate_positions()[0]
-		pos = Vector3(start_gate["x"],start_gate["y"],start_gate["z"])
-		phi = start_gate["phi"]
-	set_pose(pos, phi, true)
+	set_pose(Sim.track.origin, true)
 	self.gas = 0;
 	self.steering = 0;
 	self.brake = 0;
