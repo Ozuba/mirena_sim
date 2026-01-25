@@ -12,7 +12,9 @@ config_version=5
 
 config/name="MirenaSim"
 run/main_scene="res://Scenes/Sim/SimEnv.tscn"
+run/enable_alt_space_menu=true
 config/features=PackedStringArray("4.5", "Forward Plus")
+run/flush_stdout_on_print.debug=false
 run/max_fps=120
 boot_splash/bg_color=Color(0, 0, 0, 1)
 boot_splash/image="res://icon.png"
@@ -38,6 +40,10 @@ import/blender/enabled=false
 [global_group]
 
 Cones="Todos los miembros de este grupo son conos"
+
+[gui]
+
+timers/tooltip_delay_sec=0.6
 
 [input]
 
@@ -112,3 +118,8 @@ point_pillar_snapshot={
 
 3d/run_on_separate_thread=true
 common/physics_ticks_per_second=200
+
+[ros]
+
+parameters/use_sim_time=false
+parameters/global_frame="map"

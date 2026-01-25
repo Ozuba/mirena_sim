@@ -100,4 +100,3 @@ func get_cones_in_sight(max_dist: float = 15.0) -> Array:
 			visible_cones.append(cone)
 	return visible_cones
 	
-	

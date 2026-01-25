@@ -9,8 +9,8 @@ friction = 0.4
 bounce = 0.4
 
 [node name="Cone" type="RigidBody3D" groups=["Cones"]]
-collision_layer = 32768
-collision_mask = 32768
+collision_layer = 32769
+collision_mask = 32769
 mass = 0.3
 physics_material_override = SubResource("PhysicsMaterial_qppwo")
 center_of_mass_mode = 1
