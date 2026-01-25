@@ -135,5 +135,6 @@ func _to_ent(cone: Node3D, reference_frame: Node3D = null) -> RosMirenaCommonEnt
 	ent.position.y = pos.x
 	ent.position.z = pos.y
 	
-	ent.type = cone.get_type_as_string()
+	ent.type = cone.get_type_as_string()	
+	ent.debug_id = cone.get_instance_id()
 	return ent
