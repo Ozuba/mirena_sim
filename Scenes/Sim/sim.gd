@@ -19,6 +19,9 @@ var track : Track
 
 func _ready() -> void:	
 	self._parse_arguments()
+	# Añadir el nodo de debugging
+	var SimDebug = load("res://Scenes/Sim/sim_debug.gd")
+	add_child(SimDebug.new())
 
 func _process(delta: float) -> void:
 	pass

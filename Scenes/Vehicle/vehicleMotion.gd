@@ -88,3 +88,16 @@ func get_current_pilot() -> AVehiclePilot:
 func reset_pilot_config() -> void:
 	# Set the pilot to no pilot
 	self._active_pilot = NoPilot.new(self)
+
+func get_cones_in_sight(max_dist: float = 15.0) -> Array:
+	var visible_cones: Array = []
+	var cones = get_tree().get_nodes_in_group("Cones")
+	var camera = $CarCOG/Camera/CameraViewport/Camera3D
+	for cone in cones:
+		var pos = cone.global_position
+		# 1. Comprobación de distancia y presencia
+		if camera.global_position.distance_to(pos) < max_dist and camera.is_position_in_frustum(pos):
+			visible_cones.append(cone)
+	return visible_cones
+	
+	

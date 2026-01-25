@@ -11,4 +11,3 @@ var header : RosStdMsgsHeader:
 var entities : Array:
 	get: return get_member(&"entities")
 	set(v): set_member(&"entities", v)
-
