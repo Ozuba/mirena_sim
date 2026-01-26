@@ -20,7 +20,7 @@ var interaction_mode : int:
 	get: return get_member(&"interaction_mode")
 	set(v): set_member(&"interaction_mode", v)
 
-var always_visible : int:
+var always_visible : bool:
 	get: return get_member(&"always_visible")
 	set(v): set_member(&"always_visible", v)
 
@@ -28,7 +28,7 @@ var markers : Array:
 	get: return get_member(&"markers")
 	set(v): set_member(&"markers", v)
 
-var independent_marker_orientation : int:
+var independent_marker_orientation : bool:
 	get: return get_member(&"independent_marker_orientation")
 	set(v): set_member(&"independent_marker_orientation", v)
 

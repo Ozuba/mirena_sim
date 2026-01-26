@@ -48,7 +48,7 @@ var range : float:
 	get: return get_member(&"range")
 	set(v): set_member(&"range", v)
 
-var cast_shadows : int:
+var cast_shadows : bool:
 	get: return get_member(&"cast_shadows")
 	set(v): set_member(&"cast_shadows", v)
 

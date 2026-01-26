@@ -4,11 +4,11 @@ class_name RosRosGzInterfacesWorldControl
 func _init():
 	init("ros_gz_interfaces/msg/WorldControl")
 
-var pause : int:
+var pause : bool:
 	get: return get_member(&"pause")
 	set(v): set_member(&"pause", v)
 
-var step : int:
+var step : bool:
 	get: return get_member(&"step")
 	set(v): set_member(&"step", v)
 

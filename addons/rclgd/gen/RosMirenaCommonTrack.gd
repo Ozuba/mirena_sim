@@ -12,7 +12,7 @@ var gates : Array:
 	get: return get_member(&"gates")
 	set(v): set_member(&"gates", v)
 
-var is_closed : int:
+var is_closed : bool:
 	get: return get_member(&"is_closed")
 	set(v): set_member(&"is_closed", v)
 

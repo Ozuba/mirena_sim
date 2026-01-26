@@ -36,7 +36,7 @@ var mouse_point : RosGeometryMsgsPoint:
 	get: return get_member(&"mouse_point") as RosMsg
 	set(v): set_member(&"mouse_point", v)
 
-var mouse_point_valid : int:
+var mouse_point_valid : bool:
 	get: return get_member(&"mouse_point_valid")
 	set(v): set_member(&"mouse_point_valid", v)
 

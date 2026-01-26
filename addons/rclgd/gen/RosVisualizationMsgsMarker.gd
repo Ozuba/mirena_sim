@@ -40,7 +40,7 @@ var lifetime : RosBuiltinInterfacesDuration:
 	get: return get_member(&"lifetime") as RosMsg
 	set(v): set_member(&"lifetime", v)
 
-var frame_locked : int:
+var frame_locked : bool:
 	get: return get_member(&"frame_locked")
 	set(v): set_member(&"frame_locked", v)
 
@@ -76,7 +76,7 @@ var mesh_file : RosVisualizationMsgsMeshFile:
 	get: return get_member(&"mesh_file") as RosMsg
 	set(v): set_member(&"mesh_file", v)
 
-var mesh_use_embedded_materials : int:
+var mesh_use_embedded_materials : bool:
 	get: return get_member(&"mesh_use_embedded_materials")
 	set(v): set_member(&"mesh_use_embedded_materials", v)
 

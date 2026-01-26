@@ -20,7 +20,7 @@ var width : int:
 	get: return get_member(&"width")
 	set(v): set_member(&"width", v)
 
-var do_rectify : int:
+var do_rectify : bool:
 	get: return get_member(&"do_rectify")
 	set(v): set_member(&"do_rectify", v)
 

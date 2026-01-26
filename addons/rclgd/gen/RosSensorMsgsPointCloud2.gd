@@ -20,7 +20,7 @@ var fields : Array:
 	get: return get_member(&"fields")
 	set(v): set_member(&"fields", v)
 
-var is_bigendian : int:
+var is_bigendian : bool:
 	get: return get_member(&"is_bigendian")
 	set(v): set_member(&"is_bigendian", v)
 
@@ -36,6 +36,7 @@ var data : PackedByteArray:
 	get: return get_member(&"data")
 	set(v): set_member(&"data", v)
 
-var is_dense : int:
+var is_dense : bool:
 	get: return get_member(&"is_dense")
 	set(v): set_member(&"is_dense", v)
+

@@ -8,7 +8,7 @@ var type : int:
 	get: return get_member(&"type")
 	set(v): set_member(&"type", v)
 
-var bool_value : int:
+var bool_value : bool:
 	get: return get_member(&"bool_value")
 	set(v): set_member(&"bool_value", v)
 

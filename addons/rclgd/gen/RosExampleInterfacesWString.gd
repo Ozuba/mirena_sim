@@ -1,10 +1,10 @@
 extends RosMsg
-class_name RosStdMsgsBool
+class_name RosExampleInterfacesWString
 
 func _init():
-	init("std_msgs/msg/Bool")
+	init("example_interfaces/msg/WString")
 
-var data : bool:
+var data : Nil:
 	get: return get_member(&"data")
 	set(v): set_member(&"data", v)
 

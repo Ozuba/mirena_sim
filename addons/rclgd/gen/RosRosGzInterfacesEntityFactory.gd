@@ -8,7 +8,7 @@ var name : String:
 	get: return get_member(&"name")
 	set(v): set_member(&"name", v)
 
-var allow_renaming : int:
+var allow_renaming : bool:
 	get: return get_member(&"allow_renaming")
 	set(v): set_member(&"allow_renaming", v)
 

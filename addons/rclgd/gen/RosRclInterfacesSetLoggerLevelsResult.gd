@@ -4,7 +4,7 @@ class_name RosRclInterfacesSetLoggerLevelsResult
 func _init():
 	init("rcl_interfaces/msg/SetLoggerLevelsResult")
 
-var successful : int:
+var successful : bool:
 	get: return get_member(&"successful")
 	set(v): set_member(&"successful", v)
 

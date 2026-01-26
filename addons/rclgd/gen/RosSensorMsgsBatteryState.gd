@@ -48,7 +48,7 @@ var power_supply_technology : int:
 	get: return get_member(&"power_supply_technology")
 	set(v): set_member(&"power_supply_technology", v)
 
-var present : int:
+var present : bool:
 	get: return get_member(&"present")
 	set(v): set_member(&"present", v)
 

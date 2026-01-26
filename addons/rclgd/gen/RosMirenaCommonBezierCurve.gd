@@ -12,7 +12,7 @@ var points : Array:
 	get: return get_member(&"points")
 	set(v): set_member(&"points", v)
 
-var is_closed : int:
+var is_closed : bool:
 	get: return get_member(&"is_closed")
 	set(v): set_member(&"is_closed", v)
 

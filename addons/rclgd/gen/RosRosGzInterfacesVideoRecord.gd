@@ -8,11 +8,11 @@ var header : RosStdMsgsHeader:
 	get: return get_member(&"header") as RosMsg
 	set(v): set_member(&"header", v)
 
-var start : int:
+var start : bool:
 	get: return get_member(&"start")
 	set(v): set_member(&"start", v)
 
-var stop : int:
+var stop : bool:
 	get: return get_member(&"stop")
 	set(v): set_member(&"stop", v)
 
