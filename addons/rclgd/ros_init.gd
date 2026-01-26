@@ -32,9 +32,9 @@ static func _static_init() -> void:
 		
 		rclgd.init(final_args)
 		print("[ROS Init Args]: ", final_args)
+		
 
 func _exit_tree() -> void:
-	# 3. Clean up when the game or scene closes.
-	if not Engine.is_editor_hint() and rclgd:
+	if rclgd and rclgd.ok():
 		rclgd.shutdown()
-		print("[ROS] Context shut down safely.")
+		print("[ROS] Shutdown called from exit_tree.")
