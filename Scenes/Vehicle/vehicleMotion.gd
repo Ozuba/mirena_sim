@@ -23,7 +23,7 @@ func _ready():
 	Sim.car = self
 	
 	# Connect reset positoin to new track
-	connect("track_loaded", reset_position)
+	Sim.track.track_loaded.connect(reset_position)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -100,3 +100,9 @@ func get_cones_in_sight(max_dist: float = 15.0) -> Array:
 			visible_cones.append(cone)
 	return visible_cones
 	
+func cone_collision_is_enabled() -> bool:
+	return self.collision_layer & 2 == 0
+
+func cone_collision_set(enable: bool) -> void:
+	self.collision_layer = (self.collision_layer & ~2) | (2 * int(enable))
+	self.collision_mask = (self.collision_mask & ~2) | (2 * int(enable))

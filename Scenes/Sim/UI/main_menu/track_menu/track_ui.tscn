@@ -11,9 +11,11 @@ script = ExtResource("1_mcri0")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 2
+theme_override_constants/separation = 13
 
 [node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
 layout_mode = 2
+theme_override_constants/separation = 8
 
 [node name="RegenNoise" type="Button" parent="HBoxContainer/VBoxContainer"]
 layout_mode = 2
@@ -41,6 +43,10 @@ text = "Clear Track"
 layout_mode = 2
 text = "Open Track"
 
+[node name="EnableConeCollision" type="CheckButton" parent="HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "Enable Cone Collision"
+
 [node name="TextureRect" type="TextureRect" parent="HBoxContainer"]
 layout_mode = 2
 texture = SubResource("NoiseTexture2D_ghe6x")
@@ -54,5 +60,3 @@ initial_position = 2
 file_mode = 0
 display_mode = 1
 root_subfolder = "TrackFiles"
-
-[connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]

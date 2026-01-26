@@ -23,7 +23,8 @@ func _ready():
 	$HBoxContainer/VBoxContainer/GenerateTrack.pressed.connect(_on_generate_curve_pressed)
 	$HBoxContainer/VBoxContainer/OpenTrack.pressed.connect(_on_open_track_pressed)
 	$HBoxContainer/VBoxContainer/ClearTrack.pressed.connect(_on_clear_track_pressed)
-
+	$HBoxContainer/VBoxContainer/EnableConeCollision.toggled.connect(_on_cone_collision_toggled)
+	$FileDialog.file_selected.connect(_on_file_dialog_file_selected)
 	
 	noise = FastNoiseLite.new()
 	noise.noise_type = FastNoiseLite.TYPE_PERLIN
@@ -31,7 +32,10 @@ func _ready():
 	noise.fractal_type = FastNoiseLite.FRACTAL_NONE 
 	
 	_on_generate_new_map()
-	
+
+func _on_cone_collision_toggled(value: bool) -> void:
+	Sim.car.cone_collision_set(value)
+
 func _on_open_track_pressed():
 	$FileDialog.visible = true
 	

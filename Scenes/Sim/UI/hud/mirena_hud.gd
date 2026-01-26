@@ -2,8 +2,8 @@ extends Control
 class_name MirenaHud
 
 @onready var fps_label: Label = $Stats/MarginContainer/VBoxContainer/FpsLabel
-@onready var fallen_cones_label: Label = $Stats/MarginContainer/VBoxContainer/TimerLabel
-@onready var timer_label: Label = $Stats/MarginContainer/VBoxContainer/FallenConesLabel
+@onready var timer_label: Label = $Stats/MarginContainer/VBoxContainer/TimerLabel
+@onready var fallen_cones_label: Label = $Stats/MarginContainer/VBoxContainer/FallenConesLabel
 
 func _process(_delta: float):
 	self.update_labels()
