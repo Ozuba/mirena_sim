@@ -12,8 +12,8 @@ func pilot(delta: float):
 	var gas_input_neg := Input.get_action_strength("manual_gas_neg")
 	var ebs  := Input.get_action_strength("EBS")
 	# Move Car
-	#owner.steering = owner.MAX_STEER * smooth_steer(owner.steering/owner.MAX_STEER, steering_input, delta, 2)
-	owner.steering =  steering_input
+	owner.steering = owner.MAX_STEER * smooth_steer(owner.steering/owner.MAX_STEER, steering_input, delta, 2)
+	#sowner.steering =  steering_input
 
 	owner.gas = gas_input_pos - gas_input_neg
 	owner.brake = ebs * owner.BRAKE_F

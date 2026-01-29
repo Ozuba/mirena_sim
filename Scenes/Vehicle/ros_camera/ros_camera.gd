@@ -1,4 +1,4 @@
-extends RosNode3D
+extends RosTfBroadcaster3D
 class_name RosImagePublisher
 
 # --- Configuration ---

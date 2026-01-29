@@ -1,4 +1,4 @@
-extends RosNode3D
+extends RosTfBroadcaster3D
 
 # --- Configuration ---
 const TEXTURE_SIZE = Vector2i(600, 125)
