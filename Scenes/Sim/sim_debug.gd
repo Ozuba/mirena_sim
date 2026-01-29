@@ -150,11 +150,12 @@ func _to_deb_ent(cone: Node3D, reference_frame: Node3D = null) -> RosMirenaCommo
 	var ent = RosMirenaCommonEntity.new()
 	
 	# Obtenemos la posición inicial (global)
-	var pos: Vector3 = cone.global_position
+	var global_pos: Vector3 = cone.global_position
 	
 	# Si se proporciona un frame de referencia, transformamos la posición a local
+	var pos
 	if is_instance_valid(reference_frame):
-		pos = reference_frame.to_local(pos)
+		pos = reference_frame.to_local(global_pos)
 	
 	# Mapeo de ejes Godot -> ROS 
 	# Godot Z (Forward) -> ROS X
@@ -169,7 +170,7 @@ func _to_deb_ent(cone: Node3D, reference_frame: Node3D = null) -> RosMirenaCommo
 	var deb_ent = RosMirenaCommonDebugEntity.new()
 	deb_ent.ent = ent
 	deb_ent.debug_id = cone.get_instance_id()
-	deb_ent.debug_real_position.x = pos.z
-	deb_ent.debug_real_position.y = pos.x
-	deb_ent.debug_real_position.z = pos.y
+	deb_ent.debug_real_position.x = global_pos.z
+	deb_ent.debug_real_position.y = global_pos.x
+	deb_ent.debug_real_position.z = global_pos.y
 	return deb_ent
