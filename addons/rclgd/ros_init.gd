@@ -36,5 +36,5 @@ static func _static_init() -> void:
 
 func _exit_tree() -> void:
 	if rclgd and rclgd.ok():
-		rclgd.shutdown()
+		#rclgd.shutdown()
 		print("[ROS] Shutdown called from exit_tree.")
