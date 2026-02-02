@@ -53,7 +53,7 @@ func _physics_process(delta: float) -> void:
 	self._active_pilot.pilot(delta)
 
 func set_pose(pose, reset_vel: bool = false) -> void:
-	var pos = Vector3(pose["x"],0.1,pose["y"])
+	var pos = Vector3(pose["x"],0.1,pose["z"])
 	if reset_vel:
 		linear_velocity = Vector3.ZERO
 		angular_velocity = Vector3.ZERO

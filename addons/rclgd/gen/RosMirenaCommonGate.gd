@@ -15,4 +15,3 @@ var y : float:
 var psi : float:
 	get: return get_member(&"psi")
 	set(v): set_member(&"psi", v)
-

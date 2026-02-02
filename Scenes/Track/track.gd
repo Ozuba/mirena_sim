@@ -16,7 +16,7 @@ static var _cone_scene = preload("res://Scenes/Track/Cone/cone.tscn")
 signal track_loaded
 var origin : Dictionary = {
 	"x": 0.0,
-	"y": 0.0,
+	"z": 0.0,
 	"psi": 0.0
 }
 
@@ -109,7 +109,7 @@ func get_gate_positions() -> Array[Dictionary]:
 			# Standard 3D coordinates
 			data.append({
 				"x": gate.global_position.x,
-				"y": gate.global_position.z, # Vertical height
+				"z": gate.global_position.z, # Vertical height
 				"psi": gate.global_rotation.y # Yaw
 			})
 			
