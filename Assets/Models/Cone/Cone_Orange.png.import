@@ -3,9 +3,9 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b0a0mv8xa0ohs"
-path.etc2="res://.godot/imported/Cone_Orange.png-11713019427c57d077ec30d99613cc0d.etc2.ctex"
+path.s3tc="res://.godot/imported/Cone_Orange.png-11713019427c57d077ec30d99613cc0d.s3tc.ctex"
 metadata={
-"imported_formats": ["etc2_astc"],
+"imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
 generator_parameters={
@@ -15,7 +15,7 @@ generator_parameters={
 [deps]
 
 source_file="res://Assets/Models/Cone/Cone_Orange.png"
-dest_files=["res://.godot/imported/Cone_Orange.png-11713019427c57d077ec30d99613cc0d.etc2.ctex"]
+dest_files=["res://.godot/imported/Cone_Orange.png-11713019427c57d077ec30d99613cc0d.s3tc.ctex"]
 
 [params]
 
