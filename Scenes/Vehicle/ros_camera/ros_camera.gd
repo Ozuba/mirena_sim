@@ -13,78 +13,73 @@ var _camera_info_pub : RosPublisher
 var _camera_info : RosSensorMsgsCameraInfo
 var rd: RenderingDevice
 var is_requesting: bool = false
+var _time_since_last_publish: float = 0.0
+var _target_interval = 1.0 / publish_rate
+# Pre-allocate message to avoid GC pressure
+var _msg: RosSensorMsgsImage
 
 func _ready() -> void:
-	# 1. Guard against Editor execution
-
-	# 2. Initialize ROS Node and Publisher
+	# 1. Initialize ROS Node and Publisher
 	_node = RosNode.new()
 	_node.init("camera_node")
-	_camera_pub = _node.create_publisher(topic_name + "image_raw", "sensor_msgs/msg/Image")
-	_camera_info_pub = _node.create_publisher(topic_name + "camera_info", "sensor_msgs/msg/CameraInfo")
+	_camera_pub = _node.create_publisher(topic_name + "/image_raw", "sensor_msgs/msg/Image")
+	_camera_info_pub = _node.create_publisher(topic_name + "/camera_info", "sensor_msgs/msg/CameraInfo")
 
+	# 2. Setup Viewport for manual triggering
+	var viewport = $CameraViewport
+	viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
+	viewport.size = resolution # Ensure viewport matches intended res
+	
 	# Init camera info and cache it
 	_camera_info = fill_camera_info($CameraViewport/Camera3D)
+	
+	# Pre-configure message fields that don't change
+	_msg = RosSensorMsgsImage.new()
+	_msg.height = resolution.y
+	_msg.width = resolution.x
+	_msg.encoding = "rgba8" # Using RGBA8 to avoid CPU conversion costs
+	_msg.is_bigendian = false
+	_msg.step = resolution.x * 4 # 4 bytes for RGBA
+	_msg.header.frame_id = frame_id
 
-	# 3. Get the Main Rendering Device (Required for Async)
+	# 3. Get the Main Rendering Device
 	rd = RenderingServer.get_rendering_device()
 	if not rd:
-		push_error("Async publishing requires Forward+ or Mobile renderer!")
-		return
+		push_error("[ROS] Async publishing requires Forward+ or Mobile renderer!")
 
-	# 4. Configure the Timer (Assuming it's a child node named 'CameraTimer')
-	var timer = $CameraTimer
-	timer.wait_time = 1.0 / publish_rate
-	timer.timeout.connect(_on_timer_timeout)
-	timer.start()
+func _process(_delta: float) -> void:
+	# Most elegant trigger: request a frame as soon as the last one is done
+	_time_since_last_publish += _delta
+	if _time_since_last_publish >= _target_interval:
 	
-	print("[ROS] Image Publisher started: ", topic_name)
-
-func _on_timer_timeout() -> void:
-	if is_requesting or not _camera_pub:
-		return
-	
-	var viewport = $CameraViewport
-	var tex = viewport.get_texture()
-	
-	# --- THE FIX FOR "tex is null" ---
-	# We must convert the High-Level RID to a Low-Level RenderingDevice RID
-	var rd_tex_rid = RenderingServer.texture_get_rd_texture(tex.get_rid())
-	
-	if not rd_tex_rid.is_valid():
-		return
-
-	is_requesting = true
-	# Request data from GPU asynchronously (No frame stutter!)
-	rd.texture_get_data_async(rd_tex_rid, 0, _on_data_received)
+		is_requesting = true
+		$CameraViewport.render_target_update_mode = SubViewport.UPDATE_ONCE
+		
+		# We wait for the frame to be drawn before grabbing the RID
+		await RenderingServer.frame_post_draw
+		
+		var tex = $CameraViewport.get_texture()
+		var rd_tex_rid = RenderingServer.texture_get_rd_texture(tex.get_rid())
+		
+		if rd_tex_rid.is_valid():
+			# Offload data extraction to Rendering Thread
+			rd.texture_get_data_async(rd_tex_rid, 0, _on_data_received)
+		
 
 func _on_data_received(data: PackedByteArray) -> void:
-	is_requesting = false
-	
+	# This callback is already on the Main Thread in Godot 4
 	if data.is_empty():
+		is_requesting = false
 		return
 
-	# 5. Process the raw byte array
-	# Viewport data comes back as RGBA8 (4 bytes per pixel)
-	var img = Image.create_from_data(resolution.x, resolution.y, false, Image.FORMAT_RGBA8, data)
+	# 4. Direct Publish (No Image.convert call)
+	_msg.header.stamp = _node.now()
+	_msg.data = data # PackedByteArray is passed by reference/minimal copy
 	
-	# Convert to ROS standard RGB8 (Strips alpha channel)
-	img.convert(Image.FORMAT_RGB8)
-
-	# 6. Build and Publish
-	var msg = RosSensorMsgsImage.new()
-	msg.header.stamp = _node.now()
-	msg.header.frame_id = frame_id
-	
-	msg.height = resolution.y
-	msg.width = resolution.x
-	msg.encoding = "rgb8"
-	msg.is_bigendian = false
-	msg.step = resolution.x * 3
-	msg.data = img.get_data() # GDExtension handles the byte copy
-
-	_camera_pub.publish(msg)
+	_camera_pub.publish(_msg)
 	_camera_info_pub.publish(_camera_info)
+	
+	is_requesting = false
 	
 func fill_camera_info(camera: Camera3D):
 	var camera_info = RosSensorMsgsCameraInfo.new()

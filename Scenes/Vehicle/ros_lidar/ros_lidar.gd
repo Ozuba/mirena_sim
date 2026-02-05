@@ -2,7 +2,7 @@ extends RosTfBroadcaster3D
 
 # --- Configuration ---
 const TEXTURE_SIZE = Vector2i(600, 125)
-@export var lidar_topic: String = "/sim/LIDAR"
+@export var lidar_topic: String = "/sim/lidar"
 @export var noise_std_dev : float = 0.005
 
 @export var train_split_ratio : float = 0.8 # 80% Train, 20% Val

@@ -1,7 +1,7 @@
 extends Node
 
 # --- Referencias externas ---
-@export var CAR_FRAME: String = "MirenaCar"
+@export var CAR_FRAME: String = "car_link"
 
 # --- Estado Interno ---
 var _node: RosNode
