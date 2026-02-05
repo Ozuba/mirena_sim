@@ -3,9 +3,9 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cp2juviwmyvgv"
-path.s3tc="res://.godot/imported/Cone_Blue.png-f86a28502d217beaacc6259c789b5a45.s3tc.ctex"
+path.etc2="res://.godot/imported/Cone_Blue.png-f86a28502d217beaacc6259c789b5a45.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["etc2_astc"],
 "vram_texture": true
 }
 generator_parameters={
@@ -15,7 +15,7 @@ generator_parameters={
 [deps]
 
 source_file="res://Assets/Models/Cone/Cone_Blue.png"
-dest_files=["res://.godot/imported/Cone_Blue.png-f86a28502d217beaacc6259c789b5a45.s3tc.ctex"]
+dest_files=["res://.godot/imported/Cone_Blue.png-f86a28502d217beaacc6259c789b5a45.etc2.ctex"]
 
 [params]
 

@@ -73,7 +73,7 @@ func _prepare_msg_template():
 		_create_field("x", 0, 7), # 7 = FLOAT32
 		_create_field("y", 4, 7),
 		_create_field("z", 8, 7),
-		_create_field("intensity", 12, 7)
+		_create_field("i ", 12, 7)
 	]
 
 func _create_field(fname: String, offset: int, datatype: int) -> RosSensorMsgsPointField:
