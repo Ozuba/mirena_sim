@@ -16,7 +16,7 @@ static var _cone_scene = preload("res://Scenes/Track/Cone/cone.tscn")
 signal track_loaded
 var origin : Dictionary = {
 	"x": 0.0,
-	"z": 0.0,
+	"y": 0.0,
 	"psi": 0.0
 }
 
@@ -80,7 +80,7 @@ func load_track(path : String):
 	if data.has("cones"):
 		for cone_data in data["cones"]:
 			var cone = _cone_scene.instantiate() as Cone
-			cone.position = Vector3(cone_data["x"], 0.0, cone_data["y"])
+			cone.position = Vector3(cone_data["y"], 0.0, cone_data["x"])
 			match cone_data["type"]:
 				"cone_blue":
 					cone.type = Cone.ConeColor.BLUE
@@ -94,7 +94,9 @@ func load_track(path : String):
 			cone.rotation.y = randf_range(0,PI/2)
 			$Gates.add_child(cone)
 	# Set car to start position
-	origin = data["setup"]["car_start_pose"]
+	origin.y = data.setup.car_start_pose.x
+	origin.x = data.setup.car_start_pose.y
+	origin.psi = PI/2 - data.setup.car_start_pose.psi
 	track_loaded.emit()
 			
 			
@@ -109,7 +111,7 @@ func get_gate_positions() -> Array[Dictionary]:
 			# Standard 3D coordinates
 			data.append({
 				"x": gate.global_position.x,
-				"z": gate.global_position.z, # Vertical height
+				"y": gate.global_position.z, # Vertical height
 				"psi": gate.global_rotation.y # Yaw
 			})
 			

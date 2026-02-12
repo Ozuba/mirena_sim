@@ -109,7 +109,7 @@ func _publish_track(pub: RosPublisher):
 	msg.is_closed = Sim.track.track_curve.closed
 	msg.gates = Sim.track.get_gate_positions().map(func(gp):
 		var gate = RosMirenaCommonGate.new()
-		gate.x = gp.z; gate.y = gp.x; gate.psi = gp.psi
+		gate.x = gp.x; gate.y = gp.y; gate.psi = gp.psi
 		return gate
 	)
 	pub.publish(msg)
