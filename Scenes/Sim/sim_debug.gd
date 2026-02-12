@@ -39,7 +39,7 @@ func _setup_ros_system() -> void:
 	
 	_tasks.append(PublishTask.new("car",      50.0, _node.create_publisher("/sim/debug/car",            "mirena_common/msg/Car"),             _publish_car_state))
 	_tasks.append(PublishTask.new("control",  50.0, _node.create_publisher("/sim/debug/control",        "mirena_common/msg/CarControl"),      _publish_control))
-	_tasks.append(PublishTask.new("perc",     10.0, _node.create_publisher("/sim/debug/perception",     "mirena_common/msg/EntityList"),      _process_perception))
+	_tasks.append(PublishTask.new("perc",     50.0, _node.create_publisher("/sim/debug/perception",     "mirena_common/msg/EntityList"),      _process_perception))
 	_tasks.append(PublishTask.new("deb_perc", 10.0, _node.create_publisher("/sim/debug/deb_perception", "mirena_common/msg/DebugEntityList"), _process_debug_perception))
 	_tasks.append(PublishTask.new("slam",     10.0, _node.create_publisher("/sim/debug/slam",           "mirena_common/msg/EntityList"),      _publish_slam))
 	_tasks.append(PublishTask.new("map",      1.0,  _node.create_publisher("/sim/debug/full_map",       "mirena_common/msg/EntityList"),      _publish_full_map))
@@ -64,7 +64,7 @@ func _publish_car_state(pub: RosPublisher):
 	pub.publish(msg)
 
 func _process_perception(pub: RosPublisher):
-	var cones = Sim.car.get_cones_in_sight()
+	var cones = Sim.car.get_cones_in_sight(10.0)
 	for cone in cones:
 		if not slam_cones.has(cone): slam_cones.append(cone)
 	
@@ -89,7 +89,7 @@ func _publish_slam(pub: RosPublisher):
 	var msg = RosMirenaCommonEntityList.new()
 	msg.header.frame_id = "map"
 	msg.header.stamp = _node.now()
-	var slam_cones = slam_cones.filter(func(c): return is_instance_valid(c))
+	slam_cones = slam_cones.filter(func(c): return is_instance_valid(c))
 	msg.entities = slam_cones.map(func(c): return _to_ent(c))
 	pub.publish(msg)
 

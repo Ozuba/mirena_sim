@@ -89,7 +89,7 @@ func reset_pilot_config() -> void:
 	# Set the pilot to no pilot
 	self._active_pilot = NoPilot.new(self)
 
-func get_cones_in_sight(max_dist: float = 15.0) -> Array:
+func get_cones_in_sight(max_dist: float = 10.0) -> Array:
 	var visible_cones: Array = []
 	var cones = get_tree().get_nodes_in_group("Cones")
 	var camera = $CarCOG/Camera/CameraViewport/Camera3D
