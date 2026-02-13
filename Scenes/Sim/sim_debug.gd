@@ -8,26 +8,6 @@ var _node: RosNode
 var _tasks: Array[PublishTask] = []
 var slam_cones: Array = []
 
-# --- Clase de Tarea Autónoma ---
-class PublishTask:
-	var name: String
-	var interval: float
-	var timer: float = 0.0
-	var callback: Callable
-	var publisher: RosPublisher
-
-	func _init(_name: String, _hz: float, _pub: RosPublisher, _callback: Callable):
-		name = _name
-		interval = 1.0 / _hz if _hz > 0 else 1000000.0 # Evitar división por cero
-		publisher = _pub
-		callback = _callback
-
-	func tick(delta: float):
-		timer += delta
-		if timer >= interval:
-			timer = 0.0
-			callback.call(publisher) # Pasamos el publisher al callback directamente
-
 func _ready() -> void:
 	_setup_ros_system()
 	if Sim.has_signal("track_loaded"):
@@ -44,6 +24,10 @@ func _setup_ros_system() -> void:
 	_tasks.append(PublishTask.new("slam",     10.0, _node.create_publisher("/sim/debug/slam",           "mirena_common/msg/EntityList"),      _publish_slam))
 	_tasks.append(PublishTask.new("map",      1.0,  _node.create_publisher("/sim/debug/full_map",       "mirena_common/msg/EntityList"),      _publish_full_map))
 	_tasks.append(PublishTask.new("track",    1.0,  _node.create_publisher("/sim/debug/track",          "mirena_common/msg/Track"),           _publish_track))
+	
+	for task in _tasks:
+		Sim.get_main_menu().get_publisher_configurator().register_publisher(task)
+		
 
 func _physics_process(delta: float) -> void:
 	if not Sim.car: return

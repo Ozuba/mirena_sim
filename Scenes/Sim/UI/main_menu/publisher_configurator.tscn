@@ -1,0 +1,86 @@
+[gd_scene format=3 uid="uid://dq0vdly3moln0"]
+
+[ext_resource type="Script" uid="uid://c057f48j2xwd0" path="res://Scenes/Sim/UI/main_menu/publisher_configurator.gd" id="1_x7dby"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_x7dby"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fiia4"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.060334228, 0.060334228, 0.060334228, 0.6)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+
+[node name="PublisherConfigurator" type="PanelContainer" unique_id=1342083315]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_x7dby")
+script = ExtResource("1_x7dby")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1090649844]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=1721969184]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=1368750974]
+layout_mode = 2
+text = "Publisher: "
+
+[node name="OptionButton" type="OptionButton" parent="VBoxContainer/HBoxContainer" unique_id=1704868940]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ConfigPanel" type="PanelContainer" parent="VBoxContainer" unique_id=1693442801]
+visible = false
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_fiia4")
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/ConfigPanel" unique_id=957065183]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/ConfigPanel/MarginContainer" unique_id=1071420688]
+layout_mode = 2
+
+[node name="EnableContainer" type="HBoxContainer" parent="VBoxContainer/ConfigPanel/MarginContainer/VBoxContainer" unique_id=353716344]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/ConfigPanel/MarginContainer/VBoxContainer/EnableContainer" unique_id=982509437]
+layout_mode = 2
+text = "Enable: "
+
+[node name="CheckButton" type="CheckButton" parent="VBoxContainer/ConfigPanel/MarginContainer/VBoxContainer/EnableContainer" unique_id=2102459513]
+layout_mode = 2
+
+[node name="FrequencyContainer" type="HBoxContainer" parent="VBoxContainer/ConfigPanel/MarginContainer/VBoxContainer" unique_id=1090180352]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/ConfigPanel/MarginContainer/VBoxContainer/FrequencyContainer" unique_id=1276944441]
+layout_mode = 2
+text = "Frequency: "
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/ConfigPanel/MarginContainer/VBoxContainer/FrequencyContainer" unique_id=2018873675]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+max_length = 3
+expand_to_text_length = true
+context_menu_enabled = false
+emoji_menu_enabled = false
+
+[node name="Button" type="Button" parent="VBoxContainer/ConfigPanel/MarginContainer/VBoxContainer/FrequencyContainer" unique_id=226930647]
+layout_mode = 2
+text = "Commit"

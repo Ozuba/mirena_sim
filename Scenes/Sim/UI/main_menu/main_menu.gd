@@ -1,8 +1,8 @@
 extends PanelContainer
-
+class_name MainMenu
 
 func _ready() -> void:
-	pass
+	print("main menu ready")
 
 # Vehicle MENU
 func _on_resetcar_button_button_up() -> void:
@@ -26,3 +26,6 @@ func _on_pilot_mode_item_selected(index: int) -> void:
 		"NoPilot":
 			pilot = NoPilot.new(Sim.car)
 	Sim.car.set_pilot(pilot)
+	
+func get_publisher_configurator() -> PublisherConfiguratorUI:
+	return $MarginContainer/VBoxContainer/MenuTabs/ROS2/VBoxContainer/PublisherConfigurator
