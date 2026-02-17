@@ -18,18 +18,21 @@ static func _static_init() -> void:
 				if key + ":=" in arg:
 					override_exists = true
 					break
-			
+				
+					
 			if not override_exists:
 				var val = ProjectSettings.get_setting_with_override(p_name)
 				var res = str(val).to_lower() if val is bool else str(val)
 				ros_params.append_array(["-p", "%s:=%s" % [key, res]])
+				
 
 	if rclgd:
 		# Construimos el comando final: [Fixed Flags] + [Editor Params] + [CLI Overrides]
-		var final_args: PackedStringArray = ["--ros-args"]
+		var final_args: PackedStringArray
 		final_args.append_array(ros_params)
 		final_args.append_array(cli_args)
-		
+
+
 		rclgd.init(final_args)
 		print("[ROS Init Args]: ", final_args)
 		

@@ -126,4 +126,4 @@ common/physics_ticks_per_second=200
 [ros]
 
 parameters/use_sim_time=false
-parameters/global_frame="map"
+parameters/use_separate_thread=true
