@@ -29,7 +29,7 @@ func create_track(path: Curve3D):
 	track_curve = path
 	track_path.curve = path # No conversion needed anymore
 	
-	var length = path.get_baked_length()
+	var length = track_curve.get_baked_length()
 	var num_gates = int(length / track_spacing)
 
 	for i in range(0, num_gates):
@@ -42,7 +42,7 @@ func create_track(path: Curve3D):
 		gate.gate_type = Gate.GateType.EVENT if (i == 0) else Gate.GateType.STANDARD
 		
 		# 1. Position of the current gate (Directly from Curve3D)
-		var current_pos = path.sample_baked(d)
+		var current_pos = track_curve.sample_baked(d)
 		
 		# 2. Position of the NEXT gate for orientation
 		# If the curve is closed, we wrap around using fmod
@@ -93,6 +93,12 @@ func load_track(path : String):
 			cone.add_to_group("Cones") # Vital para el Lidar
 			cone.rotation.y = randf_range(0,PI/2)
 			$Gates.add_child(cone)
+	if data.has('path'):
+		track_curve.clear_points()
+		for path_point in data['path']:
+			var point = Vector3(path_point['y'], 0.0, path_point['x'])
+			track_curve.add_point(point)
+
 	# Set car to start position
 	origin.y = data.setup.car_start_pose.x
 	origin.x = data.setup.car_start_pose.y
@@ -102,17 +108,19 @@ func load_track(path : String):
 			
 func clear_track():
 	for n in $Gates.get_children(): n.queue_free()
-
-func get_gate_positions() -> Array[Dictionary]:
-	var data: Array[Dictionary] = []
+	var data:	 Array[Dictionary] = []
 	
-	for gate in $Gates.get_children():
-		if gate is Node3D:
-			# Standard 3D coordinates
-			data.append({
-				"x": gate.global_position.x,
-				"y": gate.global_position.z, # Vertical height
-				"psi": gate.global_rotation.y # Yaw
+func get_gate_positions() -> Array[Dictionary]:
+	var length = track_curve.get_baked_length()
+	var num_points = int(length / track_spacing)
+	var data:	 Array[Dictionary] = []
+	for i in range(0, num_points):
+		var d = (i * track_spacing)
+		var track_point = track_curve.sample_baked(d)
+		data.append({
+			"x": track_point[0],
+			"y": track_point[2],
+			"psi": atan2(track_point[2], track_point[0])
 			})
-			
+	#		
 	return data
