@@ -118,8 +118,8 @@ func get_gate_positions() -> Array[Dictionary]:
 		var d = (i * track_spacing)
 		var track_point = track_curve.sample_baked(d)
 		data.append({
-			"x": track_point[0],
-			"y": track_point[2],
+			"x": track_point[2],
+			"y": track_point[0],
 			"psi": atan2(track_point[2], track_point[0])
 			})
 	#		
