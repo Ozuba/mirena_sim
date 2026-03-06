@@ -13,6 +13,7 @@ var current_scene: Node
 var car : MirenaCar
 var track : Track
 var main_menu: MainMenu
+var arguments : Dictionary
 
 
 # -------------------------------------------------
@@ -43,7 +44,11 @@ func _input(event):
 			switch_to_camera(next_cam)
 			print("Switched to: ", next_cam)
 
-
+func _notification(what):
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		print("Ctrl+C or Close detected. Shutting down...")
+		# Perform cleanup here (save files, close sockets, etc.)
+		get_tree().quit()
 
 # -------------------------------------------------
 # Argument Parser
@@ -52,7 +57,7 @@ func _input(event):
 func _parse_arguments() -> void:
 	var arguments = {}
 	#Process user messages
-	for argument in OS.get_cmdline_user_args():
+	for argument in OS.get_cmdline_args():
 		if argument.contains("="):
 			var key_value = argument.split("=")
 			arguments[key_value[0].trim_prefix("--")] = key_value[1]
@@ -60,7 +65,12 @@ func _parse_arguments() -> void:
 			# Options without an argument will be present in the dictionary,
 			# with the value set to an empty string.
 			arguments[argument.trim_prefix("--")] = ""
-	# Handle custom track load
+	self.arguments = arguments
+	print(arguments)
+
+	#else:
+		
+	# Hndle custom track load
 	#if arguments.has("track"):
 	#	SIM.get_env().get_track_manager().loadTrack(arguments["track"])
 	#if arguments.has("follow"):

@@ -54,17 +54,24 @@ func _process(_delta: float) -> void:
 	
 		is_requesting = true
 		$CameraViewport.render_target_update_mode = SubViewport.UPDATE_ONCE
-		
+		# Log the timestamp before requesting
+		_msg.header.stamp = _node.now()
 		# We wait for the frame to be drawn before grabbing the RID
-		await RenderingServer.frame_post_draw
+		RenderingServer.frame_post_draw.connect(_on_frame_drawn, CONNECT_ONE_SHOT)
 		
-		var tex = $CameraViewport.get_texture()
-		var rd_tex_rid = RenderingServer.texture_get_rd_texture(tex.get_rid())
-		
-		if rd_tex_rid.is_valid():
-			# Offload data extraction to Rendering Thread
-			rd.texture_get_data_async(rd_tex_rid, 0, _on_data_received)
-		
+func _on_frame_drawn():
+	# This runs as soon as the RenderingServer finishes the frame
+	var tex = $CameraViewport.get_texture()
+	var rd_tex_rid = RenderingServer.texture_get_rd_texture(tex.get_rid())
+	
+	if rd_tex_rid.is_valid():
+		# 4. Request the data. This is fully asynchronous.
+		# No waiting here; _on_data_received is called when bytes are ready.
+		rd.texture_get_data_async(rd_tex_rid, 0, _on_data_received)
+	else:
+		# Cleanup if the RID was invalid
+		is_requesting = false
+
 
 func _on_data_received(data: PackedByteArray) -> void:
 	# This callback is already on the Main Thread in Godot 4
@@ -73,7 +80,6 @@ func _on_data_received(data: PackedByteArray) -> void:
 		return
 
 	# 4. Direct Publish (No Image.convert call)
-	_msg.header.stamp = _node.now()
 	_msg.data = data # PackedByteArray is passed by reference/minimal copy
 	
 	_camera_pub.publish(_msg)

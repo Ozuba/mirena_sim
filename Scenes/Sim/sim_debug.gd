@@ -48,7 +48,7 @@ func _publish_car_state(pub: RosPublisher):
 	pub.publish(msg)
 
 func _process_perception(pub: RosPublisher):
-	var cones = Sim.car.get_cones_in_sight(10.0)
+	var cones = Sim.car.get_cones_in_sight(8.0)
 	for cone in cones:
 		if not slam_cones.has(cone): slam_cones.append(cone)
 	

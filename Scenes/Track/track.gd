@@ -100,9 +100,10 @@ func load_track(path : String):
 			track_curve.add_point(point)
 
 	# Set car to start position
-	origin.y = data.setup.car_start_pose.x
-	origin.x = data.setup.car_start_pose.y
+	origin.y = data.setup.car_start_pose.y
+	origin.x = data.setup.car_start_pose.x
 	origin.psi = PI/2 - data.setup.car_start_pose.psi
+	
 	track_loaded.emit()
 			
 			

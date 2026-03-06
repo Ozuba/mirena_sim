@@ -16,6 +16,7 @@ var all_valid_loops: Array[PackedVector2Array] = []
 var current_loop_index := 0
 
 func _ready():
+	print(Sim.arguments)
 	# Connect Buttons
 	$HBoxContainer/VBoxContainer/RegenNoise.pressed.connect(_on_generate_new_map)
 	$HBoxContainer/VBoxContainer/Next.pressed.connect(_on_next_pressed)
@@ -32,6 +33,13 @@ func _ready():
 	noise.fractal_type = FastNoiseLite.FRACTAL_NONE 
 	
 	_on_generate_new_map()
+	
+	if  Sim.arguments.has('skidpad'):
+		Sim.track.load_track("res://TrackFiles/skidpad.json")
+	elif Sim.arguments.has('acceleration'):
+		Sim.track.load_track("res://TrackFiles/acceleration.json")
+	elif Sim.arguments.has('random'):
+		_on_generate_curve_pressed()
 
 func _on_cone_collision_toggled(value: bool) -> void:
 	Sim.car.cone_collision_set(value)
@@ -46,6 +54,8 @@ func _on_file_dialog_file_selected(path: String):
 		Sim.track.load_track(path)
 
 func _on_generate_new_map():
+
+
 	noise.seed = randi()
 	update_noise_texture()
 	extract_all_potential_loops()
@@ -124,6 +134,9 @@ func chaikin_smooth(points: PackedVector2Array, iterations: int = 2) -> PackedVe
 	return output
 	
 func _on_generate_curve_pressed():
+	generate_new_curve()
+
+func generate_new_curve():
 	if all_valid_loops.is_empty(): return
 	
 	var raw_points = all_valid_loops[current_loop_index]
@@ -183,7 +196,6 @@ func _on_generate_curve_pressed():
 
 	# Send the Curve3D to your Track script
 	Sim.track.create_track(final_curve)
-
 # FALLBACK SIMPLIFICATION (Ramer-Douglas-Peucker Lite)
 # Use this if Geometry2D.simplify_polyline gives you errors
 func simplify_points(pts: PackedVector2Array, epsilon: float) -> PackedVector2Array:
