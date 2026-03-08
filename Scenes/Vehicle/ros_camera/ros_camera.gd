@@ -51,7 +51,7 @@ func _process(_delta: float) -> void:
 	# Most elegant trigger: request a frame as soon as the last one is done
 	_time_since_last_publish += _delta
 	if _time_since_last_publish >= _target_interval:
-	
+		_time_since_last_publish = 0
 		is_requesting = true
 		$CameraViewport.render_target_update_mode = SubViewport.UPDATE_ONCE
 		# Log the timestamp before requesting
