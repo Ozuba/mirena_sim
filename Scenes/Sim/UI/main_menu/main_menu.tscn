@@ -13,6 +13,7 @@ font_color = Color(0.744876, 0.999331, 1, 1)
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_val13"]
 
 [node name="MainMenu" type="PanelContainer" unique_id=313477853]
+visible = false
 custom_minimum_size = Vector2(400, 500)
 offset_right = 300.0
 offset_bottom = 500.0

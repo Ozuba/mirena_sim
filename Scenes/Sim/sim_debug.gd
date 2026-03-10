@@ -27,6 +27,7 @@ func _setup_ros_system() -> void:
 	
 	for task in _tasks:
 		Sim.get_main_menu().get_publisher_configurator().register_publisher(task)
+	
 		
 
 func _physics_process(delta: float) -> void:

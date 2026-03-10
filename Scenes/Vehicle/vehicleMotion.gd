@@ -9,7 +9,7 @@ const WHEEL_RADIUS = 0.23 # m
 const BRAKE_F = 20
 const MAX_STEER = deg_to_rad(30)
 
-var _active_pilot: AVehiclePilot = ManualPilot.new(self)
+var _active_pilot: AVehiclePilot = RosPilot.new(self)
 
 # Overloaded longitudinal actuator GAS
 @export var gas: float

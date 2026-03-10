@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://debauc1yix74" path="res://Scenes/Track/track.gd" id="1_0ld5s"]
 [ext_resource type="Material" uid="uid://bsv8ux5upf4hf" path="res://Assets/Textures/Asphalt/Asphalt.tres" id="1_okhpi"]
-[ext_resource type="Texture2D" uid="uid://d2sohta4a0brk" path="res://Assets/Textures/Sky/kloofendal_48d_partly_cloudy_puresky_2k.exr" id="2_0ld5s"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_0do6f"]
 rough = true
@@ -15,22 +14,6 @@ lightmap_size_hint = Vector2i(1002, 1002)
 material = ExtResource("1_okhpi")
 add_uv2 = true
 size = Vector2(200, 200)
-
-[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_6d5m8"]
-panorama = ExtResource("2_0ld5s")
-energy_multiplier = 2.0
-
-[sub_resource type="Sky" id="Sky_640h4"]
-sky_material = SubResource("PanoramaSkyMaterial_6d5m8")
-
-[sub_resource type="Environment" id="Environment_pxc04"]
-background_mode = 2
-background_color = Color(0.529412, 0.807843, 0.921569, 1)
-sky = SubResource("Sky_640h4")
-ambient_light_color = Color(1, 1, 1, 1)
-ssao_enabled = true
-ssil_enabled = true
-sdfgi_read_sky_light = false
 
 [sub_resource type="Curve3D" id="Curve3D_0ld5s"]
 
@@ -49,13 +32,6 @@ shape = SubResource("ConvexPolygonShape3D_vfgym")
 
 [node name="GroundMesh" type="MeshInstance3D" parent="Ground" unique_id=1413446312]
 mesh = SubResource("PlaneMesh_wtm8k")
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1615804800]
-transform = Transform3D(-0.866024, -0.433016, 0.250001, 0, 0.499998, 0.866026, -0.500003, 0.749999, -0.43301, 0, 0, 0)
-shadow_enabled = true
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1591120224]
-environment = SubResource("Environment_pxc04")
 
 [node name="Gates" type="Node3D" parent="." unique_id=1017428353]
 

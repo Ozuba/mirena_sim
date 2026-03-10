@@ -5,7 +5,7 @@ class_name Track
 @export var track_width : float = 3.0
 @export var track_spacing : float = 4.0
 
-# Now stores Curve3D directly
+# ROS 2 Frame: X Forward (+Z), Y Left (+X), Z Up (+Y)
 var track_curve : Curve3D = Curve3D.new() 
 @onready var track_path : Path3D = $TrackPath
 
@@ -13,115 +13,131 @@ var track_curve : Curve3D = Curve3D.new()
 static var _gate_scene = preload("res://Scenes/Track/Gate/gate.tscn")
 static var _cone_scene = preload("res://Scenes/Track/Cone/cone.tscn")
 
+# ROS node to manage tracks
+var _node: RosNode
+
 signal track_loaded
+
+# Standard ROS 2 Origin (X: Forward, Y: Left, PSI: Counter-Clockwise Yaw)
 var origin : Dictionary = {
 	"x": 0.0,
 	"y": 0.0,
 	"psi": 0.0
 }
 
-func _ready() -> void:
-	Sim.track = self
+# Parameter handling
+func _on_ros_parameter_changed(param_name: String, value: Variant):
+	if param_name == "track":
+		if value == "random":
+			var new_track_path = value as String
+			print("ROS requested track change: ", new_track_path)
+			load_track(new_track_path)
+		
 
-## Pass a Curve3D here instead of Curve2D
+
+func _ready() -> void:
+	_node.init("track_manager")
+	_node.parameter_changed.connect(_on_ros_parameter_changed)
+	# Track name parameter
+	_node.declare_parameter("track", "")
+
 func create_track(path: Curve3D):
 	clear_track()
 	track_curve = path
-	track_path.curve = path # No conversion needed anymore
+	track_path.curve = path
 	
 	var length = track_curve.get_baked_length()
 	var num_gates = int(length / track_spacing)
 
 	for i in range(0, num_gates):
 		var d = (i * track_spacing)
-		
 		var gate = _gate_scene.instantiate() as Gate
 		$Gates.add_child(gate) 
 		
 		gate.gate_width = track_width
 		gate.gate_type = Gate.GateType.EVENT if (i == 0) else Gate.GateType.STANDARD
 		
-		# 1. Position of the current gate (Directly from Curve3D)
-		var current_pos = track_curve.sample_baked(d)
-		
-		# 2. Position of the NEXT gate for orientation
-		# If the curve is closed, we wrap around using fmod
-		var next_d = d + track_spacing
-		if path.closed:
-			next_d = fmod(next_d, length)
-		else:
-			next_d = min(next_d, length)
-			
-		var next_pos = path.sample_baked(next_d)
-		
-		# 3. Apply Transform
-		gate.global_position = current_pos
-		
-		# Handle orientation
-		if current_pos.distance_to(next_pos) > 0.1:
-			gate.look_at(next_pos, Vector3.UP)
-			gate.rotate_object_local(Vector3.UP, PI)
-		else:
-			# Fallback: Sample the up vector/tangent provided by the curve
-			var transform = path.sample_baked_with_rotation(d)
-			gate.global_transform = transform
-		# Dirty change to a track start position + signal
-		origin = get_gate_positions()[-1]
-		track_loaded.emit()
-			
+		var trans = track_curve.sample_baked_with_rotation(d, true)
+		gate.global_transform = trans
+		gate.rotate_object_local(Vector3.UP, PI)
+
+	# --- Shifted Origin Logic ---
+	var p0 = track_curve.get_point_position(0)
+	var p1 = track_curve.get_point_position(1)
+	var dir = (p1 - p0).normalized()
+
+	# Move p0 back by 2 meters along the negative direction of the track
+	var shifted_p0 = p0 - (dir * 4.0)
+
+	origin = {
+		"x": shifted_p0.z,       # ROS X (Godot +Z)
+		"y": shifted_p0.x,       # ROS Y (Godot +X)
+		"psi": atan2(dir.x, dir.z) # Yaw remains the same
+	}
+	
+	track_loaded.emit()
+
 func load_track(path : String):
 	clear_track()
 	var file = FileAccess.open(path, FileAccess.READ)
-	var content = file.get_as_text()
+	if not file: return
+	
 	var json = JSON.new()
-	var error = json.parse(content)
+	json.parse(file.get_as_text())
 	var data = json.data
-	# Load Cones
+	
+	# Load Cones: ROS X -> Godot Z | ROS Y -> Godot X
 	if data.has("cones"):
 		for cone_data in data["cones"]:
 			var cone = _cone_scene.instantiate() as Cone
+			# ROS X is Z, ROS Y is X
 			cone.position = Vector3(cone_data["y"], 0.0, cone_data["x"])
+			
 			match cone_data["type"]:
-				"cone_blue":
-					cone.type = Cone.ConeColor.BLUE
-				"cone_yellow":
-					cone.type = Cone.ConeColor.YELLOW
-				"cone_orange":
-					cone.type = Cone.ConeColor.ORANGE
-				"cone_big_orange":
-					cone.type = Cone.ConeColor.BIG_ORANGE
-			cone.add_to_group("Cones") # Vital para el Lidar
-			cone.rotation.y = randf_range(0,PI/2)
+				"cone_blue": cone.type = Cone.ConeColor.BLUE
+				"cone_yellow": cone.type = Cone.ConeColor.YELLOW
+				"cone_orange": cone.type = Cone.ConeColor.ORANGE
+				"cone_big_orange": cone.type = Cone.ConeColor.BIG_ORANGE
+			
+			cone.add_to_group("Cones")
+			cone.rotation.y = randf_range(0, PI/2)
 			$Gates.add_child(cone)
+
 	if data.has('path'):
 		track_curve.clear_points()
-		for path_point in data['path']:
-			var point = Vector3(path_point['y'], 0.0, path_point['x'])
-			track_curve.add_point(point)
+		for p in data['path']:
+			# Mapping ROS path points back to Godot space
+			track_curve.add_point(Vector3(p['y'], 0.0, p['x']))
 
-	# Set car to start position
-	origin.y = data.setup.car_start_pose.y
-	origin.x = data.setup.car_start_pose.x
-	origin.psi = PI/2 - data.setup.car_start_pose.psi
+	# Start pose directly assigned from ROS 2 input
+	origin = {
+		"x": data.setup.car_start_pose.x,
+		"y": data.setup.car_start_pose.y,
+		"psi": data.setup.car_start_pose.psi
+	}
 	
 	track_loaded.emit()
-			
-			
+
 func clear_track():
 	for n in $Gates.get_children(): n.queue_free()
-	var data:	 Array[Dictionary] = []
-	
+
 func get_gate_positions() -> Array[Dictionary]:
 	var length = track_curve.get_baked_length()
 	var num_points = int(length / track_spacing)
-	var data:	 Array[Dictionary] = []
+	var data: Array[Dictionary] = []
+	
 	for i in range(0, num_points):
 		var d = (i * track_spacing)
-		var track_point = track_curve.sample_baked(d)
+		var pos = track_curve.sample_baked(d)
+		
+		# Get direction by looking at next point
+		var next_d = fmod(d + 0.1, length)
+		var next_pos = track_curve.sample_baked(next_d)
+		var dir = (next_pos - pos).normalized()
+		
 		data.append({
-			"x": track_point[2],
-			"y": track_point[0],
-			"psi": atan2(track_point[2], track_point[0])
-			})
-	#		
+			"x": pos.z,        # Godot +Z is ROS X
+			"y": pos.x,        # Godot +X is ROS Y
+			"psi": atan2(dir.x, dir.z) # Counter-clockwise yaw from X (+Z)
+		})
 	return data
