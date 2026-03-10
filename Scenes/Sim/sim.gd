@@ -12,7 +12,6 @@ var current_scene: Node
 
 var car : MirenaCar
 var track : Track
-var main_menu: MainMenu
 var arguments : Dictionary
 
 
@@ -25,12 +24,6 @@ func _ready() -> void:
 	self._parse_arguments()
 	
 	self.current_scene = get_tree().current_scene
-	
-	var ui_scene : PackedScene = load("res://Scenes/Sim/UI/hud/SimUI.tscn")
-	var ui : MirenaHud = ui_scene.instantiate()
-	main_menu = ui.get_main_menu()
-	current_scene.add_child(ui)
-	
 	# Añadir el nodo de debugging
 	var SimDebug = load("res://Scenes/Sim/sim_debug.gd")
 	add_child.call_deferred(SimDebug.new())
@@ -115,6 +108,3 @@ func get_next_id() -> String:
 	var current_index = keys.find(_active_id)
 	var next_index = (current_index + 1) % keys.size()
 	return keys[next_index]
-
-func get_main_menu() -> MainMenu:
-	return main_menu

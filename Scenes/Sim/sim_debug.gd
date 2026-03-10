@@ -25,10 +25,6 @@ func _setup_ros_system() -> void:
 	_tasks.append(PublishTask.new("map",      1.0,  _node.create_publisher("/sim/debug/full_map",       "mirena_common/msg/EntityList"),      _publish_full_map))
 	_tasks.append(PublishTask.new("track",    1.0,  _node.create_publisher("/sim/debug/track",          "mirena_common/msg/Track"),           _publish_track))
 	
-	for task in _tasks:
-		Sim.get_main_menu().get_publisher_configurator().register_publisher(task)
-	
-		
 
 func _physics_process(delta: float) -> void:
 	if not Sim.car: return

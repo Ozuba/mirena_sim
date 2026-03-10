@@ -20,7 +20,7 @@ func _ready():
 	$HBoxContainer/VBoxContainer/Next.pressed.connect(_on_navigate.bind(1))
 	$HBoxContainer/VBoxContainer/Prev.pressed.connect(_on_navigate.bind(-1))
 	$HBoxContainer/VBoxContainer/GenerateTrack.pressed.connect(_on_generate_final)
-	
+	$HBoxContainer/VBoxContainer/OpenTrack.pressed.connect(_on_load_track)
 	_on_regen_pressed()
 
 func _on_regen_pressed():
@@ -47,3 +47,13 @@ func _on_generate_final():
 	var curve = generator.create_curve_from_loop(current_loop_index)
 	if curve:
 		Sim.track.create_track(curve)
+
+func _on_open_track_pressed():
+	$FileDialog.visible = true
+
+
+func _on_track_file_selected(path: String):
+	Sim.track.load_track(path)
+
+func _on_load_track():
+	pass

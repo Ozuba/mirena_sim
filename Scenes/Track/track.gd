@@ -36,6 +36,8 @@ func _on_ros_parameter_changed(param_name: String, value: Variant):
 
 
 func _ready() -> void:
+	Sim.track = self
+	_node = RosNode.new()
 	_node.init("track_manager")
 	_node.parameter_changed.connect(_on_ros_parameter_changed)
 	# Track name parameter

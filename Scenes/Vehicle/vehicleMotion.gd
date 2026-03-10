@@ -21,9 +21,7 @@ func _ready():
 	Sim.register_camera("FPCam",$FPCam)
 	# Register car in Sim
 	Sim.car = self
-	
-	# Connect reset positoin to new track
-	Sim.track.track_loaded.connect(reset_position)
+
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

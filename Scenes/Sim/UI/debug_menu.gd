@@ -1,5 +1,4 @@
-extends Control
-class_name PublisherConfiguratorUI
+extends MarginContainer
 
 @onready var config_panel := $VBoxContainer/ConfigPanel
 @onready var pub_selector := $VBoxContainer/HBoxContainer/OptionButton

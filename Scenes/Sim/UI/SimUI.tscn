@@ -1,0 +1,328 @@
+[gd_scene format=3 uid="uid://ne6yuaaeiar8"]
+
+[ext_resource type="Script" uid="uid://dl0k82cq0p7ky" path="res://Scenes/Sim/UI/sim_ui.gd" id="1_lfjlq"]
+[ext_resource type="Script" uid="uid://ba6w2edq6k5dp" path="res://Scenes/Sim/UI/controls_label.gd" id="2_hox2s"]
+[ext_resource type="Script" uid="uid://dtnf8qsbtrk07" path="res://Scenes/Sim/UI/stats.gd" id="2_o5cjj"]
+[ext_resource type="Script" uid="uid://btpbxj5260gcn" path="res://Scenes/Sim/UI/vehicle_menu.gd" id="3_xhllv"]
+[ext_resource type="Script" uid="uid://t2c8u12dg5bk" path="res://Scenes/Sim/track_menu.gd" id="3_xmg1i"]
+[ext_resource type="Script" uid="uid://mvywmawpyl07" path="res://Scenes/Sim/UI/extra_menu.gd" id="6_ac68a"]
+[ext_resource type="Script" uid="uid://0a6kpv3cpw7" path="res://Scenes/Sim/UI/debug_menu.gd" id="6_o5cjj"]
+
+[sub_resource type="GDScript" id="GDScript_xhllv"]
+script/source = "extends PanelContainer
+class_name MainMenu
+
+func _ready() -> void:
+	print(\"main menu ready\")
+"
+
+[sub_resource type="LabelSettings" id="LabelSettings_0tiax"]
+font_size = 22
+font_color = Color(0.744876, 0.999331, 1, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_val13"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_ghe6x"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fiia4"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.060334228, 0.060334228, 0.060334228, 0.6)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+
+[node name="SimUI" type="Control" unique_id=2132864431]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_lfjlq")
+
+[node name="Stats" type="PanelContainer" parent="." unique_id=1504225956]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -122.0
+offset_bottom = 97.0
+grow_horizontal = 0
+script = ExtResource("2_o5cjj")
+
+[node name="MarginContainer" type="MarginContainer" parent="Stats" unique_id=1479226356]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Stats/MarginContainer" unique_id=2073894066]
+layout_mode = 2
+
+[node name="FpsLabel" type="Label" parent="Stats/MarginContainer/VBoxContainer" unique_id=1010176785]
+layout_mode = 2
+text = "FPS:"
+
+[node name="TimerLabel" type="Label" parent="Stats/MarginContainer/VBoxContainer" unique_id=1047921344]
+layout_mode = 2
+text = "Timer:"
+
+[node name="FallenConesLabel" type="Label" parent="Stats/MarginContainer/VBoxContainer" unique_id=1668494678]
+layout_mode = 2
+text = "Fallen Cones:"
+
+[node name="MainMenu" type="PanelContainer" parent="." unique_id=527270208]
+custom_minimum_size = Vector2(400, 500)
+layout_mode = 0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 320.0
+offset_bottom = 520.0
+script = SubResource("GDScript_xhllv")
+
+[node name="MarginContainer" type="MarginContainer" parent="MainMenu" unique_id=1022736181]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainMenu/MarginContainer" unique_id=1895002308]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="MenuTitle" type="Label" parent="MainMenu/MarginContainer/VBoxContainer" unique_id=1594969294]
+layout_mode = 2
+text = "Options Menu"
+label_settings = SubResource("LabelSettings_0tiax")
+
+[node name="MenuTabs" type="TabContainer" parent="MainMenu/MarginContainer/VBoxContainer" unique_id=1858219786]
+layout_mode = 2
+size_flags_vertical = 3
+current_tab = 0
+
+[node name="VEHICLE" type="MarginContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs" unique_id=1780155961]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+script = ExtResource("3_xhllv")
+metadata/_tab_index = 0
+
+[node name="Panel" type="ScrollContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE" unique_id=31019524]
+layout_mode = 2
+
+[node name="Vehicle" type="VBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Panel" unique_id=1756001699]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="PilotList" type="HBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Panel/Vehicle" unique_id=804804314]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Panel/Vehicle/PilotList" unique_id=1451648093]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "Pilot:"
+
+[node name="PilotMode" type="OptionButton" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Panel/Vehicle/PilotList" unique_id=1606553936]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_force_pass_scroll_events = false
+selected = 0
+allow_reselect = true
+item_count = 4
+popup/item_0/text = "Manual"
+popup/item_0/id = 0
+popup/item_1/text = "ROS2"
+popup/item_1/id = 1
+popup/item_2/text = "FollowTrack"
+popup/item_2/id = 2
+popup/item_3/text = "NoPilot"
+popup/item_3/id = 3
+
+[node name="ResetCarButton" type="Button" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Panel/Vehicle" unique_id=599819201]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_val13")
+text = "Reset Car Position"
+
+[node name="TRACK" type="MarginContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs" unique_id=1626101123]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+script = ExtResource("3_xmg1i")
+metadata/_tab_index = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/TRACK" unique_id=1260263345]
+layout_mode = 2
+theme_override_constants/separation = 13
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/TRACK/HBoxContainer" unique_id=687881883]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="RegenNoise" type="Button" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/TRACK/HBoxContainer/VBoxContainer" unique_id=1622874389]
+layout_mode = 2
+text = "RegenNoise
+"
+
+[node name="Prev" type="Button" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/TRACK/HBoxContainer/VBoxContainer" unique_id=870690454]
+layout_mode = 2
+text = "Prev"
+
+[node name="Next" type="Button" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/TRACK/HBoxContainer/VBoxContainer" unique_id=1798298539]
+layout_mode = 2
+text = "Next"
+
+[node name="GenerateTrack" type="Button" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/TRACK/HBoxContainer/VBoxContainer" unique_id=2111812978]
+layout_mode = 2
+text = "Generate Track
+"
+
+[node name="ClearTrack" type="Button" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/TRACK/HBoxContainer/VBoxContainer" unique_id=2043538290]
+layout_mode = 2
+text = "Clear Track"
+
+[node name="OpenTrack" type="Button" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/TRACK/HBoxContainer/VBoxContainer" unique_id=1531126950]
+layout_mode = 2
+text = "Open Track"
+
+[node name="EnableConeCollision" type="CheckButton" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/TRACK/HBoxContainer/VBoxContainer" unique_id=258316078]
+layout_mode = 2
+text = "Enable Cone Collision"
+
+[node name="TextureRect" type="TextureRect" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/TRACK/HBoxContainer" unique_id=790134537]
+layout_mode = 2
+texture = SubResource("NoiseTexture2D_ghe6x")
+
+[node name="Line2D" type="Line2D" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/TRACK/HBoxContainer/TextureRect" unique_id=74824542]
+
+[node name="FileDialog" type="FileDialog" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/TRACK" unique_id=1697685901]
+oversampling_override = 1.0
+title = "Open a File"
+initial_position = 2
+file_mode = 0
+display_mode = 1
+root_subfolder = "TrackFiles"
+
+[node name="DEBUG" type="MarginContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs" unique_id=176396122]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+script = ExtResource("6_o5cjj")
+metadata/_tab_index = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/DEBUG" unique_id=1090649844]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/DEBUG/VBoxContainer" unique_id=1721969184]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Label" type="Label" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/DEBUG/VBoxContainer/HBoxContainer" unique_id=1368750974]
+layout_mode = 2
+text = "Publisher: "
+
+[node name="OptionButton" type="OptionButton" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/DEBUG/VBoxContainer/HBoxContainer" unique_id=1704868940]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ConfigPanel" type="PanelContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/DEBUG/VBoxContainer" unique_id=1693442801]
+visible = false
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_fiia4")
+
+[node name="MarginContainer" type="MarginContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/DEBUG/VBoxContainer/ConfigPanel" unique_id=957065183]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/DEBUG/VBoxContainer/ConfigPanel/MarginContainer" unique_id=1071420688]
+layout_mode = 2
+
+[node name="EnableContainer" type="HBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/DEBUG/VBoxContainer/ConfigPanel/MarginContainer/VBoxContainer" unique_id=353716344]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/DEBUG/VBoxContainer/ConfigPanel/MarginContainer/VBoxContainer/EnableContainer" unique_id=982509437]
+layout_mode = 2
+text = "Enable: "
+
+[node name="CheckButton" type="CheckButton" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/DEBUG/VBoxContainer/ConfigPanel/MarginContainer/VBoxContainer/EnableContainer" unique_id=2102459513]
+layout_mode = 2
+
+[node name="FrequencyContainer" type="HBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/DEBUG/VBoxContainer/ConfigPanel/MarginContainer/VBoxContainer" unique_id=1090180352]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/DEBUG/VBoxContainer/ConfigPanel/MarginContainer/VBoxContainer/FrequencyContainer" unique_id=1276944441]
+layout_mode = 2
+text = "Frequency: "
+
+[node name="LineEdit" type="LineEdit" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/DEBUG/VBoxContainer/ConfigPanel/MarginContainer/VBoxContainer/FrequencyContainer" unique_id=2018873675]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+max_length = 3
+expand_to_text_length = true
+context_menu_enabled = false
+emoji_menu_enabled = false
+
+[node name="Button" type="Button" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/DEBUG/VBoxContainer/ConfigPanel/MarginContainer/VBoxContainer/FrequencyContainer" unique_id=226930647]
+layout_mode = 2
+text = "Commit"
+
+[node name="EXTRA" type="MarginContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs" unique_id=137354673]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+script = ExtResource("6_ac68a")
+metadata/_tab_index = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/EXTRA" unique_id=1688313888]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="39" type="Button" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/EXTRA/VBoxContainer" unique_id=275094366]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_val13")
+text = "39"
+
+[node name="ControlsLabel" type="Label" parent="." unique_id=1827473245]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = -33.0
+offset_right = 103.0
+offset_bottom = -10.0
+grow_vertical = 0
+text = "Initializing..."
+script = ExtResource("2_hox2s")
+
+[connection signal="item_selected" from="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Panel/Vehicle/PilotList/PilotMode" to="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE" method="_on_pilot_mode_item_selected"]
+[connection signal="pressed" from="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Panel/Vehicle/ResetCarButton" to="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE" method="_on_reset_car_button_pressed"]
+[connection signal="pressed" from="MainMenu/MarginContainer/VBoxContainer/MenuTabs/TRACK/HBoxContainer/VBoxContainer/OpenTrack" to="MainMenu/MarginContainer/VBoxContainer/MenuTabs/TRACK" method="_on_open_track_pressed"]
+[connection signal="file_selected" from="MainMenu/MarginContainer/VBoxContainer/MenuTabs/TRACK/FileDialog" to="MainMenu/MarginContainer/VBoxContainer/MenuTabs/TRACK" method="_on_track_file_selected"]
+[connection signal="pressed" from="MainMenu/MarginContainer/VBoxContainer/MenuTabs/EXTRA/VBoxContainer/39" to="MainMenu/MarginContainer/VBoxContainer/MenuTabs/EXTRA" method="_miku_truco"]
