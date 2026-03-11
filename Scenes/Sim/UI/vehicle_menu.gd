@@ -9,13 +9,13 @@ func _ready() -> void:
 func _on_pilot_mode_item_selected(index: int) -> void:
 	var pilot : AVehiclePilot
 	match index:
-		1:
+		0:
 			pilot = ManualPilot.new(Sim.car)
-		2:
+		1:
 			pilot = RosPilot.new(Sim.car)
-		3:
+		2:
 			pilot = TrackRailPilot.new(Sim.car)
-		4:
+		3:
 			pilot = NoPilot.new(Sim.car)
 	Sim.car.set_pilot(pilot)
 	

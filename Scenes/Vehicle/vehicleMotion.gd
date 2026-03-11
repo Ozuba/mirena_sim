@@ -9,7 +9,7 @@ const WHEEL_RADIUS = 0.23 # m
 const BRAKE_F = 20
 const MAX_STEER = deg_to_rad(30)
 
-var _active_pilot: AVehiclePilot = RosPilot.new(self)
+var _active_pilot: AVehiclePilot
 
 # Overloaded longitudinal actuator GAS
 @export var gas: float
@@ -21,6 +21,8 @@ func _ready():
 	Sim.register_camera("FPCam",$FPCam)
 	# Register car in Sim
 	Sim.car = self
+	# Set driver
+	_active_pilot = RosPilot.new(self)
 
 
 

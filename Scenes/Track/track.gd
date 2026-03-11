@@ -13,9 +13,11 @@ var track_curve : Curve3D = Curve3D.new()
 static var _gate_scene = preload("res://Scenes/Track/Gate/gate.tscn")
 static var _cone_scene = preload("res://Scenes/Track/Cone/cone.tscn")
 
+# Track Generaytor
+var track_gen = TrackGenerator.new()
+
 # ROS node to manage tracks
 var _node: RosNode
-
 signal track_loaded
 
 # Standard ROS 2 Origin (X: Forward, Y: Left, PSI: Counter-Clockwise Yaw)
@@ -29,9 +31,10 @@ var origin : Dictionary = {
 func _on_ros_parameter_changed(param_name: String, value: Variant):
 	if param_name == "track":
 		if value == "random":
-			var new_track_path = value as String
-			print("ROS requested track change: ", new_track_path)
-			load_track(new_track_path)
+			create_track()
+		else:
+			if FileAccess.file_exists(value):
+				load_track(value)
 		
 
 
@@ -39,14 +42,27 @@ func _ready() -> void:
 	Sim.track = self
 	_node = RosNode.new()
 	_node.init("track_manager")
-	_node.parameter_changed.connect(_on_ros_parameter_changed)
 	# Track name parameter
 	_node.declare_parameter("track", "")
+	_node.parameter_changed.connect(_on_ros_parameter_changed)
 
-func create_track(path: Curve3D):
+	#Check parameter
+	var value = _node.get_parameter("track")
+	if value == "random":
+		create_track()
+	else:
+		if FileAccess.file_exists(value):
+			load_track(value)
+	
+
+	
+	
+	
+func create_track():
 	clear_track()
-	track_curve = path
-	track_path.curve = path
+	# Update curve and path
+	track_curve = track_gen.generate()
+	track_path.curve = track_curve
 	
 	var length = track_curve.get_baked_length()
 	var num_gates = int(length / track_spacing)
