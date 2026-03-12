@@ -17,8 +17,8 @@ var _active_pilot: AVehiclePilot
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	# Register cameras in sim
-	Sim.register_camera("TPCam",$TPCam)
-	Sim.register_camera("FPCam",$FPCam)
+	Sim.register_camera($TPCam)
+	Sim.register_camera($FPCam)
 	# Register car in Sim
 	Sim.car = self
 	# Set driver

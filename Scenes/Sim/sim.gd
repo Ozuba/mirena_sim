@@ -8,7 +8,6 @@ var _stats: Dictionary = {
 	"cones_fallen": 0
 }
 
-var current_scene: Node
 
 var car : MirenaCar
 var track : Track
@@ -22,20 +21,18 @@ var arguments : Dictionary
 
 func _ready() -> void:	
 	self._parse_arguments()
-	
-	self.current_scene = get_tree().current_scene
-	# Añadir el nodo de debugging
-	var SimDebug = load("res://Scenes/Sim/sim_debug.gd")
-	add_child.call_deferred(SimDebug.new())
 
 	
 func _input(event):
 	# Camera Toggle
 	if event.is_action_pressed("alternate_camera"):
-		var next_cam = get_next_id()
-		if next_cam != "":
-			switch_to_camera(next_cam)
-			print("Switched to: ", next_cam)
+		# The manager handles the internal index math (modulo, bounds checking)
+		cycle_camera()
+		
+		# Optional: Print the name of the node for debugging
+		var active = get_active_camera()
+		if active:
+			print("Switched to camera: ", active.name)
 
 func _notification(what):
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
@@ -75,36 +72,47 @@ func _parse_arguments() -> void:
 # -------------------------------------------------
 
 # Dictionary to store cameras by a unique String ID
-var _cameras: Dictionary = {}
-var _active_id: String = ""
+var _cameras: Array[Camera3D] = []
+var _active_index: int = -1
 
-func register_camera(id: String, camera: Camera3D):
-	_cameras[id] = camera
-	# If this is the first camera registered, make it active
-	if _cameras.size() == 1:
-		switch_to_camera(id)
+## Just pass the camera. No ID needed.
+func register_camera(camera: Camera3D):
+	if not _cameras.has(camera):
+		_cameras.append(camera)
 		
-func unregister_camera(id: String):
-	if _cameras.has(id):
-		_cameras.erase(id)
+		# AUTOMATION: When the camera is deleted, it cleans itself up
+		camera.tree_exiting.connect(func(): unregister_camera(camera))
 		
-func switch_to_camera(id: String):
-	if not _cameras.has(id):
-		push_warning("Camera ID '" + id + "' not found in SIM.")
-		return
+		if _cameras.size() == 1:
+			switch_to_index(0)
 
-	_active_id = id
-	
-	# Loop through all registered cameras and toggle the 'current' property
-	for cam_id in _cameras:
-		var cam = _cameras[cam_id]
-		if is_instance_valid(cam):
-			cam.current = (cam_id == id)
-			
-func get_next_id() -> String:
-	var keys = _cameras.keys()
-	if keys.is_empty(): return ""
-	
-	var current_index = keys.find(_active_id)
-	var next_index = (current_index + 1) % keys.size()
-	return keys[next_index]
+func unregister_camera(camera: Camera3D):
+	var idx = _cameras.find(camera)
+	if idx != -1:
+		_cameras.remove_at(idx)
+		# If we removed the active camera, snap to the previous valid one
+		if _active_index == idx:
+			_active_index = posmod(_active_index - 1, max(1, _cameras.size()))
+			_update_camera_states()
+
+## Cycle to the next camera in the order they were added
+func cycle_camera():
+	if _cameras.is_empty(): return
+	var next_idx = (_active_index + 1) % _cameras.size()
+	switch_to_index(next_idx)
+
+func switch_to_index(idx: int):
+	if idx < 0 or idx >= _cameras.size(): return
+	_active_index = idx
+	_update_camera_states()
+
+func _update_camera_states():
+	for i in _cameras.size():
+		if is_instance_valid(_cameras[i]):
+			_cameras[i].current = (i == _active_index)
+
+## Helper to get the currently active camera object
+func get_active_camera() -> Camera3D:
+	if _active_index != -1 and _active_index < _cameras.size():
+		return _cameras[_active_index]
+	return null

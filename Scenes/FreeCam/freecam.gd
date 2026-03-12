@@ -47,7 +47,7 @@ func _ready() -> void:
 	_setup_nodes.call_deferred()
 	_add_keybindings()
 	# Register in Sim
-	Sim.register_camera("FreeCam",self)
+	Sim.register_camera.call_deferred(self)
 
 
 
