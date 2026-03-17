@@ -25,6 +25,7 @@ var _node: RosNode
 var _state_pub: RosPublisher
 var _perception_pub: RosPublisher
 var _slam_pub: RosPublisher
+var _pub_tim : RosTimer
 # Subscribers
 var _control_sub: RosSubscriber
 
@@ -51,11 +52,13 @@ func _ready():
 	_state_pub = _node.create_publisher("~/state","mirena_common/msg/Car")
 	_perception_pub = _node.create_publisher("~/perception","mirena_common/msg/EntityList")
 	_slam_pub = _node.create_publisher("~/slam","mirena_common/msg/EntityList")
-
+	## Publisher timers
+	_pub_tim = _node.create_timer(0.01,_publish)
 	# Subscribers
 	_control_sub = _node.create_subscriber("~/control", "mirena_common/msg/CarControl", _on_control)
 	# Transforms
 	_tf_broadcaster = _node.create_tf_broadcaster()
+
 	
 	# Camera Registration
 	Sim.register_camera($TPCam)
@@ -86,7 +89,9 @@ func _physics_process(delta: float) -> void:
 	if global_position.y < -1:
 		reset_position()
 		
-	# Publish Debug Info
+# Publish Debug Info
+
+func _publish():
 	_publish_car_state()
 	_publish_perception()
 	_publish_slam()

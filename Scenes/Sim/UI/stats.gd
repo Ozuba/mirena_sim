@@ -6,6 +6,6 @@ func _ready() -> void:
 	pass # Replace with function body.
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
+func _process(_delta: float) -> void:
+	var fps = Engine.get_frames_per_second()
+	$MarginContainer/VBoxContainer/FpsLabel.text = "FPS: %d" % Engine.get_frames_per_second()

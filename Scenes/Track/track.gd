@@ -23,6 +23,9 @@ signal track_loaded
 var _node: RosNode
 var _track_pub : RosPublisher
 var _map_pub : RosPublisher
+var _map_timer : RosTimer
+var _track_timer : RosTimer
+
 # Standard ROS 2 Origin (X: Forward, Y: Left, PSI: Counter-Clockwise Yaw)
 var origin : Dictionary = {
 	"x": 0.0,
@@ -50,6 +53,10 @@ func _ready() -> void:
 	# Publishers
 	_track_pub = _node.create_publisher("~/track","mirena_common/msg/Track")
 	_map_pub = _node.create_publisher("~/full_map","mirena_common/msg/EntityList")
+	# Timers for publishers
+	_map_timer = _node.create_timer(1,_publish_full_map)
+	_track_timer = _node.create_timer(1,_publish_track)
+	
 	#Check parameter
 	var value = _node.get_parameter("track")
 	if value == "random":
@@ -58,10 +65,7 @@ func _ready() -> void:
 		if FileAccess.file_exists(value):
 			load_track(value)
 	
-	
-func _process(delta: float) -> void:
-	_publish_full_map()
-	_publish_track()
+
 	
 # ROS publishers
 func _publish_full_map():
