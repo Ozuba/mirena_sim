@@ -9,17 +9,20 @@ class_name Track
 var track_curve : Curve3D = Curve3D.new() 
 @onready var track_path : Path3D = $TrackPath
 
+
+
 # Internal Refs
 static var _gate_scene = preload("res://Scenes/Track/Gate/gate.tscn")
 static var _cone_scene = preload("res://Scenes/Track/Cone/cone.tscn")
 
-# Track Generaytor
+# Track Generator
 var track_gen = TrackGenerator.new()
+signal track_loaded
 
 # ROS node to manage tracks
 var _node: RosNode
-signal track_loaded
-
+var _track_pub : RosPublisher
+var _map_pub : RosPublisher
 # Standard ROS 2 Origin (X: Forward, Y: Left, PSI: Counter-Clockwise Yaw)
 var origin : Dictionary = {
 	"x": 0.0,
@@ -39,13 +42,14 @@ func _on_ros_parameter_changed(param_name: String, value: Variant):
 
 
 func _ready() -> void:
-	Sim.track = self
 	_node = RosNode.new()
-	_node.init("track_manager")
-	# Track name parameter
+	_node.init("track_manager","sim")
+	# Track name parameter and callback
 	_node.declare_parameter("track", "")
 	_node.parameter_changed.connect(_on_ros_parameter_changed)
-
+	# Publishers
+	_track_pub = _node.create_publisher("~/track","mirena_common/msg/Track")
+	_map_pub = _node.create_publisher("~/full_map","mirena_common/msg/EntityList")
 	#Check parameter
 	var value = _node.get_parameter("track")
 	if value == "random":
@@ -54,9 +58,43 @@ func _ready() -> void:
 		if FileAccess.file_exists(value):
 			load_track(value)
 	
+	
+func _process(delta: float) -> void:
+	_publish_full_map()
+	_publish_track()
+	
+# ROS publishers
+func _publish_full_map():
+	var msg = RosMirenaCommonEntityList.new()
+	msg.header.frame_id = "map"
+	msg.header.stamp = _node.now()
+	msg.entities = get_tree().get_nodes_in_group("Cones").map(func(c): return _to_ent(c,true))
+	_map_pub.publish(msg)
 
+
+func _publish_track():
+	if not Sim.track: return
+	var msg = RosMirenaCommonTrack.new()
+	msg.header.frame_id = "map"
+	msg.header.stamp = _node.now()
+	msg.is_closed = track_curve.closed
+	msg.gates = get_gate_positions().map(func(gp):
+		var gate = RosMirenaCommonGate.new()
+		gate.x = gp.x; gate.y = gp.y; gate.psi = gp.psi
+		return gate
+	)
+	_track_pub.publish(msg)
 	
+func _to_ent(cone: Node3D, global : bool = false  ) -> RosMirenaCommonEntity:
+	var ent = RosMirenaCommonEntity.new()
+	var pos =  cone.global_position if global else to_local(cone.global_position)
+	ent.type = cone.get_type_as_string()
 	
+	# ROS Swizzle: Forward=Z, Left=-X, Up=Y
+	ent.position.x = pos.z
+	ent.position.y = pos.x
+	ent.position.z = pos.y
+	return ent
 	
 func create_track():
 	clear_track()

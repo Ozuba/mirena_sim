@@ -1,9 +1,5 @@
 extends Control
 
-@onready var track_line: Line2D = $HBoxContainer/TextureRect/Line2D
-@onready var texture_rect: TextureRect = $HBoxContainer/TextureRect
-
-
 func _ready():
 	pass
 

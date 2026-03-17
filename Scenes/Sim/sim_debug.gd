@@ -1,12 +1,10 @@
 extends Node
 
-# --- Referencias externas ---
-@export var CAR_FRAME: String = "car_link"
-
 # --- Estado Interno ---
 var _node: RosNode
 var _tasks: Array[PublishTask] = []
 var slam_cones: Array = []
+var car_frame = "cog"
 
 func _ready() -> void:
 	_setup_ros_system()
@@ -17,10 +15,7 @@ func _setup_ros_system() -> void:
 	_node = RosNode.new()
 	_node.init("SimDebug")
 	
-	_tasks.append(PublishTask.new("car",      50.0, _node.create_publisher("/sim/debug/car",            "mirena_common/msg/Car"),             _publish_car_state))
 	_tasks.append(PublishTask.new("control",  50.0, _node.create_publisher("/sim/debug/control",        "mirena_common/msg/CarControl"),      _publish_control))
-	_tasks.append(PublishTask.new("perc",     50.0, _node.create_publisher("/sim/debug/perception",     "mirena_common/msg/EntityList"),      _process_perception))
-	_tasks.append(PublishTask.new("deb_perc", 10.0, _node.create_publisher("/sim/debug/deb_perception", "mirena_common/msg/DebugEntityList"), _process_debug_perception))
 	_tasks.append(PublishTask.new("slam",     10.0, _node.create_publisher("/sim/debug/slam",           "mirena_common/msg/EntityList"),      _publish_slam))
 	_tasks.append(PublishTask.new("map",      1.0,  _node.create_publisher("/sim/debug/full_map",       "mirena_common/msg/EntityList"),      _publish_full_map))
 	_tasks.append(PublishTask.new("track",    1.0,  _node.create_publisher("/sim/debug/track",          "mirena_common/msg/Track"),           _publish_track))
@@ -44,16 +39,6 @@ func _publish_car_state(pub: RosPublisher):
 	msg.u = local_vel.z; msg.v = local_vel.x; msg.omega = Sim.car.angular_velocity.y
 	pub.publish(msg)
 
-func _process_perception(pub: RosPublisher):
-	var cones = Sim.car.get_cones_in_sight(8.0)
-	for cone in cones:
-		if not slam_cones.has(cone): slam_cones.append(cone)
-	
-	var msg = RosMirenaCommonEntityList.new()
-	msg.header.frame_id = CAR_FRAME
-	msg.header.stamp = _node.now()
-	msg.entities = cones.map(func(c): return _to_ent(c, Sim.car))
-	pub.publish(msg)
 
 func _process_debug_perception(pub: RosPublisher):
 	var cones = Sim.car.get_cones_in_sight()
@@ -61,7 +46,7 @@ func _process_debug_perception(pub: RosPublisher):
 		if not slam_cones.has(cone): slam_cones.append(cone)
 	
 	var msg = RosMirenaCommonDebugEntityList.new()
-	msg.header.frame_id = CAR_FRAME
+	msg.header.frame_id = car_frame
 	msg.header.stamp = _node.now()
 	msg.entities = cones.map(func(c): return _to_deb_ent(c, Sim.car))
 	pub.publish(msg)

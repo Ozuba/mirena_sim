@@ -1,94 +1,111 @@
-extends RosTfBroadcaster3D
+extends Node3D # Converted from RosTfBroadcaster3D
 class_name RosImagePublisher
 
 # --- Configuration ---
-@export var topic_name: String = "camera/"
 @export var resolution: Vector2i = Vector2i(640, 480)
-# frame_id and publish_rate are inherited from RosNode3D
+@export var publish_rate: float = 15.0
+@export var frame_id: String = "~/camera"
+@export var parent_frame_id: String = "~/base_link"
 
-# --- Internal Variables ---
+# --- ROS Components ---
 var _node: RosNode
 var _camera_pub: RosPublisher
-var _camera_info_pub : RosPublisher
-var _camera_info : RosSensorMsgsCameraInfo
-var rd: RenderingDevice
-var is_requesting: bool = false
-var _time_since_last_publish: float = 0.0
-var _target_interval = 1.0 / publish_rate
-# Pre-allocate message to avoid GC pressure
+var _camera_info_pub: RosPublisher
+var _tf_broadcaster: RosTfBroadcaster
+
+# --- Internal Variables ---
+var _camera_info: RosSensorMsgsCameraInfo
 var _msg: RosSensorMsgsImage
+var rd: RenderingDevice
 
-func _ready() -> void:
-	# 1. Initialize ROS Node and Publisher
+var is_initialized: bool = false
+var is_requesting: bool = false
+var _current_stamp: RosMsg
+var _time_since_last_publish: float = 0.0
+
+func init(ros_ns: String) -> void:
+	# 1. Initialize ROS Node
 	_node = RosNode.new()
-	_node.init("camera_node")
-	_camera_pub = _node.create_publisher(topic_name + "/image_raw", "sensor_msgs/msg/Image")
-	_camera_info_pub = _node.create_publisher(topic_name + "/camera_info", "sensor_msgs/msg/CameraInfo")
+	_node.init(name.to_snake_case(), ros_ns)
+	
+	# 2. Setup Factory-Created Components
+	_camera_pub = _node.create_publisher("~/image_raw", "sensor_msgs/msg/Image")
+	_camera_info_pub = _node.create_publisher("~/camera_info", "sensor_msgs/msg/CameraInfo")
+	_tf_broadcaster = _node.create_tf_broadcaster()
 
-	# 2. Setup Viewport for manual triggering
+	# 3. Setup Hardware Rendering
+	rd = RenderingServer.get_rendering_device()
 	var viewport = $CameraViewport
+	viewport.size = resolution
 	viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
-	viewport.size = resolution # Ensure viewport matches intended res
-	
-	# Init camera info and cache it
+
+	# 4. Prepare Static Messages & Resolution
 	_camera_info = fill_camera_info($CameraViewport/Camera3D)
+	_prepare_msg_template()
 	
-	# Pre-configure message fields that don't change
+	is_initialized = true
+
+func _process(delta: float) -> void:
+	if not is_initialized: return
+
+	# --- TF BROADCASTING ---
+	# Uses C++ logic to swizzle Godot (Y-Up) to ROS (Z-Up)
+	_tf_broadcaster.send_transform(transform, frame_id, parent_frame_id, true)
+
+	# --- PERIODIC IMAGE CAPTURE ---
+	if not is_requesting:
+		_time_since_last_publish += delta
+		if _time_since_last_publish >= 1.0 / publish_rate:
+			_time_since_last_publish = 0
+			_capture_frame()
+
+func _capture_frame() -> void:
+	is_requesting = true
+	_current_stamp = _node.now()
+	$CameraViewport.render_target_update_mode = SubViewport.UPDATE_ONCE
+	
+	# Named signal connection (No lambda)
+	if not RenderingServer.frame_post_draw.is_connected(_on_frame_drawn):
+		RenderingServer.frame_post_draw.connect(_on_frame_drawn, CONNECT_ONE_SHOT)
+
+func _on_frame_drawn() -> void:
+	var tex = $CameraViewport.get_texture()
+	var rid = RenderingServer.texture_get_rd_texture(tex.get_rid())
+	if rid.is_valid():
+		rd.texture_get_data_async(rid, 0, _on_data_received)
+	else:
+		is_requesting = false
+
+func _on_data_received(data: PackedByteArray) -> void:
+	if not data.is_empty():
+		var resolved_frame = _node.get_namespace().trim_prefix("/").path_join(frame_id.trim_prefix("~/"))
+		
+		# Update Image Msg
+		_msg.header.stamp = _current_stamp
+		_msg.header.frame_id = resolved_frame
+		_msg.data = data
+		
+		# Update Info Msg
+		_camera_info.header.stamp = _current_stamp
+		_camera_info.header.frame_id = resolved_frame
+		
+		_camera_pub.publish(_msg)
+		_camera_info_pub.publish(_camera_info)
+		
+	is_requesting = false
+
+
+
+func _prepare_msg_template() -> void:
 	_msg = RosSensorMsgsImage.new()
 	_msg.height = resolution.y
 	_msg.width = resolution.x
-	_msg.encoding = "rgba8" # Using RGBA8 to avoid CPU conversion costs
-	_msg.is_bigendian = false
-	_msg.step = resolution.x * 4 # 4 bytes for RGBA
-	_msg.header.frame_id = frame_id
-
-	# 3. Get the Main Rendering Device
-	rd = RenderingServer.get_rendering_device()
-	if not rd:
-		push_error("[ROS] Async publishing requires Forward+ or Mobile renderer!")
-
-func _process(_delta: float) -> void:
-	# Most elegant trigger: request a frame as soon as the last one is done
-	_time_since_last_publish += _delta
-	if _time_since_last_publish >= _target_interval:
-		_time_since_last_publish = 0
-		is_requesting = true
-		$CameraViewport.render_target_update_mode = SubViewport.UPDATE_ONCE
-		# Log the timestamp before requesting
-		_msg.header.stamp = _node.now()
-		# We wait for the frame to be drawn before grabbing the RID
-		RenderingServer.frame_post_draw.connect(_on_frame_drawn, CONNECT_ONE_SHOT)
-		
-func _on_frame_drawn():
-	# This runs as soon as the RenderingServer finishes the frame
-	var tex = $CameraViewport.get_texture()
-	var rd_tex_rid = RenderingServer.texture_get_rd_texture(tex.get_rid())
-	
-	if rd_tex_rid.is_valid():
-		# 4. Request the data. This is fully asynchronous.
-		# No waiting here; _on_data_received is called when bytes are ready.
-		rd.texture_get_data_async(rd_tex_rid, 0, _on_data_received)
-	else:
-		# Cleanup if the RID was invalid
-		is_requesting = false
-
-
-func _on_data_received(data: PackedByteArray) -> void:
-	# This callback is already on the Main Thread in Godot 4
-	if data.is_empty():
-		is_requesting = false
-		return
-
-	# 4. Direct Publish (No Image.convert call)
-	_msg.data = data # PackedByteArray is passed by reference/minimal copy
-	
-	_camera_pub.publish(_msg)
-	_camera_info_pub.publish(_camera_info)
-	
-	is_requesting = false
+	_msg.encoding = "rgba8"
+	_msg.step = resolution.x * 4
 	
 func fill_camera_info(camera: Camera3D):
 	var camera_info = RosSensorMsgsCameraInfo.new()
+	camera_info.header.frame_id = frame_id
 	var viewport_size = camera.get_viewport().get_visible_rect().size
 	
 	# 1. Basic Dimensions

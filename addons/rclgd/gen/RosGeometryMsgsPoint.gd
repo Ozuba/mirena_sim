@@ -15,4 +15,3 @@ var y : float:
 var z : float:
 	get: return get_member(&"z")
 	set(v): set_member(&"z", v)
-
