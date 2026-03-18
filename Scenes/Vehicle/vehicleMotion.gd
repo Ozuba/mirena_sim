@@ -39,11 +39,11 @@ var _steer_smoothed: float = 0.0
 var slam_cones: Array = [] # Seen cones
 
 func _ready():
-	var ros_ns = "sim/".path_join(name.to_snake_case()) 
+	var ros_ns = "/sim"
 	# 1. Initialize Sensors
-	$Camera.init(ros_ns)
-	$Lidar.init(ros_ns)
-	$IMU/IMU.init(ros_ns)
+	$Camera.init(ros_ns.path_join(name.to_snake_case()))
+	$Lidar.init(ros_ns.path_join(name.to_snake_case()))
+	$IMU/IMU.init(ros_ns.path_join(name.to_snake_case()))
 	
 	## ROS
 	_node = RosNode.new()
