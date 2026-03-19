@@ -5,7 +5,6 @@ class_name RosLidarPublisher
 const TEXTURE_SIZE = Vector2i(600, 125)
 @export var lidar_rate: float = 10.0
 @export var frame_id: String = "~/lidar"
-@export var optical_frame_id: String = "~/camera_optical"
 @export var parent_frame_id: String = "~/base_link"
 
 @export var noise_std_dev : float = 0.005
@@ -26,8 +25,6 @@ var _is_waiting_for_gpu: bool = false
 var _current_stamp: RosMsg
 var _time_since_last_scan: float = 0.0
 
-# Helpers
-var optical_tf = Transform3D(Basis.from_euler(Vector3(0, deg_to_rad(-90), deg_to_rad(-90))), Vector3.ZERO)
 
 
 func init(ros_ns: String) -> void:
@@ -64,8 +61,7 @@ func _process(delta: float) -> void:
 
 	# Broadcast TF 
 	_tf_broadcaster.send_transform(transform, frame_id, parent_frame_id, true)
-	# Tf of optical frame
-	_tf_broadcaster.send_transform(optical_tf, optical_frame_id, frame_id, true)
+
 
 	_time_since_last_scan += delta
 	if _time_since_last_scan >= (1.0 / lidar_rate):

@@ -6,6 +6,7 @@ class_name RosImagePublisher
 @export var publish_rate: float = 15.0
 @export var frame_id: String = "~/camera"
 @export var parent_frame_id: String = "~/base_link"
+@export var optical_frame_id: String = "~/camera_optical"
 
 # --- ROS Components ---
 var _node: RosNode
@@ -23,6 +24,9 @@ var is_requesting: bool = false
 var _current_stamp: RosMsg
 var _time_since_last_publish: float = 0.0
 
+
+# Helpers
+var optical_tf = Transform3D(Basis(Vector3(0, -1, 0), Vector3(0, 0, 1), Vector3(-1, 0, 0)).orthonormalized(), Vector3.ZERO)
 func init(ros_ns: String) -> void:
 	# 1. Initialize ROS Node
 	_node = RosNode.new()
@@ -43,14 +47,16 @@ func init(ros_ns: String) -> void:
 	_camera_info = fill_camera_info($CameraViewport/Camera3D)
 	_prepare_msg_template()
 	
+	## Publish transforms 
+	# Uses C++ logic to swizzle Godot (Y-Up) to ROS (Z-Up)
+	_tf_broadcaster.send_transform(transform, frame_id, parent_frame_id, true)
+	# Tf of optical frame
+	_tf_broadcaster.send_transform(optical_tf, optical_frame_id, frame_id, true)
 	is_initialized = true
 
 func _process(delta: float) -> void:
 	if not is_initialized: return
 
-	# --- TF BROADCASTING ---
-	# Uses C++ logic to swizzle Godot (Y-Up) to ROS (Z-Up)
-	_tf_broadcaster.send_transform(transform, frame_id, parent_frame_id, true)
 
 	# --- PERIODIC IMAGE CAPTURE ---
 	if not is_requesting:
@@ -78,17 +84,17 @@ func _on_frame_drawn() -> void:
 
 func _on_data_received(data: PackedByteArray) -> void:
 	if not data.is_empty():
-		var resolved_frame = _node.get_namespace().trim_prefix("/").path_join(frame_id.trim_prefix("~/"))
-		
+		var optical_frame_name = _node.get_namespace().trim_prefix("/").path_join(optical_frame_id.trim_prefix("~/"))
 		# Update Image Msg
 		_msg.header.stamp = _current_stamp
-		_msg.header.frame_id = resolved_frame
+		_msg.header.frame_id = optical_frame_name
 		_msg.data = data
 		
 		# Update Info Msg
 		_camera_info.header.stamp = _current_stamp
-		_camera_info.header.frame_id = resolved_frame
+		_camera_info.header.frame_id = optical_frame_name
 		
+		# Send Messages
 		_camera_pub.publish(_msg)
 		_camera_info_pub.publish(_camera_info)
 		
@@ -105,7 +111,7 @@ func _prepare_msg_template() -> void:
 	
 func fill_camera_info(camera: Camera3D):
 	var camera_info = RosSensorMsgsCameraInfo.new()
-	camera_info.header.frame_id = frame_id
+	camera_info.header.frame_id = optical_frame_id
 	var viewport_size = camera.get_viewport().get_visible_rect().size
 	
 	# 1. Basic Dimensions
