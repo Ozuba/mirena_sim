@@ -39,19 +39,18 @@ var _steer_smoothed: float = 0.0
 var slam_cones: Array = [] # Seen cones
 
 func _ready():
-	var ros_ns = "/sim"
 	# 1. Initialize Sensors
-	$Camera.init(ros_ns.path_join(name.to_snake_case()))
-	$Lidar.init(ros_ns.path_join(name.to_snake_case()))
-	$IMU/IMU.init(ros_ns.path_join(name.to_snake_case()))
+	$Camera.init(name.to_snake_case())
+	$Lidar.init(name.to_snake_case())
+	$IMU/IMU.init(name.to_snake_case())
 	
 	## ROS
 	_node = RosNode.new()
-	_node.init(name.to_snake_case(), ros_ns)
+	_node.init(name.to_snake_case())
 	## Publisher
 	_state_pub = _node.create_publisher("~/state","mirena_common/msg/Car")
-	_perception_pub = _node.create_publisher("~/perception","mirena_common/msg/EntityList")
-	_slam_pub = _node.create_publisher("~/slam","mirena_common/msg/EntityList")
+	_perception_pub = _node.create_publisher("~/debug_perception","mirena_common/msg/EntityList")
+	_slam_pub = _node.create_publisher("~/debug_slam","mirena_common/msg/EntityList")
 	## Publisher timers
 	_pub_tim = _node.create_timer(0.01,_publish)
 	# Subscribers
