@@ -4,8 +4,8 @@ class_name RosLidarPublisher
 # --- Configuration ---
 const TEXTURE_SIZE = Vector2i(600, 125)
 @export var lidar_rate: float = 10.0
-@export var frame_id: String = "~/lidar"
-@export var parent_frame_id: String = "~/base_link"
+@export var frame_id: String = "~lidar"
+@export var parent_frame_id: String = "~base_link"
 
 @export var noise_std_dev : float = 0.005
 
@@ -86,7 +86,7 @@ func _on_frame_drawn() -> void:
 func _on_texture_data_ready(raw_bytes: PackedByteArray) -> void:
 	if not raw_bytes.is_empty():
 		_cached_msg.header.stamp = _current_stamp
-		_cached_msg.header.frame_id = _node.get_namespace().trim_prefix("/").path_join(frame_id.trim_prefix("~/"))
+		_cached_msg.header.frame_id = _node.get_namespace().trim_prefix("/").path_join(frame_id.trim_prefix("~"))
 		
 		_cached_msg.width = raw_bytes.size() / 16
 		_cached_msg.row_step = raw_bytes.size()

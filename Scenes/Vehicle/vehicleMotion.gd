@@ -19,7 +19,7 @@ var _rail_progress: float = 0.0
 var path : Path3D
 
 # --- ROS Variables ---
-@export var frame_id: String = "~/car/cog"
+@export var frame_id: String = "car/cog"
 var _node: RosNode
 # Publishers
 var _state_pub: RosPublisher
