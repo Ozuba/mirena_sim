@@ -4,9 +4,9 @@ class_name RosImagePublisher
 # --- Configuration ---
 @export var resolution: Vector2i = Vector2i(640, 480)
 @export var publish_rate: float = 15.0
-@export var frame_id: String = "~/camera"
-@export var parent_frame_id: String = "~/base_link"
-@export var optical_frame_id: String = "~/camera_optical"
+@export var frame_id: String = "~camera"
+@export var parent_frame_id: String = "~base_link"
+@export var optical_frame_id: String = "~camera_optical"
 
 # --- ROS Components ---
 var _node: RosNode
@@ -28,7 +28,7 @@ var _time_since_last_publish: float = 0.0
 # Helpers
 var optical_tf = Transform3D(Basis(Vector3(0, -1, 0), Vector3(0, 0, 1), Vector3(-1, 0, 0)).orthonormalized(), Vector3.ZERO)
 func init(ros_ns: String) -> void:
-	# 1. Initialize ROS Node
+	# 1. Initialize ROS Node in car namespace
 	_node = RosNode.new()
 	_node.init(name.to_snake_case(), ros_ns)
 	
@@ -84,7 +84,7 @@ func _on_frame_drawn() -> void:
 
 func _on_data_received(data: PackedByteArray) -> void:
 	if not data.is_empty():
-		var optical_frame_name = _node.get_namespace().trim_prefix("/").path_join(optical_frame_id.trim_prefix("~/"))
+		var optical_frame_name = _node.resolve_frame(optical_frame_id)
 		# Update Image Msg
 		_msg.header.stamp = _current_stamp
 		_msg.header.frame_id = optical_frame_name

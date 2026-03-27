@@ -86,7 +86,7 @@ func _on_frame_drawn() -> void:
 func _on_texture_data_ready(raw_bytes: PackedByteArray) -> void:
 	if not raw_bytes.is_empty():
 		_cached_msg.header.stamp = _current_stamp
-		_cached_msg.header.frame_id = _node.get_namespace().trim_prefix("/").path_join(frame_id.trim_prefix("~"))
+		_cached_msg.header.frame_id = _node.resolve_frame(frame_id)
 		
 		_cached_msg.width = raw_bytes.size() / 16
 		_cached_msg.row_step = raw_bytes.size()

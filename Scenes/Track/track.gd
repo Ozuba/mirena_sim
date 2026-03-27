@@ -46,7 +46,7 @@ func _on_ros_parameter_changed(param_name: String, value: Variant):
 
 func _ready() -> void:
 	_node = RosNode.new()
-	_node.init("track_manager","sim")
+	_node.init("track_manager")
 	# Track name parameter and callback
 	_node.declare_parameter("track", "")
 	_node.parameter_changed.connect(_on_ros_parameter_changed)
@@ -165,9 +165,10 @@ func load_track(path : String):
 
 	if data.has('path'):
 		track_curve.clear_points()
-		for p in data['path']:
+		for p in data['path']['points']:
 			# Mapping ROS path points back to Godot space
 			track_curve.add_point(Vector3(p['y'], 0.0, p['x']))
+			track_curve.closed = data['path']['closed']
 
 	# Start pose directly assigned from ROS 2 input
 	origin = {

@@ -83,7 +83,7 @@ func _physics_process(delta: float) -> void:
 
 func _publish_imu(accel: Vector3, gyro: Vector3, rot: Quaternion) -> void:
 	_msg.header.stamp = _node.now()
-	_msg.header.frame_id = _node.get_namespace().trim_prefix("/").path_join(frame_id.trim_prefix("~/"))
+	_msg.header.frame_id = _node.resolve_frame(frame_id)
 	
 	# --- Godot (Y-Up) to ROS (Z-Up / FLU) Swizzle ---
 	_msg.linear_acceleration.x = accel.z

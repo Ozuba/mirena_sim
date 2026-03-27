@@ -19,7 +19,7 @@ var _rail_progress: float = 0.0
 var path : Path3D
 
 # --- ROS Variables ---
-@export var frame_id: String = "car/cog"
+@export var frame_id: String = "~cog"
 var _node: RosNode
 # Publishers
 var _state_pub: RosPublisher
@@ -46,15 +46,15 @@ func _ready():
 	
 	## ROS
 	_node = RosNode.new()
-	_node.init(name.to_snake_case())
+	_node.init(name.to_snake_case(),name.to_snake_case())
 	## Publisher
-	_state_pub = _node.create_publisher("~/state","mirena_common/msg/Car")
-	_perception_pub = _node.create_publisher("~/debug_perception","mirena_common/msg/EntityList")
-	_slam_pub = _node.create_publisher("~/debug_slam","mirena_common/msg/EntityList")
+	_state_pub = _node.create_publisher("state","mirena_common/msg/Car")
+	_perception_pub = _node.create_publisher("debug_perception","mirena_common/msg/EntityList")
+	_slam_pub = _node.create_publisher("debug_slam","mirena_common/msg/EntityList")
 	## Publisher timers
 	_pub_tim = _node.create_timer(0.01,_publish)
 	# Subscribers
-	_control_sub = _node.create_subscriber("~/control", "mirena_common/msg/CarControl", _on_control)
+	_control_sub = _node.create_subscriber("control", "mirena_common/msg/CarControl", _on_control)
 	# Transforms
 	_tf_broadcaster = _node.create_tf_broadcaster()
 
@@ -115,7 +115,7 @@ func _publish_perception():
 	
 	var msg = RosMirenaCommonEntityList.new()
 	msg.header.stamp = _node.now()
-	msg.header.frame_id = _resolve_frame(frame_id)
+	msg.header.frame_id = _node.resolve_frame(frame_id)
 	msg.entities = cones.map(func(c): return _to_ent(c))
 	_perception_pub.publish(msg)
 
@@ -139,9 +139,6 @@ func _to_ent(cone: Node3D, global : bool = false  ) -> RosMirenaCommonEntity:
 	ent.position.y = pos.x
 	ent.position.z = pos.y
 	return ent
-
-func _resolve_frame(id: String) -> String:
-	return _node.get_namespace().trim_prefix("/").path_join(id.trim_prefix("~/"))
 
 
 # --- Pilot Logic ---
