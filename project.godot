@@ -31,7 +31,10 @@ Sim="*res://Scenes/Sim/sim.gd"
 
 [display]
 
+window/size/viewport_width=800
+window/size/viewport_height=600
 window/size/mode=2
+window/vsync/vsync_mode=0
 
 [editor_plugins]
 

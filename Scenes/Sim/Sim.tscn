@@ -33,6 +33,7 @@ script = ExtResource("1_3f2tq")
 
 [node name="Car" parent="." unique_id=908748782 instance=ExtResource("2_cv8nj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.411332, 0)
+pilot = 2
 
 [node name="SimUI" parent="." unique_id=2132864431 instance=ExtResource("5_iqvu6")]
 

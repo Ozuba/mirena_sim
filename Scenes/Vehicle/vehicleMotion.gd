@@ -25,7 +25,8 @@ var _node: RosNode
 var _state_pub: RosPublisher
 var _perception_pub: RosPublisher
 var _slam_pub: RosPublisher
-var _pub_tim : RosTimer
+var _state_tim : RosTimer
+var _debug_tim : RosTimer
 # Subscribers
 var _control_sub: RosSubscriber
 
@@ -52,7 +53,8 @@ func _ready():
 	_perception_pub = _node.create_publisher("debug_perception","mirena_common/msg/EntityList")
 	_slam_pub = _node.create_publisher("debug_slam","mirena_common/msg/EntityList")
 	## Publisher timers
-	_pub_tim = _node.create_timer(0.01,_publish)
+	_debug_tim = _node.create_timer(0.1,_debug_publish)
+	_state_tim = _node.create_timer(0.02,_publish_car_state)
 	# Subscribers
 	_control_sub = _node.create_subscriber("control", "mirena_common/msg/CarControl", _on_control)
 	# Transforms
@@ -89,9 +91,7 @@ func _physics_process(delta: float) -> void:
 		reset_position()
 		
 # Publish Debug Info
-
-func _publish():
-	_publish_car_state()
+func _debug_publish():
 	_publish_perception()
 	_publish_slam()
 	
