@@ -3,12 +3,6 @@ extends Camera3D
 ## Camera with flying script attached to it.
 class_name Freecam3D
 
-##
-## Camera with toggleable freecam mode for prototyping when creating levels, shaders, lighting, etc.
-##
-## Usage: Run your game, press <TAB> and fly around freely. Uses Minecraft-like controls.
-##
-
 ## Customize your own toggle key to avoid collisions with your current mappings.
 @export var toggle_key: Key = KEY_TAB
 ## Speed up / down by scrolling the mouse whell down / up

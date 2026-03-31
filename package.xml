@@ -4,9 +4,8 @@
   <name>mirena_sim</name>
   <version>0.1.0</version>
   <description>GODOT implementation of rclcpp</description>
-  <maintainer email="ozuba@ozuba.es">Ozuba</maintainer>
-  <license>MIT</license>
-
+  <maintainer email="miguelozubas@gmail.com">Ozuba</maintainer>
+  <license>GPL-3.0-or-later</license>
   <buildtool_depend>rclgd</buildtool_depend>
   <export>
 	<build_type>rclgd</build_type>
