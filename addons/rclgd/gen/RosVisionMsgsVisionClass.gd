@@ -11,3 +11,4 @@ var class_id : int:
 var class_name : String:
 	get: return get_member(&"class_name")
 	set(v): set_member(&"class_name", v)
+

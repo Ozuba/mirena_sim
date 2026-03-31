@@ -7,3 +7,4 @@ func _init():
 var data : Nil:
 	get: return get_member(&"data")
 	set(v): set_member(&"data", v)
+

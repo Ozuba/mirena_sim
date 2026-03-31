@@ -20,6 +20,10 @@ var psi : float:
 	get: return get_member(&"psi")
 	set(v): set_member(&"psi", v)
 
+var child_frame_id : String:
+	get: return get_member(&"child_frame_id")
+	set(v): set_member(&"child_frame_id", v)
+
 var u : float:
 	get: return get_member(&"u")
 	set(v): set_member(&"u", v)

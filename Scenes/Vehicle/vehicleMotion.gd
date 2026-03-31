@@ -35,6 +35,7 @@ var _ros_gas: float = 0.0
 var _ros_steer: float = 0.0
 
 # --- Internal State ---
+var origin  : Transform3D = Transform3D.IDENTITY
 var gas: float = 0.0
 var _steer_smoothed: float = 0.0
 var slam_cones: Array = [] # Seen cones
@@ -44,12 +45,13 @@ func _ready():
 	$Camera.init(name.to_snake_case())
 	$Lidar.init(name.to_snake_case())
 	$IMU.init(name.to_snake_case())
+	$GPS.init(name.to_snake_case())
 	
 	## ROS
 	_node = RosNode.new()
 	_node.init(name.to_snake_case(),name.to_snake_case())
 	## Publisher
-	_state_pub = _node.create_publisher("state","mirena_common/msg/Car")
+	_state_pub = _node.create_publisher("debug_state","mirena_common/msg/Car")
 	_perception_pub = _node.create_publisher("debug_perception","mirena_common/msg/EntityList")
 	_slam_pub = _node.create_publisher("debug_slam","mirena_common/msg/EntityList")
 	## Publisher timers
@@ -59,6 +61,7 @@ func _ready():
 	_control_sub = _node.create_subscriber("control", "mirena_common/msg/CarControl", _on_control)
 	# Transforms
 	_tf_broadcaster = _node.create_tf_broadcaster()
+	
 
 	
 	# Camera Registration
@@ -70,8 +73,7 @@ func _on_control(msg):
 	_ros_steer = msg.steer_angle
 
 func _physics_process(delta: float) -> void:
-	#Publish transform
-	_tf_broadcaster.send_transform(global_transform, frame_id, "map", false)
+
 	
 	# Process driving commands
 	match pilot:
@@ -96,17 +98,48 @@ func _debug_publish():
 	_publish_slam()
 	
 # ROS Publishing
+## Car state (Substitutes sensor EKF)
 func _publish_car_state():
+	
 	var msg = RosMirenaCommonCar.new()
 	msg.header.stamp = _node.now()
-	msg.header.frame_id = "map"
-	msg.x = global_position.z
-	msg.y = global_position.x
-	msg.psi = global_rotation.y
+	msg.header.frame_id = "odom"
+	msg.child_frame_id = _node.resolve_frame(frame_id) # COG usualy
+	
+	#var odom_transform : Transform3D = origin.affine_inverse() * global_transform
+	# 1. Pose and Dynamics
+	msg.x = global_transform.origin.z
+	msg.y = global_transform.origin.x
+	msg.psi = global_transform.basis.get_euler().y
 	
 	var local_vel = basis.inverse() * linear_velocity
-	msg.u = local_vel.z; msg.v = local_vel.x; msg.omega = angular_velocity.y
+	msg.u = local_vel.z
+	msg.v = local_vel.x
+	msg.omega = angular_velocity.y
+	
+	# 2. Covariance Setup (6x6 matrix flattened)
+	# Indices for diagonal: x=0, y=7, psi=14, u=21, v=28, omega=35
+	var cov = []
+	cov.resize(36)
+	for i in range(36):
+		cov[i] = 0.0 # Initialize all to zero
+		
+	# Set Variances (Standard Deviation squared)
+	# These values represent "how much we trust the simulator"
+	cov[0]  = 0 # x variance (m^2)
+	cov[7]  = 0  # y variance (m^2)
+	cov[14] = 0 # psi variance (rad^2)
+	cov[21] = 0  # u variance (m/s^2)
+	cov[28] = 0  # v variance (m/s^2)
+	cov[35] = 0  # omega variance (rad/s^2)
+	
+	msg.covariance = cov
+	
 	_state_pub.publish(msg)
+	# publish cog transform
+	
+	# Publish from odom to car center of gravity
+	_tf_broadcaster.send_transform(global_transform * Transform3D(Basis(), center_of_mass),frame_id,"odom", false)
 
 func _publish_perception():
 	var cones = get_cones_in_sight(12.0)
@@ -223,16 +256,16 @@ func _smooth_steer(current: float, target: float, delta: float, speed: float) ->
 
 # --- Interface & Utility ---
 
-func set_pose(pose, reset_vel: bool = false) -> void:
-	var pos = Vector3(pose["y"], 0.1, pose["x"])
+func set_origin(pose, reset_vel: bool = false) -> void:
+	var origin = Transform3D(Basis(Vector3.UP, pose["psi"]), Vector3(pose["y"], 0.1, pose["x"]))
 	if reset_vel:
 		linear_velocity = Vector3.ZERO
 		angular_velocity = Vector3.ZERO
 	await get_tree().process_frame
-	set_deferred("global_transform", Transform3D(Basis(Vector3.UP, pose["psi"]), pos))
+	set_deferred("global_transform", origin)
 
 func reset_position() -> void:
-	set_pose(Sim.track.origin, true)
+	set_origin(Sim.track.origin, true)
 	self.gas = 0;
 	self.steering = 0;
 	self.brake = 0;

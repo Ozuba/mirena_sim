@@ -15,3 +15,4 @@ var debug_id : int:
 var debug_real_position : RosGeometryMsgsPoint:
 	get: return get_member(&"debug_real_position") as RosMsg
 	set(v): set_member(&"debug_real_position", v)
+

@@ -12,3 +12,7 @@ var type : String:
 	get: return get_member(&"type")
 	set(v): set_member(&"type", v)
 
+var confidence : float:
+	get: return get_member(&"confidence")
+	set(v): set_member(&"confidence", v)
+
