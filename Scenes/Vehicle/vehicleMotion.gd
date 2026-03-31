@@ -43,7 +43,7 @@ func _ready():
 	# 1. Initialize Sensors
 	$Camera.init(name.to_snake_case())
 	$Lidar.init(name.to_snake_case())
-	$IMU/IMU.init(name.to_snake_case())
+	$IMU.init(name.to_snake_case())
 	
 	## ROS
 	_node = RosNode.new()
