@@ -109,7 +109,7 @@ func _publish_car_state():
 	_state_pub.publish(msg)
 
 func _publish_perception():
-	var cones = get_cones_in_sight(8.0)
+	var cones = get_cones_in_sight(12.0)
 	for cone in cones:
 		if not slam_cones.has(cone): slam_cones.append(cone)
 	
