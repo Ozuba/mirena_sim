@@ -23,6 +23,7 @@ var path : Path3D
 var _node: RosNode
 # Publishers
 var _state_pub: RosPublisher
+var _as_status_pub : RosPublisher
 var _perception_pub: RosPublisher
 var _slam_pub: RosPublisher
 var _state_tim : RosTimer
@@ -40,6 +41,9 @@ var gas: float = 0.0
 var _steer_smoothed: float = 0.0
 var slam_cones: Array = [] # Seen cones
 
+@onready var car_state : RosMirenaCommonCar = RosMirenaCommonCar.new()
+@onready var as_status : RosMirenaCommonAsStatus = RosMirenaCommonAsStatus.new()
+
 func _ready():
 	# 1. Initialize Sensors
 	$Camera.init(name.to_snake_case())
@@ -52,6 +56,7 @@ func _ready():
 	_node.init(name.to_snake_case(),name.to_snake_case())
 	## Publisher
 	_state_pub = _node.create_publisher("debug_state","mirena_common/msg/Car")
+	_as_status_pub = _node.create_publisher("as_status","mirena_common/msg/ASStatus")
 	_perception_pub = _node.create_publisher("debug_perception","mirena_common/msg/EntityList")
 	_slam_pub = _node.create_publisher("debug_slam","mirena_common/msg/EntityList")
 	## Publisher timers
@@ -95,27 +100,29 @@ func _physics_process(delta: float) -> void:
 # Publish Debug Info
 func _debug_publish():
 	_publish_perception()
+	_publish_as_status()
 	_publish_slam()
 	
 # ROS Publishing
+func _publish_as_status():
+	_as_status_pub.publish(as_status)
+
 ## Car state (Substitutes sensor EKF)
 func _publish_car_state():
+	car_state.header.stamp = _node.now()
+	car_state.header.frame_id = "odom"
+	car_state.child_frame_id = _node.resolve_frame(frame_id) # COG usualy
 	
-	var msg = RosMirenaCommonCar.new()
-	msg.header.stamp = _node.now()
-	msg.header.frame_id = "odom"
-	msg.child_frame_id = _node.resolve_frame(frame_id) # COG usualy
-	
-	#var odom_transform : Transform3D = origin.affine_inverse() * global_transform
+	var odom_transform : Transform3D = origin.affine_inverse() * global_transform
 	# 1. Pose and Dynamics
-	msg.x = global_transform.origin.z
-	msg.y = global_transform.origin.x
-	msg.psi = global_transform.basis.get_euler().y
+	car_state.x = odom_transform.origin.z
+	car_state.y = odom_transform.origin.x
+	car_state.psi = odom_transform.basis.get_euler().y
 	
 	var local_vel = basis.inverse() * linear_velocity
-	msg.u = local_vel.z
-	msg.v = local_vel.x
-	msg.omega = angular_velocity.y
+	car_state.u = local_vel.z
+	car_state.v = local_vel.x
+	car_state.omega = angular_velocity.y
 	
 	# 2. Covariance Setup (6x6 matrix flattened)
 	# Indices for diagonal: x=0, y=7, psi=14, u=21, v=28, omega=35
@@ -133,13 +140,13 @@ func _publish_car_state():
 	cov[28] = 0  # v variance (m/s^2)
 	cov[35] = 0  # omega variance (rad/s^2)
 	
-	msg.covariance = cov
+	car_state.covariance = cov
 	
-	_state_pub.publish(msg)
+	_state_pub.publish(car_state)
 	# publish cog transform
 	
 	# Publish from odom to car center of gravity
-	_tf_broadcaster.send_transform(global_transform * Transform3D(Basis(), center_of_mass),frame_id,"odom", false)
+	_tf_broadcaster.send_transform(odom_transform.translated(center_of_mass),frame_id,"odom", false)
 
 func _publish_perception():
 	var cones = get_cones_in_sight(12.0)
@@ -257,7 +264,10 @@ func _smooth_steer(current: float, target: float, delta: float, speed: float) ->
 # --- Interface & Utility ---
 
 func set_origin(pose, reset_vel: bool = false) -> void:
-	var origin = Transform3D(Basis(Vector3.UP, pose["psi"]), Vector3(pose["y"], 0.1, pose["x"]))
+	var pos = Vector3(pose["y"], 0.1, pose["x"])
+	var rot = Basis(Vector3.UP, pose["psi"])
+	origin = Transform3D(rot, pos)
+	
 	if reset_vel:
 		linear_velocity = Vector3.ZERO
 		angular_velocity = Vector3.ZERO

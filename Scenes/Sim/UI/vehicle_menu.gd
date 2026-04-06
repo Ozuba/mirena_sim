@@ -22,3 +22,11 @@ func _on_pilot_mode_item_selected(index: int) -> void:
 
 func _on_reset_car_button_pressed() -> void:
 	Sim.car.reset_position()
+
+
+func _on_as_state_item_selected(index: int) -> void:
+	Sim.car.as_status.state = index
+
+
+func _on_mission_item_selected(index: int) -> void:
+	Sim.car.as_status.mission = index

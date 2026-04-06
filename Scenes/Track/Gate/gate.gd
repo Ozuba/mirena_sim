@@ -42,11 +42,11 @@ func _update_layout():
 			
 		GateType.EVENT:
 			# Event gates have two cones on each side (spaced slightly apart in Z)
-			var z_offset = 0.5 
-			_spawn_cone("LeftFront",  Vector3(-gate_width / 2.0, 0, -z_offset), Cone.ConeColor.BIG_ORANGE)
-			_spawn_cone("LeftBack",   Vector3(-gate_width / 2.0, 0,  z_offset), Cone.ConeColor.BIG_ORANGE)
-			_spawn_cone("RightFront", Vector3( gate_width / 2.0, 0, -z_offset), Cone.ConeColor.BIG_ORANGE)
-			_spawn_cone("RightBack",  Vector3( gate_width / 2.0, 0,  z_offset), Cone.ConeColor.BIG_ORANGE)
+			var z_offset = 0.3 
+			_spawn_cone("LeftFrontCone",  Vector3(-gate_width / 2.0, 0, -z_offset), Cone.ConeColor.BIG_ORANGE)
+			_spawn_cone("LeftBackCone",   Vector3(-gate_width / 2.0, 0,  z_offset), Cone.ConeColor.BIG_ORANGE)
+			_spawn_cone("RightFrontCone", Vector3( gate_width / 2.0, 0, -z_offset), Cone.ConeColor.BIG_ORANGE)
+			_spawn_cone("RightBackCone",  Vector3( gate_width / 2.0, 0,  z_offset), Cone.ConeColor.BIG_ORANGE)
 
 	# 3. Update Collision Shape
 	if has_node("CollisionShape3D"):
