@@ -124,7 +124,8 @@ point_pillar_snapshot={
 [physics]
 
 3d/run_on_separate_thread=true
-common/physics_ticks_per_second=200
+common/physics_ticks_per_second=400
+common/max_physics_steps_per_frame=20
 
 [ros]
 

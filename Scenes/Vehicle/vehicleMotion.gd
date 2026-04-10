@@ -63,7 +63,7 @@ func _ready():
 	_inferred_control_pub = _node.create_publisher("inferred_control","mirena_common/msg/CarControl")
 	## Publisher timers
 	_debug_tim = _node.create_timer(0.1,_debug_publish)
-	_state_tim = _node.create_timer(0.01,_publish_car_state)
+	_state_tim = _node.create_timer(0.005,_publish_car_state)
 	# Subscribers
 	_control_sub = _node.create_subscriber("control", "mirena_common/msg/CarControl", _on_control)
 	# Transforms
@@ -112,7 +112,8 @@ func _publish_as_status():
 
 ## Car state (Substitutes sensor EKF)
 func _publish_car_state():
-	car_state.header.stamp = _node.now()
+	var now = _node.now()
+	car_state.header.stamp = now
 	car_state.header.frame_id = "odom"
 	car_state.child_frame_id = _node.resolve_frame(frame_id) # COG usualy
 	
@@ -144,12 +145,11 @@ func _publish_car_state():
 	cov[35] = 0  # omega variance (rad/s^2)
 	
 	car_state.covariance = cov
-	
-	_state_pub.publish(car_state)
-	# publish cog transform
-	
 	# Publish from odom to car center of gravity
-	_tf_broadcaster.send_transform(odom_transform.translated(center_of_mass),frame_id,"odom", false)
+	_tf_broadcaster.send_transform(odom_transform.translated(center_of_mass),frame_id,"odom", false,now)
+	_state_pub.publish(car_state)
+	
+
 
 func _publish_perception():
 	var cones = get_cones_in_sight(12.0)
