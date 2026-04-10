@@ -75,7 +75,7 @@ func _publish_gps() -> void:
 	_msg.altitude = origin_alt + d_up
 	
 	_msg.status.status = 0 
-	_msg.status.service = 1 
+	_msg.status.service = 1
 	
 	_gps_pub.publish(_msg)
 

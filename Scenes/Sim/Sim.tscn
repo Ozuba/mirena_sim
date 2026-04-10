@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://bdosnwuuwheyu" path="res://Scenes/Track/Track.tscn" id="1_638e3"]
 [ext_resource type="PackedScene" uid="uid://lnlv7w6dktqx" path="res://Scenes/Vehicle/mirena_car.tscn" id="2_cv8nj"]
 [ext_resource type="Script" uid="uid://diysurgbljif6" path="res://Scenes/FreeCam/freecam.gd" id="3_3f2tq"]
-[ext_resource type="Texture2D" uid="uid://bsboxptpn0imd" path="res://Assets/Textures/Sky/kloofendal_48d_partly_cloudy_puresky_2k.exr" id="4_720cc"]
+[ext_resource type="Texture2D" uid="uid://d2sohta4a0brk" path="res://Assets/Textures/Sky/kloofendal_48d_partly_cloudy_puresky_2k.exr" id="4_720cc"]
 [ext_resource type="PackedScene" uid="uid://ne6yuaaeiar8" path="res://Scenes/Sim/UI/SimUI.tscn" id="5_iqvu6"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_k4cy8"]

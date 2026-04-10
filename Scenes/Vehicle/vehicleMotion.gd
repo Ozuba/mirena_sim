@@ -26,6 +26,7 @@ var _state_pub: RosPublisher
 var _as_status_pub : RosPublisher
 var _perception_pub: RosPublisher
 var _slam_pub: RosPublisher
+var _inferred_control_pub: RosPublisher
 var _state_tim : RosTimer
 var _debug_tim : RosTimer
 # Subscribers
@@ -59,9 +60,10 @@ func _ready():
 	_as_status_pub = _node.create_publisher("as_status","mirena_common/msg/ASStatus")
 	_perception_pub = _node.create_publisher("debug_perception","mirena_common/msg/EntityList")
 	_slam_pub = _node.create_publisher("debug_slam","mirena_common/msg/EntityList")
+	_inferred_control_pub = _node.create_publisher("inferred_control","mirena_common/msg/CarControl")
 	## Publisher timers
 	_debug_tim = _node.create_timer(0.1,_debug_publish)
-	_state_tim = _node.create_timer(0.02,_publish_car_state)
+	_state_tim = _node.create_timer(0.01,_publish_car_state)
 	# Subscribers
 	_control_sub = _node.create_subscriber("control", "mirena_common/msg/CarControl", _on_control)
 	# Transforms
@@ -102,6 +104,7 @@ func _debug_publish():
 	_publish_perception()
 	_publish_as_status()
 	_publish_slam()
+	_publish_control()
 	
 # ROS Publishing
 func _publish_as_status():
@@ -113,7 +116,7 @@ func _publish_car_state():
 	car_state.header.frame_id = "odom"
 	car_state.child_frame_id = _node.resolve_frame(frame_id) # COG usualy
 	
-	var odom_transform : Transform3D = origin.affine_inverse() * global_transform
+	var odom_transform : Transform3D = global_transform
 	# 1. Pose and Dynamics
 	car_state.x = odom_transform.origin.z
 	car_state.y = odom_transform.origin.x
@@ -167,6 +170,15 @@ func _publish_slam():
 	# Use Identity transform for global positions
 	msg.entities = slam_cones.map(func(c): return _to_ent(c,true))
 	_slam_pub.publish(msg)
+
+func _publish_control():
+	var msg = RosMirenaCommonCarControl.new()
+	msg.header.stamp = _node.now()
+	msg.header.frame_id = "map"
+	msg.gas = self.gas
+	msg.steer_angle = self.steering
+
+	_inferred_control_pub.publish(msg)
 
 # Conversion helper
 func _to_ent(cone: Node3D, global : bool = false  ) -> RosMirenaCommonEntity:

@@ -95,15 +95,13 @@ func _publish_imu() -> void:
 	_msg.angular_velocity.z = noisy_gyro.y
 	
 	# --- Orientation Mapping ---
-	# To maintain consistency with the vector mapping, 
-	# we rotate the Godot basis to match your ZXY target.
-	var godot_basis = Basis(current_quat)
-	var ros_basis = Basis(
-		godot_basis.z, # ROS X
-		godot_basis.x, # ROS Y
-		godot_basis.y  # ROS Z
+	var ros_quat = Quaternion(
+		-current_quat.z,
+		-current_quat.x,
+		current_quat.y,
+		current_quat.w
 	)
-	var ros_quat = Quaternion(ros_basis)
+	#print(ros_basis.get_euler())
 	
 	_msg.orientation.x = ros_quat.x
 	_msg.orientation.y = ros_quat.y
