@@ -9,7 +9,3 @@ func _input(event):
 	# Toggle Visibility
 	if event.is_action_pressed("open_sim_menu"):
 		visible = !visible
-		
-
-func _process(_delta: float):
-	pass

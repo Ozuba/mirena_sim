@@ -5,8 +5,8 @@
 [ext_resource type="Script" uid="uid://dtnf8qsbtrk07" path="res://Scenes/Sim/UI/stats.gd" id="2_o5cjj"]
 [ext_resource type="Script" uid="uid://btpbxj5260gcn" path="res://Scenes/Sim/UI/vehicle_menu.gd" id="3_xhllv"]
 [ext_resource type="Script" uid="uid://t2c8u12dg5bk" path="res://Scenes/Sim/track_menu.gd" id="3_xmg1i"]
+[ext_resource type="Script" uid="uid://bwvepfqb0lqm0" path="res://Scenes/Sim/UI/can_bus_dummy.gd" id="4_xhllv"]
 [ext_resource type="Script" uid="uid://mvywmawpyl07" path="res://Scenes/Sim/UI/extra_menu.gd" id="6_ac68a"]
-[ext_resource type="Script" uid="uid://0a6kpv3cpw7" path="res://Scenes/Sim/UI/debug_menu.gd" id="6_o5cjj"]
 
 [sub_resource type="GDScript" id="GDScript_xhllv"]
 script/source = "extends PanelContainer
@@ -21,18 +21,6 @@ font_size = 22
 font_color = Color(0.744876, 0.999331, 1, 1)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_val13"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fiia4"]
-content_margin_left = 0.0
-content_margin_top = 0.0
-content_margin_right = 0.0
-content_margin_bottom = 0.0
-bg_color = Color(0.060334228, 0.060334228, 0.060334228, 0.6)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-corner_detail = 5
 
 [node name="SimUI" type="Control" unique_id=2132864431]
 layout_mode = 3
@@ -147,47 +135,42 @@ popup/item_2/id = 2
 popup/item_3/text = "NoPilot"
 popup/item_3/id = 3
 
-[node name="ASStateSelector" type="HBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle" unique_id=758235677]
+[node name="ResetCarButton" type="Button" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle" unique_id=599819201]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_val13")
+text = "Reset Car Position"
+
+[node name="MarginContainer" type="MarginContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle" unique_id=1015491300]
+layout_mode = 2
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Label" type="Label" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/MarginContainer" unique_id=69039004]
+layout_mode = 2
+text = "Can Bus Dummy"
+
+[node name="MarginContainer2" type="MarginContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle" unique_id=1562618088]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+
+[node name="CanBusDummy" type="VBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/MarginContainer2" unique_id=1784271774]
+layout_mode = 2
+script = ExtResource("4_xhllv")
+
+[node name="MissionSelector" type="HBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/MarginContainer2/CanBusDummy" unique_id=667962896]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 10
 
-[node name="Label" type="Label" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/ASStateSelector" unique_id=2043176321]
+[node name="Label" type="Label" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/MarginContainer2/CanBusDummy/MissionSelector" unique_id=179886042]
 layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 0
-text = "AS_STATE"
+size_flags_horizontal = 4
+text = "MISSION:"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="ASState" type="OptionButton" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/ASStateSelector" unique_id=899474261]
-layout_mode = 2
-size_flags_horizontal = 3
-mouse_force_pass_scroll_events = false
-selected = 0
-allow_reselect = true
-item_count = 5
-popup/item_0/text = "AS_OFF"
-popup/item_0/id = 0
-popup/item_1/text = "AS_READY"
-popup/item_1/id = 1
-popup/item_2/text = "AS_DRIVING"
-popup/item_2/id = 2
-popup/item_3/text = "AS_FINISHED"
-popup/item_3/id = 3
-popup/item_4/text = "AS_EMERGENCY"
-popup/item_4/id = 4
-
-[node name="MissionSelector" type="HBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle" unique_id=67903068]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 10
-
-[node name="Label" type="Label" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/MissionSelector" unique_id=633101729]
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 0
-text = "MISSION"
-
-[node name="Mission" type="OptionButton" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/MissionSelector" unique_id=1125433271]
+[node name="Mission" type="OptionButton" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/MarginContainer2/CanBusDummy/MissionSelector" unique_id=1126441793]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_force_pass_scroll_events = false
@@ -209,10 +192,18 @@ popup/item_5/id = 5
 popup/item_6/text = "INSPECTION"
 popup/item_6/id = 6
 
-[node name="ResetCarButton" type="Button" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle" unique_id=599819201]
+[node name="StartStop" type="HBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/MarginContainer2/CanBusDummy" unique_id=297911303]
 layout_mode = 2
-theme_override_styles/focus = SubResource("StyleBoxEmpty_val13")
-text = "Reset Car Position"
+
+[node name="DvStartButton" type="Button" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/MarginContainer2/CanBusDummy/StartStop" unique_id=1812788994]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Send DV Start Signal"
+
+[node name="DvStopButton" type="Button" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/MarginContainer2/CanBusDummy/StartStop" unique_id=2112318357]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Send DV Stop Signal"
 
 [node name="TRACK" type="MarginContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs" unique_id=1626101123]
 visible = false
@@ -257,76 +248,6 @@ file_mode = 0
 display_mode = 1
 root_subfolder = "TrackFiles"
 
-[node name="DEBUG" type="MarginContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs" unique_id=176396122]
-visible = false
-layout_mode = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
-script = ExtResource("6_o5cjj")
-metadata/_tab_index = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/DEBUG" unique_id=1090649844]
-layout_mode = 2
-theme_override_constants/separation = 20
-
-[node name="HBoxContainer" type="HBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/DEBUG/VBoxContainer" unique_id=1721969184]
-layout_mode = 2
-theme_override_constants/separation = 20
-
-[node name="Label" type="Label" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/DEBUG/VBoxContainer/HBoxContainer" unique_id=1368750974]
-layout_mode = 2
-text = "Publisher: "
-
-[node name="OptionButton" type="OptionButton" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/DEBUG/VBoxContainer/HBoxContainer" unique_id=1704868940]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="ConfigPanel" type="PanelContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/DEBUG/VBoxContainer" unique_id=1693442801]
-visible = false
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_fiia4")
-
-[node name="MarginContainer" type="MarginContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/DEBUG/VBoxContainer/ConfigPanel" unique_id=957065183]
-layout_mode = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/DEBUG/VBoxContainer/ConfigPanel/MarginContainer" unique_id=1071420688]
-layout_mode = 2
-
-[node name="EnableContainer" type="HBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/DEBUG/VBoxContainer/ConfigPanel/MarginContainer/VBoxContainer" unique_id=353716344]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/DEBUG/VBoxContainer/ConfigPanel/MarginContainer/VBoxContainer/EnableContainer" unique_id=982509437]
-layout_mode = 2
-text = "Enable: "
-
-[node name="CheckButton" type="CheckButton" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/DEBUG/VBoxContainer/ConfigPanel/MarginContainer/VBoxContainer/EnableContainer" unique_id=2102459513]
-layout_mode = 2
-
-[node name="FrequencyContainer" type="HBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/DEBUG/VBoxContainer/ConfigPanel/MarginContainer/VBoxContainer" unique_id=1090180352]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/DEBUG/VBoxContainer/ConfigPanel/MarginContainer/VBoxContainer/FrequencyContainer" unique_id=1276944441]
-layout_mode = 2
-text = "Frequency: "
-
-[node name="LineEdit" type="LineEdit" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/DEBUG/VBoxContainer/ConfigPanel/MarginContainer/VBoxContainer/FrequencyContainer" unique_id=2018873675]
-custom_minimum_size = Vector2(50, 0)
-layout_mode = 2
-max_length = 3
-expand_to_text_length = true
-context_menu_enabled = false
-emoji_menu_enabled = false
-
-[node name="Button" type="Button" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/DEBUG/VBoxContainer/ConfigPanel/MarginContainer/VBoxContainer/FrequencyContainer" unique_id=226930647]
-layout_mode = 2
-text = "Commit"
-
 [node name="EXTRA" type="MarginContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs" unique_id=137354673]
 visible = false
 layout_mode = 2
@@ -335,7 +256,7 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 script = ExtResource("6_ac68a")
-metadata/_tab_index = 3
+metadata/_tab_index = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/EXTRA" unique_id=1688313888]
 layout_mode = 2
@@ -360,8 +281,6 @@ text = "Initializing..."
 script = ExtResource("2_hox2s")
 
 [connection signal="item_selected" from="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/PilotSelector/PilotMode" to="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE" method="_on_pilot_mode_item_selected"]
-[connection signal="item_selected" from="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/ASStateSelector/ASState" to="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE" method="_on_as_state_item_selected"]
-[connection signal="item_selected" from="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/MissionSelector/Mission" to="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE" method="_on_mission_item_selected"]
 [connection signal="pressed" from="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/ResetCarButton" to="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE" method="_on_reset_car_button_pressed"]
 [connection signal="pressed" from="MainMenu/MarginContainer/VBoxContainer/MenuTabs/TRACK/HBoxContainer/VBoxContainer/GenerateTrack" to="MainMenu/MarginContainer/VBoxContainer/MenuTabs/TRACK" method="_on_generate_track"]
 [connection signal="pressed" from="MainMenu/MarginContainer/VBoxContainer/MenuTabs/TRACK/HBoxContainer/VBoxContainer/ClearTrack" to="MainMenu/MarginContainer/VBoxContainer/MenuTabs/TRACK" method="_on_clear_track_pressed"]

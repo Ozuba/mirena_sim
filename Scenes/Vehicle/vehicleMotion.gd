@@ -23,7 +23,7 @@ var path : Path3D
 var _node: RosNode
 # Publishers
 var _state_pub: RosPublisher
-var _as_status_pub : RosPublisher
+var _can_dv_config_pub : RosPublisher
 var _perception_pub: RosPublisher
 var _slam_pub: RosPublisher
 var _inferred_control_pub: RosPublisher
@@ -43,7 +43,6 @@ var _steer_smoothed: float = 0.0
 var slam_cones: Array = [] # Seen cones
 
 @onready var car_state : RosMirenaCommonCar = RosMirenaCommonCar.new()
-@onready var as_status : RosMirenaCommonAsStatus = RosMirenaCommonAsStatus.new()
 
 func _ready():
 	# 1. Initialize Sensors
@@ -56,8 +55,8 @@ func _ready():
 	_node = RosNode.new()
 	_node.init(name.to_snake_case(),name.to_snake_case())
 	## Publisher
+	_can_dv_config_pub = _node.create_publisher("debug_dv_config", "mirena_common/msg/CanDvConfig")
 	_state_pub = _node.create_publisher("debug_state","mirena_common/msg/Car")
-	_as_status_pub = _node.create_publisher("as_status","mirena_common/msg/ASStatus")
 	_perception_pub = _node.create_publisher("debug_perception","mirena_common/msg/EntityList")
 	_slam_pub = _node.create_publisher("debug_slam","mirena_common/msg/EntityList")
 	_inferred_control_pub = _node.create_publisher("inferred_control","mirena_common/msg/CarControl")
@@ -102,13 +101,10 @@ func _physics_process(delta: float) -> void:
 # Publish Debug Info
 func _debug_publish():
 	_publish_perception()
-	_publish_as_status()
 	_publish_slam()
 	_publish_control()
 	
 # ROS Publishing
-func _publish_as_status():
-	_as_status_pub.publish(as_status)
 
 ## Car state (Substitutes sensor EKF)
 func _publish_car_state():
@@ -307,3 +303,7 @@ func get_cones_in_sight(max_dist: float = 10.0) -> Array:
 			if camera.is_position_in_frustum(cone.global_position):
 				visible_cones.append(cone)
 	return visible_cones
+
+# Returns the can bus dv config dummy that corresponds to this car
+func get_can_dv_config_pub():
+	return self._can_dv_config_pub
