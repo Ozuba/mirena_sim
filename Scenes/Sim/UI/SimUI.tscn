@@ -198,12 +198,7 @@ layout_mode = 2
 [node name="DvStartButton" type="Button" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/MarginContainer2/CanBusDummy/StartStop" unique_id=1812788994]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Send DV Start Signal"
-
-[node name="DvStopButton" type="Button" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/MarginContainer2/CanBusDummy/StartStop" unique_id=2112318357]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Send DV Stop Signal"
+text = "Send Selected Mission Req"
 
 [node name="TRACK" type="MarginContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs" unique_id=1626101123]
 visible = false

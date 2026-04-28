@@ -4,13 +4,9 @@ class_name RosMirenaCommonCanDvInfo
 func _init():
 	init("mirena_common/msg/CanDvInfo")
 
-var mission_status : RosMirenaCommonMissionStatus:
-	get: return get_member(&"mission_status") as RosMsg
-	set(v): set_member(&"mission_status", v)
-
-var mission : RosMirenaCommonMissionType:
-	get: return get_member(&"mission") as RosMsg
-	set(v): set_member(&"mission", v)
+var finished : bool:
+	get: return get_member(&"finished")
+	set(v): set_member(&"finished", v)
 
 var cones_count_actual : int:
 	get: return get_member(&"cones_count_actual")
