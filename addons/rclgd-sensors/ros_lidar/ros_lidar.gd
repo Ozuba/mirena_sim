@@ -261,7 +261,7 @@ func _on_timer_timeout():
 	_current_stamp = _node.now()
 	
 	# Update TF before render
-	_tf_broadcaster.send_transform(transform, frame_id, parent_frame_id, false)
+	_tf_broadcaster.send_transform(transform, frame_id, parent_frame_id, true)
 
 	# Determine which viewports need to be rendered based on FOV configuration
 	var render_mask = [false, false, false, false, false, false]

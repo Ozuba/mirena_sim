@@ -170,8 +170,8 @@ void main() {
 
     // 7. Convert to ROS frame:
     // Godot local -> ROS frame
-    // ROS X = Forward = -Godot Z
-    // ROS Y = Left = -Godot X
+    // ROS X = Forward = Godot Z
+    // ROS Y = Left = Godot X
     // ROS Z = Up = Godot Y
     vec3 ros_point;
     ros_point.x = local_noisy_point.z;

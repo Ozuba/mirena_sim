@@ -36,7 +36,7 @@ var is_requesting: bool = false
 var _resolved_optical_frame: String
 var _current_stamp: RosMsg
 
-var optical_tf = Transform3D(Basis(Vector3(0, -1, 0), Vector3(0, 0, 1), Vector3(-1, 0, 0)).orthonormalized(), Vector3.ZERO)
+var optical_tf = Transform3D(Basis(Vector3(0, -1, 0), Vector3(0, 0, -1), Vector3(1, 0, 0)).orthonormalized(), Vector3.ZERO)
 
 func _ready() -> void:
 	_setup_internal_nodes()
@@ -100,7 +100,7 @@ func _request_capture() -> void:
 	
 	# Sync the TF right before we render to ensure the "photo" is taken at the correct spot
 	# Use the exact same stamp as the image message to prevent synchronization lag
-	_tf_broadcaster.send_transform(transform, frame_id, parent_frame_id, false, _current_stamp)
+	_tf_broadcaster.send_transform(transform, frame_id, parent_frame_id, true)
 	
 	_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
 	
