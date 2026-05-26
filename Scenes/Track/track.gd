@@ -27,11 +27,7 @@ var _map_timer : RosTimer
 var _track_timer : RosTimer
 
 # Standard ROS 2 Origin (X: Forward, Y: Left, PSI: Counter-Clockwise Yaw)
-var origin : Dictionary = {
-	"x": 0.0,
-	"y": 0.0,
-	"psi": 0.0
-}
+var origin : Transform3D 
 
 # Parameter handling
 func _on_ros_parameter_changed(param_name: String, value: Variant):
@@ -70,7 +66,7 @@ func _ready() -> void:
 # ROS publishers
 func _publish_full_map():
 	var msg = RosMirenaCommonEntityList.new()
-	msg.header.frame_id = "map"
+	msg.header.frame_id = "debug_map"
 	msg.header.stamp = _node.now()
 	msg.entities = get_tree().get_nodes_in_group("Cones").map(func(c): return _to_ent(c,true))
 	_map_pub.publish(msg)
@@ -79,12 +75,15 @@ func _publish_full_map():
 func _publish_track():
 	if not Sim.track: return
 	var msg = RosMirenaCommonTrack.new()
-	msg.header.frame_id = "map"
+	msg.header.frame_id = "debug_map"
 	msg.header.stamp = _node.now()
 	msg.is_closed = track_curve.closed
-	msg.gates = get_gate_positions().map(func(gp):
+	msg.gates = get_gate_positions().map(func(t: Transform3D):
 		var gate = RosMirenaCommonGate.new()
-		gate.x = gp.x; gate.y = gp.y; gate.psi = gp.psi
+		gate.x = -t.origin.z  # Godot -Z Forward -> ROS +X
+		gate.y = -t.origin.x  # Godot -X Left    -> ROS +Y
+		gate.psi = -t.basis.get_euler(EulerOrder.EULER_ORDER_YXZ).x
+		
 		return gate
 	)
 	_track_pub.publish(msg)
@@ -95,8 +94,8 @@ func _to_ent(cone: Node3D, global : bool = false  ) -> RosMirenaCommonEntity:
 	ent.type = cone.get_type_as_string()
 	
 	# ROS Swizzle: Forward=Z, Left=-X, Up=Y
-	ent.position.x = pos.z
-	ent.position.y = pos.x
+	ent.position.x = -pos.z
+	ent.position.y = -pos.x
 	ent.position.z = pos.y
 	return ent
 	
@@ -124,16 +123,13 @@ func create_track():
 	# --- Shifted Origin Logic ---
 	var p0 = track_curve.get_point_position(0)
 	var p1 = track_curve.get_point_position(1)
-	var dir = (p1 - p0).normalized()
+	var dir = (p0 - p1).normalized()
 
 	# Move p0 back by 2 meters along the negative direction of the track
-	var shifted_p0 = p0 - (dir * 4.0)
+	var shifted_p0 = p0 + (dir * 4.0)
 
-	origin = {
-		"x": shifted_p0.z,       # ROS X (Godot +Z)
-		"y": shifted_p0.x,       # ROS Y (Godot +X)
-		"psi": atan2(dir.x, dir.z) # Yaw remains the same
-	}
+	origin.origin = shifted_p0
+	origin.basis = Basis.looking_at(dir, Vector3.UP, true)
 	
 	track_loaded.emit()
 
@@ -150,8 +146,8 @@ func load_track(path : String):
 	if data.has("cones"):
 		for cone_data in data["cones"]:
 			var cone = _cone_scene.instantiate() as Cone
-			# ROS X is Z, ROS Y is X
-			cone.position = Vector3(cone_data["y"], 0.0, cone_data["x"])
+			# ROS X is -Z, ROS Y is -X
+			cone.position = Vector3(-cone_data["y"], 0.0, -cone_data["x"])
 			
 			match cone_data["type"]:
 				"cone_blue": cone.type = Cone.ConeColor.BLUE
@@ -171,34 +167,34 @@ func load_track(path : String):
 			track_curve.closed = data['path']['closed']
 
 	# Start pose directly assigned from ROS 2 input
-	origin = {
-		"x": data.setup.car_start_pose.x,
-		"y": data.setup.car_start_pose.y,
-		"psi": data.setup.car_start_pose.psi
-	}
-	
+
+	origin.origin = Vector3(-data.setup.car_start_pose.y,0.0,-data.setup.car_start_pose.x)
+	origin.basis = Basis(Vector3.UP, data.setup.car_start_pose.psi)
 	track_loaded.emit()
 
 func clear_track():
 	for n in $Gates.get_children(): n.queue_free()
 
-func get_gate_positions() -> Array[Dictionary]:
+func get_gate_positions() -> Array[Transform3D]:
 	var length = track_curve.get_baked_length()
 	var num_points = int(length / track_spacing)
-	var data: Array[Dictionary] = []
+	var transforms: Array[Transform3D] = []
 	
 	for i in range(0, num_points):
 		var d = (i * track_spacing)
 		var pos = track_curve.sample_baked(d)
 		
-		# Get direction by looking at next point
+		# Get direction vector by looking slightly ahead
 		var next_d = fmod(d + 0.1, length)
 		var next_pos = track_curve.sample_baked(next_d)
 		var dir = (next_pos - pos).normalized()
 		
-		data.append({
-			"x": pos.z,        # Godot +Z is ROS X
-			"y": pos.x,        # Godot +X is ROS Y
-			"psi": atan2(dir.x, dir.z) # Counter-clockwise yaw from X (+Z)
-		})
-	return data
+		# Construct the Transform3D
+		var gate_xform = Transform3D()
+		gate_xform.origin = pos
+		# use_model_front = true enforces Godot's native -Z as forward
+		gate_xform.basis = Basis.looking_at(dir, Vector3.UP, true)
+		
+		transforms.append(gate_xform)
+		
+	return transforms

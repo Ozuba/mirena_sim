@@ -113,18 +113,18 @@ func _debug_publish():
 func _publish_car_state():
 	var now = _node.now()
 	car_state.header.stamp = now
-	car_state.header.frame_id = "odom"
+	car_state.header.frame_id = "debug_odom"
 	car_state.child_frame_id = _node.resolve_frame(frame_id) # COG usualy
 	
-	var odom_transform : Transform3D = global_transform
+	var odom_transform : Transform3D = origin.inverse() * global_transform
 	# 1. Pose and Dynamics
-	car_state.x = odom_transform.origin.z
-	car_state.y = odom_transform.origin.x
+	car_state.x = -odom_transform.origin.z
+	car_state.y = -odom_transform.origin.x
 	car_state.psi = odom_transform.basis.get_euler().y
 	
 	var local_vel = basis.inverse() * linear_velocity
-	car_state.u = local_vel.z
-	car_state.v = local_vel.x
+	car_state.u = -local_vel.z
+	car_state.v = -local_vel.x
 	car_state.omega = angular_velocity.y
 	
 	# 2. Covariance Setup (6x6 matrix flattened)
@@ -144,8 +144,10 @@ func _publish_car_state():
 	cov[35] = 0  # omega variance (rad/s^2)
 	
 	car_state.covariance = cov
-	# Publish from odom to car center of gravity
-	_tf_broadcaster.send_transform(odom_transform.translated(center_of_mass),frame_id,"odom", false,now)
+	# Publish debug odom and map transforms 
+	_tf_broadcaster.send_transform(odom_transform.translated(center_of_mass).inverse(),"debug_odom",frame_id, false,now)
+	_tf_broadcaster.send_transform(origin.inverse(),"debug_map","debug_odom", false,now)
+
 	_state_pub.publish(car_state)
 	
 
@@ -186,8 +188,8 @@ func _to_ent(cone: Node3D, global : bool = false  ) -> RosMirenaCommonEntity:
 	ent.type = cone.get_type_as_string()
 	
 	# ROS Swizzle: Forward=Z, Left=-X, Up=Y
-	ent.position.x = pos.z
-	ent.position.y = pos.x
+	ent.position.x = -pos.z
+	ent.position.y = -pos.x
 	ent.position.z = pos.y
 	return ent
 
@@ -240,12 +242,10 @@ func _process_track_rail(delta: float) -> void:
 	var look_target_local = path.curve.sample_baked_with_rotation(look_ahead_p, true)
 	var look_target_global = path.global_transform * look_target_local
 	
-	# Adjust basis (Flip PI to face forward)
-	var target_basis = look_target_global.basis * Basis(Vector3.UP, PI)
 	
 	# Smoothly rotate the car to face the look-ahead point
 	global_transform.basis = global_transform.basis.slerp(
-		target_basis.orthonormalized(), 
+		look_target_global.basis .orthonormalized(), 
 		5.0 * delta
 	).orthonormalized()
 # --- Physics & Low Level Control ---
@@ -274,11 +274,8 @@ func _smooth_steer(current: float, target: float, delta: float, speed: float) ->
 
 # --- Interface & Utility ---
 
-func set_origin(pose, reset_vel: bool = false) -> void:
-	var pos = Vector3(pose["y"], 0.1, pose["x"])
-	var rot = Basis(Vector3.UP, pose["psi"])
-	origin = Transform3D(rot, pos)
-	
+func set_origin(transform, reset_vel: bool = false) -> void:
+	origin = transform
 	if reset_vel:
 		linear_velocity = Vector3.ZERO
 		angular_velocity = Vector3.ZERO

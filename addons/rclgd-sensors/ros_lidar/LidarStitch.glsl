@@ -174,8 +174,8 @@ void main() {
     // ROS Y = Left = Godot X
     // ROS Z = Up = Godot Y
     vec3 ros_point;
-    ros_point.x = local_noisy_point.z;
-    ros_point.y = local_noisy_point.x;
+    ros_point.x = -local_noisy_point.z;
+    ros_point.y = -local_noisy_point.x;
     ros_point.z = local_noisy_point.y;
 
     imageStore(lidar_out, xy, vec4(ros_point, intensity));

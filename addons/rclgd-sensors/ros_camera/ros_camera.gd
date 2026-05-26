@@ -36,11 +36,11 @@ var is_requesting: bool = false
 var _resolved_optical_frame: String
 var _current_stamp: RosMsg
 
-var optical_tf = Transform3D(Basis(Vector3(0, -1, 0), Vector3(0, 0, -1), Vector3(1, 0, 0)).orthonormalized(), Vector3.ZERO)
+var optical_tf = Transform3D(Basis(Vector3(0, 1, 0), Vector3(0, 0, -1), Vector3(-1, 0, 0)).orthonormalized(), Vector3.ZERO)
 
 func _ready() -> void:
 	_setup_internal_nodes()
-	
+	Vector3.FORWARD
 	_node = RosNode.new()
 	_node.init(name.to_snake_case(),ros_namespace.to_snake_case())
 	
