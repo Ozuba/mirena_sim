@@ -44,13 +44,16 @@ var slam_cones: Array = [] # Seen cones
 
 @onready var car_state : RosMirenaCommonCar = RosMirenaCommonCar.new()
 
-func _ready():
-	# 1. Initialize Sensors
-	$Camera.init(name.to_snake_case())
-	$Lidar.init(name.to_snake_case())
-	$IMU.init(name.to_snake_case())
-	$GPS.init(name.to_snake_case())
+func _init():
+	child_entered_tree.connect(_on_child_entered_tree)
+
+func _on_child_entered_tree(node: Node) -> void:
+	# If the child node has a namespace property, overwrite it immediately
+	if "ros_namespace" in node:
+		# Use the current name of the car instance as the namespace basis
+		node.ros_namespace = self.name.to_snake_case()
 	
+func _ready():
 	## ROS
 	_node = RosNode.new()
 	_node.init(name.to_snake_case(),name.to_snake_case())
@@ -297,7 +300,8 @@ func cone_collision_set(enable: bool) -> void:
 	
 func get_cones_in_sight(max_dist: float = 10.0) -> Array:
 	var visible_cones: Array = []
-	var camera = $Camera/CameraViewport/Camera3D
+	var camera = $Camera._camera
+	if not camera: return []
 	for cone in get_tree().get_nodes_in_group("Cones"):
 		if global_position.distance_to(cone.global_position) < max_dist:
 			if camera.is_position_in_frustum(cone.global_position):

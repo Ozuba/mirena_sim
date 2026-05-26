@@ -2,11 +2,10 @@
 
 [ext_resource type="Script" uid="uid://bytxt20k5w1u5" path="res://Scenes/Vehicle/vehicleMotion.gd" id="1_nuhka"]
 [ext_resource type="ArrayMesh" uid="uid://ba1hm840bhu06" path="res://Assets/Models/Car/TeR.res" id="2_pdc0f"]
-[ext_resource type="Script" uid="uid://cxrb8iam8llhk" path="res://Scenes/Vehicle/ros_lidar/ros_lidar.gd" id="3_s7vep"]
-[ext_resource type="Script" uid="uid://ds4q43s0n1ft7" path="res://Scenes/Vehicle/ros_camera/ros_camera.gd" id="4_83xek"]
-[ext_resource type="Script" uid="uid://ccva5vor3oe1w" path="res://Scenes/Vehicle/ros_lidar/lidar_compositor.gd" id="4_phpun"]
-[ext_resource type="Script" uid="uid://mkpwl8tofjal" path="res://Scenes/Vehicle/ros_imu/ros_imu.gd" id="5_20grj"]
-[ext_resource type="Script" uid="uid://dcw5vtrynexba" path="res://Scenes/Vehicle/ros_gps/ros_gps.gd" id="7_dflui"]
+[ext_resource type="Script" uid="uid://cxrb8iam8llhk" path="res://addons/rclgd-sensors/ros_lidar/ros_lidar.gd" id="3_pdc0f"]
+[ext_resource type="Script" uid="uid://ds4q43s0n1ft7" path="res://addons/rclgd-sensors/ros_camera/ros_camera.gd" id="4_dflui"]
+[ext_resource type="Script" uid="uid://bsmemyc0nuhy2" path="res://addons/rclgd-sensors/ros_imu/ros_imu.gd" id="5_sviuk"]
+[ext_resource type="Script" uid="uid://c0hu800pgnmoh" path="res://addons/rclgd-sensors/ros_gps/ros_gps.gd" id="6_1avwx"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_iwp33"]
 size = Vector3(1.440945, 3.0220528, 1.1161242)
@@ -150,20 +149,6 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_hnasb")
 
-[sub_resource type="CompositorEffect" id="CompositorEffect_20grj"]
-resource_local_to_scene = true
-resource_name = ""
-enabled = true
-effect_callback_type = 4
-needs_motion_vectors = false
-needs_normal_roughness = false
-script = ExtResource("4_phpun")
-metadata/_custom_type_script = "uid://ccva5vor3oe1w"
-
-[sub_resource type="Compositor" id="Compositor_p8sg5"]
-resource_local_to_scene = true
-compositor_effects = Array[CompositorEffect]([SubResource("CompositorEffect_20grj")])
-
 [node name="MirenaCar" type="VehicleBody3D" unique_id=1131682099]
 mass = 250.0
 center_of_mass_mode = 1
@@ -248,50 +233,39 @@ cull_mask = 524287
 [node name="TPCam" type="Camera3D" parent="." unique_id=1703368758]
 transform = Transform3D(-1, 2.4829383e-08, -8.382272e-08, -2.1503142e-08, 0.85950476, 0.51112777, 8.473701e-08, 0.51112777, -0.85950476, 0, 3.7957363, -3.7916777)
 
-[node name="Lidar" type="Node3D" parent="." unique_id=307820733]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 3.14659e-09, 0.9339553, -0.039999276)
-script = ExtResource("3_s7vep")
+[node name="Lidar" type="Node3D" parent="." unique_id=1957314712]
+transform = Transform3D(-1, 1.5180806e-08, -8.609462e-08, 0, 0.9848077, 0.17364818, 8.742278e-08, 0.17364818, -0.9848077, -0.049117498, 1.0057302, 0)
+script = ExtResource("3_pdc0f")
+horizontal_resolution = 600
+vertical_resolution = 125
+vertical_fov_min = -12.5
+vertical_fov_max = 12.5
+horizontal_fov_min = -60.0
+horizontal_fov_max = 60.0
+max_range = 200.0
+noise_std_dev = 0.001
+face_resolution = 2048
+lidar_topic = "~/cloud"
 parent_frame_id = "~cog"
+metadata/_custom_type_script = "uid://cxrb8iam8llhk"
 
-[node name="LidarViewport" type="SubViewport" parent="Lidar" unique_id=348320180]
-size = Vector2i(600, 250)
-render_target_update_mode = 1
-
-[node name="LidarCamera" type="Camera3D" parent="Lidar/LidarViewport" unique_id=552550394]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 3.14659e-09, 0.9339553, -0.039999276)
-compositor = SubResource("Compositor_p8sg5")
-fov = 60.0
-size = 0.145
-near = 0.001
-
-[node name="LidarTransform" type="RemoteTransform3D" parent="Lidar" unique_id=1997756434]
-remote_path = NodePath("../LidarViewport/LidarCamera")
-
-[node name="Camera" type="Node3D" parent="." unique_id=2101984612]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.002910778, 0.9216325, -0.03909497)
-script = ExtResource("4_83xek")
+[node name="Camera" type="Node3D" parent="." unique_id=1031281475]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0.06849846, 0.97969174, -0.03357707)
+script = ExtResource("4_dflui")
 publish_rate = 60.0
+frame_id = "~camera"
 parent_frame_id = "~cog"
+optical_frame_id = "~camera_optical"
+metadata/_custom_type_script = "uid://ds4q43s0n1ft7"
 
-[node name="CameraViewport" type="SubViewport" parent="Camera" unique_id=1467890133]
-size = Vector2i(640, 480)
-render_target_update_mode = 0
-
-[node name="Camera3D" type="Camera3D" parent="Camera/CameraViewport" unique_id=1836564985]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -0.002910778, 0.9216325, -0.03909497)
-
-[node name="RemoteTransform3D" type="RemoteTransform3D" parent="Camera" unique_id=23809096]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
-remote_path = NodePath("../CameraViewport/Camera3D")
-
-[node name="IMU" type="Node3D" parent="." unique_id=1005273975]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.195885, 0)
-script = ExtResource("5_20grj")
+[node name="IMU" type="Node3D" parent="." unique_id=598701879]
+script = ExtResource("5_sviuk")
 frame_id = "~imu_link"
-parent_frame_id = "~cog"
+parent_frame_id = "~base_link"
+metadata/_custom_type_script = "uid://bsmemyc0nuhy2"
 
-[node name="GPS" type="Node3D" parent="." unique_id=1308701133]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5146423, -0.25449088)
-script = ExtResource("7_dflui")
+[node name="GPS" type="Node3D" parent="." unique_id=1746440958]
+script = ExtResource("6_1avwx")
 frame_id = "~gps_link"
 parent_frame_id = "~cog"
+metadata/_custom_type_script = "uid://c0hu800pgnmoh"

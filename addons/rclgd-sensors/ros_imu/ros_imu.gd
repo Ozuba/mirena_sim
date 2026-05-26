@@ -1,20 +1,21 @@
 extends Node3D
-class_name RosImuPublisher
+class_name RosImu
 
 # --- Configuration ---
-@export_group("ROS 2 Settings")
-@export var imu_rate: float = 100.0 
-@export var frame_id: String = "~/imu_link"
-@export var parent_frame_id: String = "~/base_link"
-
-@export_group("Physical Constants")
+@export_group("Sensor Settings")
 @export var gravity_constant: float = 9.81 
-
-@export_group("Noise Model")
 @export var accel_noise_std: float = 0.05
 @export var gyro_noise_std: float = 0.005
 @export var bias_drift_std: float = 0.0001
 @export var lpf_tau: float = 0.15 # Low-pass filter for physics jitter
+
+@export_group("ROS 2 Settings")
+@export var ros_namespace : String = ""
+@export var imu_rate: float = 100.0 
+@export var frame_id: String = "~/imu_link"
+@export var parent_frame_id: String = "~/base_link"
+
+
 
 # --- Internal State ---
 var is_initialized: bool = false
@@ -35,9 +36,9 @@ var _tf_broadcaster: RosTfBroadcaster
 var _timer: RosTimer
 var _msg: RosSensorMsgsImu
 
-func init(ros_ns: String) -> void:
+func _ready() -> void:
 	_node = RosNode.new()
-	_node.init(name.to_snake_case(), ros_ns)
+	_node.init(name.to_snake_case(),ros_namespace.to_snake_case())
 	_imu_pub = _node.create_publisher("~/data", "sensor_msgs/msg/Imu")
 	_timer = _node.create_timer(1.0 / imu_rate, _publish_imu)
 	
