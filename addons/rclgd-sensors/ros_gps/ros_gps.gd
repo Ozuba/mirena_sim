@@ -62,8 +62,8 @@ func _publish_gps() -> void:
 	_msg.header.frame_id = _node.resolve_frame(frame_id)
 	
 	# Mapping: Godot Z -> ROS X, Godot X -> ROS Y, Godot Y -> ROS Z
-	var d_north = noisy_pos.z
-	var d_east = noisy_pos.x
+	var d_north = -noisy_pos.z
+	var d_east = -noisy_pos.x
 	var d_up = noisy_pos.y
 	
 	var phi = deg_to_rad(origin_lat)

@@ -87,12 +87,12 @@ func _publish_imu() -> void:
 	
 	# --- Coordinate Mapping: (Godot x,y,z) -> (ROS z,x,y) ---
 	# As per your request for the specific mapping:
-	_msg.linear_acceleration.x = noisy_accel.z
-	_msg.linear_acceleration.y = noisy_accel.x
+	_msg.linear_acceleration.x = -noisy_accel.z
+	_msg.linear_acceleration.y = -noisy_accel.x
 	_msg.linear_acceleration.z = noisy_accel.y
 	
-	_msg.angular_velocity.x = noisy_gyro.z
-	_msg.angular_velocity.y = noisy_gyro.x
+	_msg.angular_velocity.x = -noisy_gyro.z
+	_msg.angular_velocity.y = -noisy_gyro.x
 	_msg.angular_velocity.z = noisy_gyro.y
 	
 	# --- Orientation Mapping ---
