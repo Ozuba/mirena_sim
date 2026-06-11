@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosTypeDescriptionInterfacesKeyValue
 
+const ROS_TYPE_NAME = "type_description_interfaces/msg/KeyValue"
+
 func _init():
-	init("type_description_interfaces/msg/KeyValue")
+	init(ROS_TYPE_NAME)
 
 var key : String:
 	get: return get_member(&"key")

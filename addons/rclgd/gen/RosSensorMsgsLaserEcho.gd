@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosSensorMsgsLaserEcho
 
+const ROS_TYPE_NAME = "sensor_msgs/msg/LaserEcho"
+
 func _init():
-	init("sensor_msgs/msg/LaserEcho")
+	init(ROS_TYPE_NAME)
 
 var echoes : PackedFloat32Array:
 	get: return get_member(&"echoes")

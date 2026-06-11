@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosRclInterfacesParameterEventDescriptors
 
+const ROS_TYPE_NAME = "rcl_interfaces/msg/ParameterEventDescriptors"
+
 func _init():
-	init("rcl_interfaces/msg/ParameterEventDescriptors")
+	init(ROS_TYPE_NAME)
 
 var new_parameters : Array:
 	get: return get_member(&"new_parameters")

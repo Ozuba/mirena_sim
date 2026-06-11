@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosShapeMsgsSolidPrimitive
 
+const ROS_TYPE_NAME = "shape_msgs/msg/SolidPrimitive"
+
 func _init():
-	init("shape_msgs/msg/SolidPrimitive")
+	init(ROS_TYPE_NAME)
 
 var type : int:
 	get: return get_member(&"type")

@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosUniqueIdentifierMsgsUuid
 
+const ROS_TYPE_NAME = "unique_identifier_msgs/msg/UUID"
+
 func _init():
-	init("unique_identifier_msgs/msg/UUID")
+	init(ROS_TYPE_NAME)
 
 var uuid : PackedByteArray:
 	get: return get_member(&"uuid")

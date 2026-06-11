@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosPclMsgsModelCoefficients
 
+const ROS_TYPE_NAME = "pcl_msgs/msg/ModelCoefficients"
+
 func _init():
-	init("pcl_msgs/msg/ModelCoefficients")
+	init(ROS_TYPE_NAME)
 
 var header : RosStdMsgsHeader:
 	get: return get_member(&"header") as RosMsg

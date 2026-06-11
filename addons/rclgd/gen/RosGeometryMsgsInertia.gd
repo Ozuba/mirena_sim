@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosGeometryMsgsInertia
 
+const ROS_TYPE_NAME = "geometry_msgs/msg/Inertia"
+
 func _init():
-	init("geometry_msgs/msg/Inertia")
+	init(ROS_TYPE_NAME)
 
 var m : float:
 	get: return get_member(&"m")

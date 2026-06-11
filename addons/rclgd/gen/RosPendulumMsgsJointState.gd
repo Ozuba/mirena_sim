@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosPendulumMsgsJointState
 
+const ROS_TYPE_NAME = "pendulum_msgs/msg/JointState"
+
 func _init():
-	init("pendulum_msgs/msg/JointState")
+	init(ROS_TYPE_NAME)
 
 var position : float:
 	get: return get_member(&"position")

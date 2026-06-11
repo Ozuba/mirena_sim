@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosExampleInterfacesByteMultiArray
 
+const ROS_TYPE_NAME = "example_interfaces/msg/ByteMultiArray"
+
 func _init():
-	init("example_interfaces/msg/ByteMultiArray")
+	init(ROS_TYPE_NAME)
 
 var layout : RosExampleInterfacesMultiArrayLayout:
 	get: return get_member(&"layout") as RosMsg

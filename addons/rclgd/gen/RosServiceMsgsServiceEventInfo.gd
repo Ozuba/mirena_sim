@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosServiceMsgsServiceEventInfo
 
+const ROS_TYPE_NAME = "service_msgs/msg/ServiceEventInfo"
+
 func _init():
-	init("service_msgs/msg/ServiceEventInfo")
+	init(ROS_TYPE_NAME)
 
 var event_type : int:
 	get: return get_member(&"event_type")

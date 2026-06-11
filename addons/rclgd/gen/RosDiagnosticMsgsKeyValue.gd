@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosDiagnosticMsgsKeyValue
 
+const ROS_TYPE_NAME = "diagnostic_msgs/msg/KeyValue"
+
 func _init():
-	init("diagnostic_msgs/msg/KeyValue")
+	init(ROS_TYPE_NAME)
 
 var key : String:
 	get: return get_member(&"key")

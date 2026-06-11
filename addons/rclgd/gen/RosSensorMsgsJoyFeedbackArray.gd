@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosSensorMsgsJoyFeedbackArray
 
+const ROS_TYPE_NAME = "sensor_msgs/msg/JoyFeedbackArray"
+
 func _init():
-	init("sensor_msgs/msg/JoyFeedbackArray")
+	init(ROS_TYPE_NAME)
 
 var array : Array:
 	get: return get_member(&"array")

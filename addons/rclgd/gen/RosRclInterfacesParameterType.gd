@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosRclInterfacesParameterType
 
+const ROS_TYPE_NAME = "rcl_interfaces/msg/ParameterType"
+
 func _init():
-	init("rcl_interfaces/msg/ParameterType")
+	init(ROS_TYPE_NAME)
 
 var structure_needs_at_least_one_member : int:
 	get: return get_member(&"structure_needs_at_least_one_member")

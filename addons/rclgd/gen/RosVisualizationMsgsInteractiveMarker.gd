@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosVisualizationMsgsInteractiveMarker
 
+const ROS_TYPE_NAME = "visualization_msgs/msg/InteractiveMarker"
+
 func _init():
-	init("visualization_msgs/msg/InteractiveMarker")
+	init(ROS_TYPE_NAME)
 
 var header : RosStdMsgsHeader:
 	get: return get_member(&"header") as RosMsg

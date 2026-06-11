@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosDataTamerMsgsSchema
 
+const ROS_TYPE_NAME = "data_tamer_msgs/msg/Schema"
+
 func _init():
-	init("data_tamer_msgs/msg/Schema")
+	init(ROS_TYPE_NAME)
 
 var hash : int:
 	get: return get_member(&"hash")

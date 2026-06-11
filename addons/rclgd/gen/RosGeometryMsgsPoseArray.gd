@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosGeometryMsgsPoseArray
 
+const ROS_TYPE_NAME = "geometry_msgs/msg/PoseArray"
+
 func _init():
-	init("geometry_msgs/msg/PoseArray")
+	init(ROS_TYPE_NAME)
 
 var header : RosStdMsgsHeader:
 	get: return get_member(&"header") as RosMsg

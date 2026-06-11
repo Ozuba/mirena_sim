@@ -35,7 +35,7 @@ var _msg: RosSensorMsgsNavSatFix
 
 func _ready() -> void:
 	_node = RosNode.new()
-	_node.init(name.to_snake_case())
+	_node.init(name.to_snake_case(),ros_namespace.to_snake_case())
 	_gps_pub = _node.create_publisher("~/fix", "sensor_msgs/msg/NavSatFix")
 	_timer = _node.create_timer(1.0 / gps_rate, _publish_gps)
 	

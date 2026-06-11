@@ -25,8 +25,9 @@ func _on_reset_car_button_pressed() -> void:
 
 
 func _on_as_state_item_selected(index: int) -> void:
-	Sim.car.as_status.state = index
+	Sim.car._as_status.as_status = index
 
 
 func _on_mission_item_selected(index: int) -> void:
-	Sim.car.as_status.mission = index
+	var mission = $Vehicle/MarginContainer/AsStatus/MissionSelector/Mission.get_item_text(index)
+	Sim.car._as_status.mission_selected = mission

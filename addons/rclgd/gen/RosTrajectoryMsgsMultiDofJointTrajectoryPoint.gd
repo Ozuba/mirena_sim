@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosTrajectoryMsgsMultiDofJointTrajectoryPoint
 
+const ROS_TYPE_NAME = "trajectory_msgs/msg/MultiDOFJointTrajectoryPoint"
+
 func _init():
-	init("trajectory_msgs/msg/MultiDOFJointTrajectoryPoint")
+	init(ROS_TYPE_NAME)
 
 var transforms : Array:
 	get: return get_member(&"transforms")

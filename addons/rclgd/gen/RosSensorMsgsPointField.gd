@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosSensorMsgsPointField
 
+const ROS_TYPE_NAME = "sensor_msgs/msg/PointField"
+
 func _init():
-	init("sensor_msgs/msg/PointField")
+	init(ROS_TYPE_NAME)
 
 var name : String:
 	get: return get_member(&"name")

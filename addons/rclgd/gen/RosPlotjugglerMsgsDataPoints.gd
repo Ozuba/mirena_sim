@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosPlotjugglerMsgsDataPoints
 
+const ROS_TYPE_NAME = "plotjuggler_msgs/msg/DataPoints"
+
 func _init():
-	init("plotjuggler_msgs/msg/DataPoints")
+	init(ROS_TYPE_NAME)
 
 var dictionary_uuid : int:
 	get: return get_member(&"dictionary_uuid")

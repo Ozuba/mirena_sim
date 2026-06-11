@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosExampleInterfacesBool
 
+const ROS_TYPE_NAME = "example_interfaces/msg/Bool"
+
 func _init():
-	init("example_interfaces/msg/Bool")
+	init(ROS_TYPE_NAME)
 
 var data : bool:
 	get: return get_member(&"data")

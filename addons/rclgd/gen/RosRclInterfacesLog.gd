@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosRclInterfacesLog
 
+const ROS_TYPE_NAME = "rcl_interfaces/msg/Log"
+
 func _init():
-	init("rcl_interfaces/msg/Log")
+	init(ROS_TYPE_NAME)
 
 var stamp : RosBuiltinInterfacesTime:
 	get: return get_member(&"stamp") as RosMsg

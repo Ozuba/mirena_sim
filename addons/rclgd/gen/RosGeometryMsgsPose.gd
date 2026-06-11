@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosGeometryMsgsPose
 
+const ROS_TYPE_NAME = "geometry_msgs/msg/Pose"
+
 func _init():
-	init("geometry_msgs/msg/Pose")
+	init(ROS_TYPE_NAME)
 
 var position : RosGeometryMsgsPoint:
 	get: return get_member(&"position") as RosMsg

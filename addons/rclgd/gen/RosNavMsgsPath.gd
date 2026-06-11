@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosNavMsgsPath
 
+const ROS_TYPE_NAME = "nav_msgs/msg/Path"
+
 func _init():
-	init("nav_msgs/msg/Path")
+	init(ROS_TYPE_NAME)
 
 var header : RosStdMsgsHeader:
 	get: return get_member(&"header") as RosMsg

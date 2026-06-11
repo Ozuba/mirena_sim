@@ -5,7 +5,6 @@
 [ext_resource type="Script" uid="uid://dtnf8qsbtrk07" path="res://Scenes/Sim/UI/stats.gd" id="2_o5cjj"]
 [ext_resource type="Script" uid="uid://btpbxj5260gcn" path="res://Scenes/Sim/UI/vehicle_menu.gd" id="3_xhllv"]
 [ext_resource type="Script" uid="uid://t2c8u12dg5bk" path="res://Scenes/Sim/track_menu.gd" id="3_xmg1i"]
-[ext_resource type="Script" uid="uid://bwvepfqb0lqm0" path="res://Scenes/Sim/UI/can_bus_dummy.gd" id="4_xhllv"]
 [ext_resource type="Script" uid="uid://mvywmawpyl07" path="res://Scenes/Sim/UI/extra_menu.gd" id="6_ac68a"]
 
 [sub_resource type="GDScript" id="GDScript_xhllv"]
@@ -146,31 +145,56 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="Label" type="Label" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/MarginContainer" unique_id=69039004]
+[node name="AsStatus" type="VBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/MarginContainer" unique_id=1784271774]
 layout_mode = 2
-text = "Can Bus Dummy"
 
-[node name="MarginContainer2" type="MarginContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle" unique_id=1562618088]
+[node name="Label" type="Label" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/MarginContainer/AsStatus" unique_id=69039004]
 layout_mode = 2
-theme_override_constants/margin_left = 10
+text = "AS_STATUS:"
 
-[node name="CanBusDummy" type="VBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/MarginContainer2" unique_id=1784271774]
-layout_mode = 2
-script = ExtResource("4_xhllv")
-
-[node name="MissionSelector" type="HBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/MarginContainer2/CanBusDummy" unique_id=667962896]
+[node name="StateSelector" type="HBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/MarginContainer/AsStatus" unique_id=667962896]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 10
 
-[node name="Label" type="Label" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/MarginContainer2/CanBusDummy/MissionSelector" unique_id=179886042]
+[node name="Label" type="Label" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/MarginContainer/AsStatus/StateSelector" unique_id=179886042]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "STATE:"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="State" type="OptionButton" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/MarginContainer/AsStatus/StateSelector" unique_id=1126441793]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_force_pass_scroll_events = false
+selected = 0
+allow_reselect = true
+item_count = 5
+popup/item_0/text = "AS_OFF"
+popup/item_0/id = 0
+popup/item_1/text = "AS_READY"
+popup/item_1/id = 1
+popup/item_2/text = "AS_DRIVING"
+popup/item_2/id = 2
+popup/item_3/text = "AS_FINISHED"
+popup/item_3/id = 3
+popup/item_4/text = "AS_EMERGENCY"
+popup/item_4/id = 4
+
+[node name="MissionSelector" type="HBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/MarginContainer/AsStatus" unique_id=740860849]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/MarginContainer/AsStatus/MissionSelector" unique_id=180471293]
 layout_mode = 2
 size_flags_horizontal = 4
 text = "MISSION:"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Mission" type="OptionButton" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/MarginContainer2/CanBusDummy/MissionSelector" unique_id=1126441793]
+[node name="Mission" type="OptionButton" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/MarginContainer/AsStatus/MissionSelector" unique_id=1129771903]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_force_pass_scroll_events = false
@@ -191,14 +215,6 @@ popup/item_5/text = "BRAKE_TEST"
 popup/item_5/id = 5
 popup/item_6/text = "INSPECTION"
 popup/item_6/id = 6
-
-[node name="StartStop" type="HBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/MarginContainer2/CanBusDummy" unique_id=297911303]
-layout_mode = 2
-
-[node name="DvStartButton" type="Button" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/MarginContainer2/CanBusDummy/StartStop" unique_id=1812788994]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Send Selected Mission Req"
 
 [node name="TRACK" type="MarginContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs" unique_id=1626101123]
 visible = false
@@ -277,6 +293,8 @@ script = ExtResource("2_hox2s")
 
 [connection signal="item_selected" from="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/PilotSelector/PilotMode" to="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE" method="_on_pilot_mode_item_selected"]
 [connection signal="pressed" from="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/ResetCarButton" to="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE" method="_on_reset_car_button_pressed"]
+[connection signal="item_selected" from="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/MarginContainer/AsStatus/StateSelector/State" to="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE" method="_on_as_state_item_selected"]
+[connection signal="item_selected" from="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle/MarginContainer/AsStatus/MissionSelector/Mission" to="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE" method="_on_mission_item_selected"]
 [connection signal="pressed" from="MainMenu/MarginContainer/VBoxContainer/MenuTabs/TRACK/HBoxContainer/VBoxContainer/GenerateTrack" to="MainMenu/MarginContainer/VBoxContainer/MenuTabs/TRACK" method="_on_generate_track"]
 [connection signal="pressed" from="MainMenu/MarginContainer/VBoxContainer/MenuTabs/TRACK/HBoxContainer/VBoxContainer/ClearTrack" to="MainMenu/MarginContainer/VBoxContainer/MenuTabs/TRACK" method="_on_clear_track_pressed"]
 [connection signal="pressed" from="MainMenu/MarginContainer/VBoxContainer/MenuTabs/TRACK/HBoxContainer/VBoxContainer/OpenTrack" to="MainMenu/MarginContainer/VBoxContainer/MenuTabs/TRACK" method="_on_open_track_pressed"]

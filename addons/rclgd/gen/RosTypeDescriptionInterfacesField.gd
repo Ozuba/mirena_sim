@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosTypeDescriptionInterfacesField
 
+const ROS_TYPE_NAME = "type_description_interfaces/msg/Field"
+
 func _init():
-	init("type_description_interfaces/msg/Field")
+	init(ROS_TYPE_NAME)
 
 var name : String:
 	get: return get_member(&"name")

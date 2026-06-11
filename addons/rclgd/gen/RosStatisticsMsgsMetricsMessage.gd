@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosStatisticsMsgsMetricsMessage
 
+const ROS_TYPE_NAME = "statistics_msgs/msg/MetricsMessage"
+
 func _init():
-	init("statistics_msgs/msg/MetricsMessage")
+	init(ROS_TYPE_NAME)
 
 var measurement_source_name : String:
 	get: return get_member(&"measurement_source_name")

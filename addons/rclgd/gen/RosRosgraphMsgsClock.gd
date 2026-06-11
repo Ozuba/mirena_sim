@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosRosgraphMsgsClock
 
+const ROS_TYPE_NAME = "rosgraph_msgs/msg/Clock"
+
 func _init():
-	init("rosgraph_msgs/msg/Clock")
+	init(ROS_TYPE_NAME)
 
 var clock : RosBuiltinInterfacesTime:
 	get: return get_member(&"clock") as RosMsg

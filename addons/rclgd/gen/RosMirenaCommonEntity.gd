@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosMirenaCommonEntity
 
+const ROS_TYPE_NAME = "mirena_common/msg/Entity"
+
 func _init():
-	init("mirena_common/msg/Entity")
+	init(ROS_TYPE_NAME)
 
 var position : RosGeometryMsgsPoint:
 	get: return get_member(&"position") as RosMsg

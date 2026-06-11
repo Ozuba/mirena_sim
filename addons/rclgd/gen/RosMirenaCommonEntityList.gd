@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosMirenaCommonEntityList
 
+const ROS_TYPE_NAME = "mirena_common/msg/EntityList"
+
 func _init():
-	init("mirena_common/msg/EntityList")
+	init(ROS_TYPE_NAME)
 
 var header : RosStdMsgsHeader:
 	get: return get_member(&"header") as RosMsg

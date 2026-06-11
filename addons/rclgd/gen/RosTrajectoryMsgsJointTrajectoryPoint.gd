@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosTrajectoryMsgsJointTrajectoryPoint
 
+const ROS_TYPE_NAME = "trajectory_msgs/msg/JointTrajectoryPoint"
+
 func _init():
-	init("trajectory_msgs/msg/JointTrajectoryPoint")
+	init(ROS_TYPE_NAME)
 
 var positions : PackedFloat64Array:
 	get: return get_member(&"positions")

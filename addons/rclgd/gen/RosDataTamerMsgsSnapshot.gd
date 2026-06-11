@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosDataTamerMsgsSnapshot
 
+const ROS_TYPE_NAME = "data_tamer_msgs/msg/Snapshot"
+
 func _init():
-	init("data_tamer_msgs/msg/Snapshot")
+	init(ROS_TYPE_NAME)
 
 var timestamp_nsec : int:
 	get: return get_member(&"timestamp_nsec")

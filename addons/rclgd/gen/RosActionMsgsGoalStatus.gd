@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosActionMsgsGoalStatus
 
+const ROS_TYPE_NAME = "action_msgs/msg/GoalStatus"
+
 func _init():
-	init("action_msgs/msg/GoalStatus")
+	init(ROS_TYPE_NAME)
 
 var goal_info : RosActionMsgsGoalInfo:
 	get: return get_member(&"goal_info") as RosMsg

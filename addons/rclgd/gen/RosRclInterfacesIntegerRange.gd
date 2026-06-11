@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosRclInterfacesIntegerRange
 
+const ROS_TYPE_NAME = "rcl_interfaces/msg/IntegerRange"
+
 func _init():
-	init("rcl_interfaces/msg/IntegerRange")
+	init(ROS_TYPE_NAME)
 
 var from_value : int:
 	get: return get_member(&"from_value")

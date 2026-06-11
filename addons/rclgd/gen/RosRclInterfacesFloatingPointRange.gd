@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosRclInterfacesFloatingPointRange
 
+const ROS_TYPE_NAME = "rcl_interfaces/msg/FloatingPointRange"
+
 func _init():
-	init("rcl_interfaces/msg/FloatingPointRange")
+	init(ROS_TYPE_NAME)
 
 var from_value : float:
 	get: return get_member(&"from_value")

@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosDiagnosticMsgsDiagnosticArray
 
+const ROS_TYPE_NAME = "diagnostic_msgs/msg/DiagnosticArray"
+
 func _init():
-	init("diagnostic_msgs/msg/DiagnosticArray")
+	init(ROS_TYPE_NAME)
 
 var header : RosStdMsgsHeader:
 	get: return get_member(&"header") as RosMsg

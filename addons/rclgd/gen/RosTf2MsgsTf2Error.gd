@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosTf2MsgsTf2Error
 
+const ROS_TYPE_NAME = "tf2_msgs/msg/TF2Error"
+
 func _init():
-	init("tf2_msgs/msg/TF2Error")
+	init(ROS_TYPE_NAME)
 
 var error : int:
 	get: return get_member(&"error")

@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosSensorMsgsPointCloud
 
+const ROS_TYPE_NAME = "sensor_msgs/msg/PointCloud"
+
 func _init():
-	init("sensor_msgs/msg/PointCloud")
+	init(ROS_TYPE_NAME)
 
 var header : RosStdMsgsHeader:
 	get: return get_member(&"header") as RosMsg

@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosShapeMsgsMeshTriangle
 
+const ROS_TYPE_NAME = "shape_msgs/msg/MeshTriangle"
+
 func _init():
-	init("shape_msgs/msg/MeshTriangle")
+	init(ROS_TYPE_NAME)
 
 var vertex_indices : Array:
 	get: return get_member(&"vertex_indices")

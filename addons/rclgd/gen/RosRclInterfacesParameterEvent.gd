@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosRclInterfacesParameterEvent
 
+const ROS_TYPE_NAME = "rcl_interfaces/msg/ParameterEvent"
+
 func _init():
-	init("rcl_interfaces/msg/ParameterEvent")
+	init(ROS_TYPE_NAME)
 
 var stamp : RosBuiltinInterfacesTime:
 	get: return get_member(&"stamp") as RosMsg

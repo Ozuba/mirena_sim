@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosGeometryMsgsTransform
 
+const ROS_TYPE_NAME = "geometry_msgs/msg/Transform"
+
 func _init():
-	init("geometry_msgs/msg/Transform")
+	init(ROS_TYPE_NAME)
 
 var translation : RosGeometryMsgsVector3:
 	get: return get_member(&"translation") as RosMsg

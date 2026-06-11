@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosStdMsgsFloat64MultiArray
 
+const ROS_TYPE_NAME = "std_msgs/msg/Float64MultiArray"
+
 func _init():
-	init("std_msgs/msg/Float64MultiArray")
+	init(ROS_TYPE_NAME)
 
 var layout : RosStdMsgsMultiArrayLayout:
 	get: return get_member(&"layout") as RosMsg

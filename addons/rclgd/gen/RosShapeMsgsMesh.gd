@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosShapeMsgsMesh
 
+const ROS_TYPE_NAME = "shape_msgs/msg/Mesh"
+
 func _init():
-	init("shape_msgs/msg/Mesh")
+	init(ROS_TYPE_NAME)
 
 var triangles : Array:
 	get: return get_member(&"triangles")

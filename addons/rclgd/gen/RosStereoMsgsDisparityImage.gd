@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosStereoMsgsDisparityImage
 
+const ROS_TYPE_NAME = "stereo_msgs/msg/DisparityImage"
+
 func _init():
-	init("stereo_msgs/msg/DisparityImage")
+	init(ROS_TYPE_NAME)
 
 var header : RosStdMsgsHeader:
 	get: return get_member(&"header") as RosMsg

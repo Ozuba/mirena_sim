@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosNavMsgsTrajectoryPoint
 
+const ROS_TYPE_NAME = "nav_msgs/msg/TrajectoryPoint"
+
 func _init():
-	init("nav_msgs/msg/TrajectoryPoint")
+	init(ROS_TYPE_NAME)
 
 var header : RosStdMsgsHeader:
 	get: return get_member(&"header") as RosMsg

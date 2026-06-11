@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosSensorMsgsIlluminance
 
+const ROS_TYPE_NAME = "sensor_msgs/msg/Illuminance"
+
 func _init():
-	init("sensor_msgs/msg/Illuminance")
+	init(ROS_TYPE_NAME)
 
 var header : RosStdMsgsHeader:
 	get: return get_member(&"header") as RosMsg

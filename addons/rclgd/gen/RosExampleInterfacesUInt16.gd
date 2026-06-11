@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosExampleInterfacesUInt16
 
+const ROS_TYPE_NAME = "example_interfaces/msg/UInt16"
+
 func _init():
-	init("example_interfaces/msg/UInt16")
+	init(ROS_TYPE_NAME)
 
 var data : int:
 	get: return get_member(&"data")

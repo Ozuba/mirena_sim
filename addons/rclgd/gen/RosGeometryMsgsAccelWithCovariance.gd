@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosGeometryMsgsAccelWithCovariance
 
+const ROS_TYPE_NAME = "geometry_msgs/msg/AccelWithCovariance"
+
 func _init():
-	init("geometry_msgs/msg/AccelWithCovariance")
+	init(ROS_TYPE_NAME)
 
 var accel : RosGeometryMsgsAccel:
 	get: return get_member(&"accel") as RosMsg

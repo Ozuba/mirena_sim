@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosPendulumMsgsRttestResults
 
+const ROS_TYPE_NAME = "pendulum_msgs/msg/RttestResults"
+
 func _init():
-	init("pendulum_msgs/msg/RttestResults")
+	init(ROS_TYPE_NAME)
 
 var stamp : RosBuiltinInterfacesTime:
 	get: return get_member(&"stamp") as RosMsg

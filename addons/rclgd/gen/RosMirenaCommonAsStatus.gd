@@ -1,18 +1,16 @@
 extends RosMsg
 class_name RosMirenaCommonAsStatus
 
+const ROS_TYPE_NAME = "mirena_common/msg/ASStatus"
+
 func _init():
-	init("mirena_common/msg/ASStatus")
+	init(ROS_TYPE_NAME)
 
-var header : RosStdMsgsHeader:
-	get: return get_member(&"header") as RosMsg
-	set(v): set_member(&"header", v)
+var as_status : int:
+	get: return get_member(&"as_status")
+	set(v): set_member(&"as_status", v)
 
-var state : int:
-	get: return get_member(&"state")
-	set(v): set_member(&"state", v)
-
-var mission : int:
-	get: return get_member(&"mission")
-	set(v): set_member(&"mission", v)
+var mission_selected : String:
+	get: return get_member(&"mission_selected")
+	set(v): set_member(&"mission_selected", v)
 

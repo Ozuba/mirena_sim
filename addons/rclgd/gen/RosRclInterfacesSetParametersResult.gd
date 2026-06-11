@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosRclInterfacesSetParametersResult
 
+const ROS_TYPE_NAME = "rcl_interfaces/msg/SetParametersResult"
+
 func _init():
-	init("rcl_interfaces/msg/SetParametersResult")
+	init(ROS_TYPE_NAME)
 
 var successful : bool:
 	get: return get_member(&"successful")

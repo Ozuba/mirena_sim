@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosRclInterfacesLoggerLevel
 
+const ROS_TYPE_NAME = "rcl_interfaces/msg/LoggerLevel"
+
 func _init():
-	init("rcl_interfaces/msg/LoggerLevel")
+	init(ROS_TYPE_NAME)
 
 var name : String:
 	get: return get_member(&"name")

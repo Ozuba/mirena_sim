@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosGeometryMsgsTwistWithCovarianceStamped
 
+const ROS_TYPE_NAME = "geometry_msgs/msg/TwistWithCovarianceStamped"
+
 func _init():
-	init("geometry_msgs/msg/TwistWithCovarianceStamped")
+	init(ROS_TYPE_NAME)
 
 var header : RosStdMsgsHeader:
 	get: return get_member(&"header") as RosMsg

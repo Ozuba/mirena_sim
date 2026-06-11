@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosSensorMsgsBatteryState
 
+const ROS_TYPE_NAME = "sensor_msgs/msg/BatteryState"
+
 func _init():
-	init("sensor_msgs/msg/BatteryState")
+	init(ROS_TYPE_NAME)
 
 var header : RosStdMsgsHeader:
 	get: return get_member(&"header") as RosMsg

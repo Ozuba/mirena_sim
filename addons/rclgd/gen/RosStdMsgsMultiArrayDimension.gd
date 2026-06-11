@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosStdMsgsMultiArrayDimension
 
+const ROS_TYPE_NAME = "std_msgs/msg/MultiArrayDimension"
+
 func _init():
-	init("std_msgs/msg/MultiArrayDimension")
+	init(ROS_TYPE_NAME)
 
 var label : String:
 	get: return get_member(&"label")

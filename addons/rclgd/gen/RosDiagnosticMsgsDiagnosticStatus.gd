@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosDiagnosticMsgsDiagnosticStatus
 
+const ROS_TYPE_NAME = "diagnostic_msgs/msg/DiagnosticStatus"
+
 func _init():
-	init("diagnostic_msgs/msg/DiagnosticStatus")
+	init(ROS_TYPE_NAME)
 
 var level : int:
 	get: return get_member(&"level")

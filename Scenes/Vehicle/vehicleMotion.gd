@@ -23,7 +23,7 @@ var path : Path3D
 var _node: RosNode
 # Publishers
 var _state_pub: RosPublisher
-var _can_dv_config_pub : RosPublisher
+var _as_status_pub : RosPublisher # as status system
 var _perception_pub: RosPublisher
 var _slam_pub: RosPublisher
 var _inferred_control_pub: RosPublisher
@@ -41,6 +41,7 @@ var origin  : Transform3D = Transform3D.IDENTITY
 var gas: float = 0.0
 var _steer_smoothed: float = 0.0
 var slam_cones: Array = [] # Seen cones
+var _as_status : RosMirenaCommonAsStatus 
 
 @onready var car_state : RosMirenaCommonCar = RosMirenaCommonCar.new()
 
@@ -58,11 +59,16 @@ func _ready():
 	_node = RosNode.new()
 	_node.init(name.to_snake_case(),name.to_snake_case())
 	## Publisher
-	_can_dv_config_pub = _node.create_publisher("debug_dv_config", "mirena_common/msg/CanDvConfig")
+	_as_status_pub = _node.create_publisher("as_status", "mirena_common/msg/ASStatus")
 	_state_pub = _node.create_publisher("debug_state","mirena_common/msg/Car")
 	_perception_pub = _node.create_publisher("debug_perception","mirena_common/msg/EntityList")
 	_slam_pub = _node.create_publisher("debug_slam","mirena_common/msg/EntityList")
 	_inferred_control_pub = _node.create_publisher("inferred_control","mirena_common/msg/CarControl")
+	
+	
+	# State setup
+	_as_status = RosMirenaCommonAsStatus.new()
+	_as_status.as_status = 0
 	## Publisher timers
 	_debug_tim = _node.create_timer(0.1,_debug_publish)
 	_state_tim = _node.create_timer(0.005,_publish_car_state)
@@ -72,7 +78,7 @@ func _ready():
 	_tf_broadcaster = _node.create_tf_broadcaster()
 	
 
-	
+
 	# Camera Registration
 	Sim.register_camera($TPCam)
 	Sim.register_camera($FPCam)
@@ -106,7 +112,7 @@ func _debug_publish():
 	_publish_perception()
 	_publish_slam()
 	_publish_control()
-	
+	_as_status_pub.publish(_as_status)
 # ROS Publishing
 
 ## Car state (Substitutes sensor EKF)
@@ -304,7 +310,3 @@ func get_cones_in_sight(max_dist: float = 10.0) -> Array:
 			if camera.is_position_in_frustum(cone.global_position):
 				visible_cones.append(cone)
 	return visible_cones
-
-# Returns the can bus dv config dummy that corresponds to this car
-func get_can_dv_config_pub():
-	return self._can_dv_config_pub

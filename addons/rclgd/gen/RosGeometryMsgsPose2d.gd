@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosGeometryMsgsPose2d
 
+const ROS_TYPE_NAME = "geometry_msgs/msg/Pose2D"
+
 func _init():
-	init("geometry_msgs/msg/Pose2D")
+	init(ROS_TYPE_NAME)
 
 var x : float:
 	get: return get_member(&"x")

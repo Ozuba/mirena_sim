@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosVisualizationMsgsInteractiveMarkerUpdate
 
+const ROS_TYPE_NAME = "visualization_msgs/msg/InteractiveMarkerUpdate"
+
 func _init():
-	init("visualization_msgs/msg/InteractiveMarkerUpdate")
+	init(ROS_TYPE_NAME)
 
 var server_id : String:
 	get: return get_member(&"server_id")

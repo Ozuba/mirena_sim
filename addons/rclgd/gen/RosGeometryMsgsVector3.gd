@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosGeometryMsgsVector3
 
+const ROS_TYPE_NAME = "geometry_msgs/msg/Vector3"
+
 func _init():
-	init("geometry_msgs/msg/Vector3")
+	init(ROS_TYPE_NAME)
 
 var x : float:
 	get: return get_member(&"x")

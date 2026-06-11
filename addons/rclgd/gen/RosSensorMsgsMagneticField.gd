@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosSensorMsgsMagneticField
 
+const ROS_TYPE_NAME = "sensor_msgs/msg/MagneticField"
+
 func _init():
-	init("sensor_msgs/msg/MagneticField")
+	init(ROS_TYPE_NAME)
 
 var header : RosStdMsgsHeader:
 	get: return get_member(&"header") as RosMsg

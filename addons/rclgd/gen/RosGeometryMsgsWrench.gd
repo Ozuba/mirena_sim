@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosGeometryMsgsWrench
 
+const ROS_TYPE_NAME = "geometry_msgs/msg/Wrench"
+
 func _init():
-	init("geometry_msgs/msg/Wrench")
+	init(ROS_TYPE_NAME)
 
 var force : RosGeometryMsgsVector3:
 	get: return get_member(&"force") as RosMsg

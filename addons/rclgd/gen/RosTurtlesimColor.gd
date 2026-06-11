@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosTurtlesimColor
 
+const ROS_TYPE_NAME = "turtlesim/msg/Color"
+
 func _init():
-	init("turtlesim/msg/Color")
+	init(ROS_TYPE_NAME)
 
 var r : int:
 	get: return get_member(&"r")

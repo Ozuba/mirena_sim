@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosGeometryMsgsVelocityStamped
 
+const ROS_TYPE_NAME = "geometry_msgs/msg/VelocityStamped"
+
 func _init():
-	init("geometry_msgs/msg/VelocityStamped")
+	init(ROS_TYPE_NAME)
 
 var header : RosStdMsgsHeader:
 	get: return get_member(&"header") as RosMsg

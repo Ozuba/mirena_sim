@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosSensorMsgsRegionOfInterest
 
+const ROS_TYPE_NAME = "sensor_msgs/msg/RegionOfInterest"
+
 func _init():
-	init("sensor_msgs/msg/RegionOfInterest")
+	init(ROS_TYPE_NAME)
 
 var x_offset : int:
 	get: return get_member(&"x_offset")

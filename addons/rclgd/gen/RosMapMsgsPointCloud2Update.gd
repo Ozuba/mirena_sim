@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosMapMsgsPointCloud2Update
 
+const ROS_TYPE_NAME = "map_msgs/msg/PointCloud2Update"
+
 func _init():
-	init("map_msgs/msg/PointCloud2Update")
+	init(ROS_TYPE_NAME)
 
 var header : RosStdMsgsHeader:
 	get: return get_member(&"header") as RosMsg

@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosVisualizationMsgsMeshFile
 
+const ROS_TYPE_NAME = "visualization_msgs/msg/MeshFile"
+
 func _init():
-	init("visualization_msgs/msg/MeshFile")
+	init(ROS_TYPE_NAME)
 
 var filename : String:
 	get: return get_member(&"filename")

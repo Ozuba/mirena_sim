@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosGeometryMsgsPoint32
 
+const ROS_TYPE_NAME = "geometry_msgs/msg/Point32"
+
 func _init():
-	init("geometry_msgs/msg/Point32")
+	init(ROS_TYPE_NAME)
 
 var x : float:
 	get: return get_member(&"x")

@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosRmwDdsCommonNodeEntitiesInfo
 
+const ROS_TYPE_NAME = "rmw_dds_common/msg/NodeEntitiesInfo"
+
 func _init():
-	init("rmw_dds_common/msg/NodeEntitiesInfo")
+	init(ROS_TYPE_NAME)
 
 var node_namespace : String:
 	get: return get_member(&"node_namespace")

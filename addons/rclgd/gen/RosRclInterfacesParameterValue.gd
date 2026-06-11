@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosRclInterfacesParameterValue
 
+const ROS_TYPE_NAME = "rcl_interfaces/msg/ParameterValue"
+
 func _init():
-	init("rcl_interfaces/msg/ParameterValue")
+	init(ROS_TYPE_NAME)
 
 var type : int:
 	get: return get_member(&"type")

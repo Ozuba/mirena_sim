@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosMapMsgsProjectedMapInfo
 
+const ROS_TYPE_NAME = "map_msgs/msg/ProjectedMapInfo"
+
 func _init():
-	init("map_msgs/msg/ProjectedMapInfo")
+	init(ROS_TYPE_NAME)
 
 var frame_id : String:
 	get: return get_member(&"frame_id")

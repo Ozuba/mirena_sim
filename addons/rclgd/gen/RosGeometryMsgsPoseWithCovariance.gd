@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosGeometryMsgsPoseWithCovariance
 
+const ROS_TYPE_NAME = "geometry_msgs/msg/PoseWithCovariance"
+
 func _init():
-	init("geometry_msgs/msg/PoseWithCovariance")
+	init(ROS_TYPE_NAME)
 
 var pose : RosGeometryMsgsPose:
 	get: return get_member(&"pose") as RosMsg

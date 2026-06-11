@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosNavMsgsOccupancyGrid
 
+const ROS_TYPE_NAME = "nav_msgs/msg/OccupancyGrid"
+
 func _init():
-	init("nav_msgs/msg/OccupancyGrid")
+	init(ROS_TYPE_NAME)
 
 var header : RosStdMsgsHeader:
 	get: return get_member(&"header") as RosMsg

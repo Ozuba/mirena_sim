@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosNavMsgsMapMetaData
 
+const ROS_TYPE_NAME = "nav_msgs/msg/MapMetaData"
+
 func _init():
-	init("nav_msgs/msg/MapMetaData")
+	init(ROS_TYPE_NAME)
 
 var map_load_time : RosBuiltinInterfacesTime:
 	get: return get_member(&"map_load_time") as RosMsg

@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosMirenaCommonGate
 
+const ROS_TYPE_NAME = "mirena_common/msg/Gate"
+
 func _init():
-	init("mirena_common/msg/Gate")
+	init(ROS_TYPE_NAME)
 
 var x : float:
 	get: return get_member(&"x")

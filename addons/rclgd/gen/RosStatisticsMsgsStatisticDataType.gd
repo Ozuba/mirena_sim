@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosStatisticsMsgsStatisticDataType
 
+const ROS_TYPE_NAME = "statistics_msgs/msg/StatisticDataType"
+
 func _init():
-	init("statistics_msgs/msg/StatisticDataType")
+	init(ROS_TYPE_NAME)
 
 var structure_needs_at_least_one_member : int:
 	get: return get_member(&"structure_needs_at_least_one_member")

@@ -258,7 +258,7 @@ metadata/_custom_type_script = "uid://ds4q43s0n1ft7"
 [node name="IMU" type="Node3D" parent="." unique_id=598701879]
 script = ExtResource("5_sviuk")
 frame_id = "~imu_link"
-parent_frame_id = "~base_link"
+parent_frame_id = "~cog"
 metadata/_custom_type_script = "uid://bsmemyc0nuhy2"
 
 [node name="GPS" type="Node3D" parent="." unique_id=1746440958]

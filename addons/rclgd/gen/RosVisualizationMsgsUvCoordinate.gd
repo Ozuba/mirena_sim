@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosVisualizationMsgsUvCoordinate
 
+const ROS_TYPE_NAME = "visualization_msgs/msg/UVCoordinate"
+
 func _init():
-	init("visualization_msgs/msg/UVCoordinate")
+	init(ROS_TYPE_NAME)
 
 var u : float:
 	get: return get_member(&"u")

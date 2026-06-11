@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosRosbag2InterfacesWriteSplitEvent
 
+const ROS_TYPE_NAME = "rosbag2_interfaces/msg/WriteSplitEvent"
+
 func _init():
-	init("rosbag2_interfaces/msg/WriteSplitEvent")
+	init(ROS_TYPE_NAME)
 
 var closed_file : String:
 	get: return get_member(&"closed_file")

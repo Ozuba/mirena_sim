@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosBuiltinInterfacesTime
 
+const ROS_TYPE_NAME = "builtin_interfaces/msg/Time"
+
 func _init():
-	init("builtin_interfaces/msg/Time")
+	init(ROS_TYPE_NAME)
 
 var sec : int:
 	get: return get_member(&"sec")

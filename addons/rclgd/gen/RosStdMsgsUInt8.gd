@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosStdMsgsUInt8
 
+const ROS_TYPE_NAME = "std_msgs/msg/UInt8"
+
 func _init():
-	init("std_msgs/msg/UInt8")
+	init(ROS_TYPE_NAME)
 
 var data : int:
 	get: return get_member(&"data")

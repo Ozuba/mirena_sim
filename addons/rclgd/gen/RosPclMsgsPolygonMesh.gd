@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosPclMsgsPolygonMesh
 
+const ROS_TYPE_NAME = "pcl_msgs/msg/PolygonMesh"
+
 func _init():
-	init("pcl_msgs/msg/PolygonMesh")
+	init(ROS_TYPE_NAME)
 
 var header : RosStdMsgsHeader:
 	get: return get_member(&"header") as RosMsg

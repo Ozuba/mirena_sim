@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosStdMsgsHeader
 
+const ROS_TYPE_NAME = "std_msgs/msg/Header"
+
 func _init():
-	init("std_msgs/msg/Header")
+	init(ROS_TYPE_NAME)
 
 var stamp : RosBuiltinInterfacesTime:
 	get: return get_member(&"stamp") as RosMsg

@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosTurtlesimPose
 
+const ROS_TYPE_NAME = "turtlesim/msg/Pose"
+
 func _init():
-	init("turtlesim/msg/Pose")
+	init(ROS_TYPE_NAME)
 
 var x : float:
 	get: return get_member(&"x")

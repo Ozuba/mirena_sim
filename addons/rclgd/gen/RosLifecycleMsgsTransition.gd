@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosLifecycleMsgsTransition
 
+const ROS_TYPE_NAME = "lifecycle_msgs/msg/Transition"
+
 func _init():
-	init("lifecycle_msgs/msg/Transition")
+	init(ROS_TYPE_NAME)
 
 var id : int:
 	get: return get_member(&"id")

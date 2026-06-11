@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosStdMsgsColorRgba
 
+const ROS_TYPE_NAME = "std_msgs/msg/ColorRGBA"
+
 func _init():
-	init("std_msgs/msg/ColorRGBA")
+	init(ROS_TYPE_NAME)
 
 var r : float:
 	get: return get_member(&"r")

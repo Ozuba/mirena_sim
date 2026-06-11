@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosGeometryMsgsQuaternion
 
+const ROS_TYPE_NAME = "geometry_msgs/msg/Quaternion"
+
 func _init():
-	init("geometry_msgs/msg/Quaternion")
+	init(ROS_TYPE_NAME)
 
 var x : float:
 	get: return get_member(&"x")

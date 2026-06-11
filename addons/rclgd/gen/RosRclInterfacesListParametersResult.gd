@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosRclInterfacesListParametersResult
 
+const ROS_TYPE_NAME = "rcl_interfaces/msg/ListParametersResult"
+
 func _init():
-	init("rcl_interfaces/msg/ListParametersResult")
+	init(ROS_TYPE_NAME)
 
 var names : PackedStringArray:
 	get: return get_member(&"names")

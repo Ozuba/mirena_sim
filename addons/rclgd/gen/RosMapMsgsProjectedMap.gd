@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosMapMsgsProjectedMap
 
+const ROS_TYPE_NAME = "map_msgs/msg/ProjectedMap"
+
 func _init():
-	init("map_msgs/msg/ProjectedMap")
+	init(ROS_TYPE_NAME)
 
 var map : RosNavMsgsOccupancyGrid:
 	get: return get_member(&"map") as RosMsg

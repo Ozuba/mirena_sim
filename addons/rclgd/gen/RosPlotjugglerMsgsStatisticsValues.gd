@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosPlotjugglerMsgsStatisticsValues
 
+const ROS_TYPE_NAME = "plotjuggler_msgs/msg/StatisticsValues"
+
 func _init():
-	init("plotjuggler_msgs/msg/StatisticsValues")
+	init(ROS_TYPE_NAME)
 
 var header : RosStdMsgsHeader:
 	get: return get_member(&"header") as RosMsg

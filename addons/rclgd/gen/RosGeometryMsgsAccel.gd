@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosGeometryMsgsAccel
 
+const ROS_TYPE_NAME = "geometry_msgs/msg/Accel"
+
 func _init():
-	init("geometry_msgs/msg/Accel")
+	init(ROS_TYPE_NAME)
 
 var linear : RosGeometryMsgsVector3:
 	get: return get_member(&"linear") as RosMsg

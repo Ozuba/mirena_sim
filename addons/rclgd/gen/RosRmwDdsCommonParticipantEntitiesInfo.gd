@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosRmwDdsCommonParticipantEntitiesInfo
 
+const ROS_TYPE_NAME = "rmw_dds_common/msg/ParticipantEntitiesInfo"
+
 func _init():
-	init("rmw_dds_common/msg/ParticipantEntitiesInfo")
+	init(ROS_TYPE_NAME)
 
 var gid : RosRmwDdsCommonGid:
 	get: return get_member(&"gid") as RosMsg

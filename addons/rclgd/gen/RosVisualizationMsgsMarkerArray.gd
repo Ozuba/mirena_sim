@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosVisualizationMsgsMarkerArray
 
+const ROS_TYPE_NAME = "visualization_msgs/msg/MarkerArray"
+
 func _init():
-	init("visualization_msgs/msg/MarkerArray")
+	init(ROS_TYPE_NAME)
 
 var markers : Array:
 	get: return get_member(&"markers")

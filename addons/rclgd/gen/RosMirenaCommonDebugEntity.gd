@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosMirenaCommonDebugEntity
 
+const ROS_TYPE_NAME = "mirena_common/msg/DebugEntity"
+
 func _init():
-	init("mirena_common/msg/DebugEntity")
+	init(ROS_TYPE_NAME)
 
 var ent : RosMirenaCommonEntity:
 	get: return get_member(&"ent") as RosMsg

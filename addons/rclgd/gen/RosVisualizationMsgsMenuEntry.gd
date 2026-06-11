@@ -1,8 +1,10 @@
 extends RosMsg
 class_name RosVisualizationMsgsMenuEntry
 
+const ROS_TYPE_NAME = "visualization_msgs/msg/MenuEntry"
+
 func _init():
-	init("visualization_msgs/msg/MenuEntry")
+	init(ROS_TYPE_NAME)
 
 var id : int:
 	get: return get_member(&"id")
