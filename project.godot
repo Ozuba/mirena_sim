@@ -127,6 +127,10 @@ point_pillar_snapshot={
 common/physics_ticks_per_second=400
 common/max_physics_steps_per_frame=20
 
+[rendering]
+
+renderer/rendering_method="mobile"
+
 [ros]
 
 parameters/use_sim_time=false

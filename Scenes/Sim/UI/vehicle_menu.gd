@@ -17,6 +17,8 @@ func _on_pilot_mode_item_selected(index: int) -> void:
 			Sim.car.pilot = MirenaCar.PilotMode.TRACK_RAIL
 		3:
 			Sim.car.pilot = MirenaCar.PilotMode.NO_PILOT
+		4: 
+			Sim.car.pilot = MirenaCar.PilotMode.CONTROLLER
 
 	
 

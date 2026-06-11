@@ -125,7 +125,7 @@ size_flags_horizontal = 3
 mouse_force_pass_scroll_events = false
 selected = 1
 allow_reselect = true
-item_count = 4
+item_count = 5
 popup/item_0/text = "Manual"
 popup/item_0/id = 0
 popup/item_1/text = "ROS2"
@@ -134,6 +134,8 @@ popup/item_2/text = "FollowTrack"
 popup/item_2/id = 2
 popup/item_3/text = "NoPilot"
 popup/item_3/id = 3
+popup/item_4/text = "Controller"
+popup/item_4/id = 4
 
 [node name="ResetCarButton" type="Button" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/VEHICLE/Vehicle" unique_id=599819201]
 layout_mode = 2

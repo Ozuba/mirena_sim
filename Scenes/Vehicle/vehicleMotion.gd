@@ -1,7 +1,7 @@
 extends VehicleBody3D
 class_name MirenaCar
 
-enum PilotMode { NO_PILOT, MANUAL, ROS, TRACK_RAIL }
+enum PilotMode { NO_PILOT, MANUAL, ROS, TRACK_RAIL, CONTROLLER }
 
 # --- Configuration ---
 const POWER_LIM = 80000 # W
@@ -18,6 +18,10 @@ const MAX_STEER = deg_to_rad(30)
 var _rail_progress: float = 0.0
 var path : Path3D
 
+# --- UI / Camera Background Additions ---
+@export var target_display: TextureRect # <-- Assign your UI background node here in the inspector
+var background_texture: ImageTexture = ImageTexture.new()
+
 # --- ROS Variables ---
 @export var frame_id: String = "~cog"
 var _node: RosNode
@@ -31,6 +35,7 @@ var _state_tim : RosTimer
 var _debug_tim : RosTimer
 # Subscribers
 var _control_sub: RosSubscriber
+var _camera_sub: RosSubscriber # <-- FIXED: Added missing variable declaration
 
 var _tf_broadcaster: RosTfBroadcaster
 var _ros_gas: float = 0.0
@@ -48,9 +53,7 @@ func _init():
 	child_entered_tree.connect(_on_child_entered_tree)
 
 func _on_child_entered_tree(node: Node) -> void:
-	# If the child node has a namespace property, overwrite it immediately
 	if "ros_namespace" in node:
-		# Use the current name of the car instance as the namespace basis
 		node.ros_namespace = self.name.to_snake_case()
 	
 func _ready():
@@ -68,22 +71,41 @@ func _ready():
 	_state_tim = _node.create_timer(0.005,_publish_car_state)
 	# Subscribers
 	_control_sub = _node.create_subscriber("control", "mirena_common/msg/CarControl", _on_control)
+	_camera_sub = _node.create_subscriber("mirena_camera/image", "sensor_msgs/msg/Image", _on_image)
+
 	# Transforms
 	_tf_broadcaster = _node.create_tf_broadcaster()
-	
-
 	
 	# Camera Registration
 	Sim.register_camera($TPCam)
 	Sim.register_camera($FPCam)
+
+func _on_image(msg):
+	# FIXED: Ensure we only process if a target display UI is actually hooked up
+	if pilot == PilotMode.CONTROLLER and target_display != null:
+		var img := Image.new()
+		var width := 640
+		var height := 480
+		var raw_bytes: PackedByteArray = msg.data
+		
+		img.create_from_data(width, height, false, Image.FORMAT_RGB8, raw_bytes)
+		
+		# FIXED: Use call_deferred to safely push texture modifications back to Godot's main thread
+		_update_ui_texture.call_deferred(img)
+
+# FIXED: Separate helper function to update UI on the main thread safely
+func _update_ui_texture(img: Image) -> void:
+	if background_texture.get_size() != Vector2(img.get_size()):
+		background_texture = ImageTexture.create_from_image(img)
+		target_display.texture = background_texture 
+	else:
+		background_texture.update(img)
 
 func _on_control(msg):
 	_ros_gas = msg.gas
 	_ros_steer = msg.steer_angle
 
 func _physics_process(delta: float) -> void:
-
-	
 	# Process driving commands
 	match pilot:
 		PilotMode.NO_PILOT:
@@ -97,6 +119,9 @@ func _physics_process(delta: float) -> void:
 			_apply_vehicle_physics(delta)
 		PilotMode.TRACK_RAIL:
 			_process_track_rail(delta)
+		PilotMode.CONTROLLER:
+			_process_controller_pilot(delta) # <-- FIXED: Passing delta down
+			_apply_vehicle_physics(delta)
 	
 	if global_position.y < -1:
 		reset_position()
@@ -114,7 +139,7 @@ func _publish_car_state():
 	var now = _node.now()
 	car_state.header.stamp = now
 	car_state.header.frame_id = "debug_odom"
-	car_state.child_frame_id = _node.resolve_frame(frame_id) # COG usualy
+	car_state.child_frame_id = _node.resolve_frame(frame_id) 
 	
 	var odom_transform : Transform3D = origin.inverse() * global_transform
 	# 1. Pose and Dynamics
@@ -127,30 +152,23 @@ func _publish_car_state():
 	car_state.v = -local_vel.x
 	car_state.omega = angular_velocity.y
 	
-	# 2. Covariance Setup (6x6 matrix flattened)
-	# Indices for diagonal: x=0, y=7, psi=14, u=21, v=28, omega=35
 	var cov = []
 	cov.resize(36)
 	for i in range(36):
-		cov[i] = 0.0 # Initialize all to zero
+		cov[i] = 0.0 
 		
-	# Set Variances (Standard Deviation squared)
-	# These values represent "how much we trust the simulator"
-	cov[0]  = 0 # x variance (m^2)
-	cov[7]  = 0  # y variance (m^2)
-	cov[14] = 0 # psi variance (rad^2)
-	cov[21] = 0  # u variance (m/s^2)
-	cov[28] = 0  # v variance (m/s^2)
-	cov[35] = 0  # omega variance (rad/s^2)
+	cov[0]  = 0 
+	cov[7]  = 0  
+	cov[14] = 0 
+	cov[21] = 0  
+	cov[28] = 0  
+	cov[35] = 0  
 	
 	car_state.covariance = cov
-	# Publish debug odom and map transforms 
 	_tf_broadcaster.send_transform(odom_transform.translated(center_of_mass).inverse(),"debug_odom",frame_id, false,now)
 	_tf_broadcaster.send_transform(origin.inverse(),"debug_map","debug_odom", false,now)
 
 	_state_pub.publish(car_state)
-	
-
 
 func _publish_perception():
 	var cones = get_cones_in_sight(12.0)
@@ -168,7 +186,6 @@ func _publish_slam():
 	msg.header.stamp = _node.now()
 	msg.header.frame_id = "map"
 	slam_cones = slam_cones.filter(func(c): return is_instance_valid(c))
-	# Use Identity transform for global positions
 	msg.entities = slam_cones.map(func(c): return _to_ent(c,true))
 	_slam_pub.publish(msg)
 
@@ -193,19 +210,16 @@ func _to_ent(cone: Node3D, global : bool = false  ) -> RosMirenaCommonEntity:
 	ent.position.z = pos.y
 	return ent
 
-
 # --- Pilot Logic ---
 
 func _process_no_pilot() -> void:
-	# Zero out all inputs to ensure the car stays stationary or coasts to a stop
 	self.gas = 0.0
 	self.steering = 0.0
-	self.brake = BRAKE_F # Keep brakes engaged in No Pilot mode
+	self.brake = BRAKE_F 
 
 func _process_manual_pilot(delta: float) -> void:
-	var steer_input = Input.get_action_strength("manual_steer_l") - Input.get_action_strength("manual_steer_r")
-	_steer_smoothed = _smooth_steer(_steer_smoothed, steer_input, delta, 2.0)
-	
+	var steer_input = Input.get_action_strength("manual_steer_l") - Input.get_action_strength("manual_steer_r")    
+	_steer_smoothed = _smooth_steer(_steer_smoothed, steer_input, delta, 2.0) # FIXED: Added smoothing call matching controller mode
 	self.gas = Input.get_action_strength("manual_gas_pos") - Input.get_action_strength("manual_gas_neg")
 	self.steering = _steer_smoothed * MAX_STEER
 	self.brake = Input.get_action_strength("EBS") * BRAKE_F
@@ -213,41 +227,60 @@ func _process_manual_pilot(delta: float) -> void:
 func _process_ros_pilot() -> void:
 	self.gas = _ros_gas
 	self.steering = _ros_steer 
-	self.brake = 0.0 # Brakes handled by ROS if needed
+	self.brake = 0.0 
 
 func _process_track_rail(delta: float) -> void:
 	if not path or not path.curve: 
 		return
 
-	# 1. Advance progress (meters)
 	_rail_progress += rail_speed * delta
-	
-	# 2. Sample the curve math directly (No PathFollow node needed!)
-	# This gives us the local Transform3D (position + orientation)
 	var local_transform = path.curve.sample_baked_with_rotation(_rail_progress, true)
-	
-	# 3. Convert to Global Space
-	# We multiply by the path's transform so the car follows the path where it sits in the world
 	var target_global_transform = path.global_transform * local_transform
 	
-	# 4. Movement (Your move_and_collide approach)
 	var motion = target_global_transform.origin - global_position
 	var collision = move_and_collide(motion)
 	if collision:
 		var remainder = collision.get_remainder().slide(collision.get_normal())
 		move_and_collide(remainder)
 
-	# 5. Look-Ahead Orientation
 	var look_ahead_p = _rail_progress + rail_look_ahead
 	var look_target_local = path.curve.sample_baked_with_rotation(look_ahead_p, true)
 	var look_target_global = path.global_transform * look_target_local
 	
-	
-	# Smoothly rotate the car to face the look-ahead point
 	global_transform.basis = global_transform.basis.slerp(
-		look_target_global.basis .orthonormalized(), 
+		look_target_global.basis.orthonormalized(), 
 		5.0 * delta
 	).orthonormalized()
+
+func _process_controller_pilot(delta: float) -> void:
+	# 1. Check if a controller is actually connected
+	if Input.get_connected_joypads().is_empty():
+		self.gas = 0.0
+		self.steering = 0.0
+		self.brake = BRAKE_F
+		return
+
+	var device_id = 0 
+
+	# 2. Get Analog Steering (Left Stick X-Axis)
+	# JOY_AXIS_LEFT_X returns -1.0 (Full Left) to 1.0 (Full Right)
+	var steer_input = Input.get_joy_axis(device_id, JOY_AXIS_LEFT_X)
+	
+	# Apply a small deadzone to prevent drift when the stick is resting
+	if abs(steer_input) < 0.05:
+		steer_input = 0.0
+		
+	_steer_smoothed = _smooth_steer(_steer_smoothed, steer_input, delta, 3.5) # Increased speed slightly for responsive analog feel
+	self.steering = _steer_smoothed * MAX_STEER
+
+	# 3. Get Analog Gas & Brake (Triggers)
+	# Triggers rest at 0.0 and go up to 1.0 when fully pressed
+	var trigger_gas = Input.get_joy_axis(device_id, JOY_AXIS_TRIGGER_RIGHT)
+	var trigger_brake = Input.get_joy_axis(device_id, JOY_AXIS_TRIGGER_LEFT)
+
+	self.gas = trigger_gas
+	self.brake = trigger_brake * BRAKE_F
+	
 # --- Physics & Low Level Control ---
 
 func _apply_vehicle_physics(_delta: float) -> void:
@@ -260,7 +293,6 @@ func _apply_vehicle_physics(_delta: float) -> void:
 	$RL_WHEEL.engine_force = fx / 2.0
 	$RR_WHEEL.engine_force = fx / 2.0
 	
-	# Apply braking force to wheels
 	$RL_WHEEL.brake = brake
 	$RR_WHEEL.brake = brake
 
@@ -284,11 +316,10 @@ func set_origin(transform, reset_vel: bool = false) -> void:
 
 func reset_position() -> void:
 	set_origin(Sim.track.origin, true)
-	self.gas = 0;
-	self.steering = 0;
-	self.brake = 0;
+	self.gas = 0
+	self.steering = 0
+	self.brake = 0
 	_rail_progress = 0
-	# Reset slam
 	slam_cones.clear()
 
 func cone_collision_set(enable: bool) -> void:
@@ -305,6 +336,5 @@ func get_cones_in_sight(max_dist: float = 10.0) -> Array:
 				visible_cones.append(cone)
 	return visible_cones
 
-# Returns the can bus dv config dummy that corresponds to this car
 func get_can_dv_config_pub():
 	return self._can_dv_config_pub

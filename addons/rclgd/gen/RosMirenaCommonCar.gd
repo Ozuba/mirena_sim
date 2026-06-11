@@ -39,4 +39,3 @@ var omega : float:
 var covariance : PackedFloat64Array:
 	get: return get_member(&"covariance")
 	set(v): set_member(&"covariance", v)
-

@@ -15,8 +15,6 @@ func on_mission_selected(item: int) -> void:
 	pass
 
 func on_dv_enable_set() -> void:
-	if MissionSelector.selected < 0:
-		return
 	var msg := RosMirenaCommonCanDvConfig.new()
 	msg.mission_select.mission = MissionSelector.selected
 	Sim.car.get_can_dv_config_pub().publish(msg)

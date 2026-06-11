@@ -15,4 +15,3 @@ var gates : Array:
 var is_closed : bool:
 	get: return get_member(&"is_closed")
 	set(v): set_member(&"is_closed", v)
-
