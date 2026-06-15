@@ -11,9 +11,9 @@ class_name RosGps
 
 @export_group("ROS 2 Settings")
 @export var ros_namespace : String = ""
-@export var gps_rate: float = 10.0 
-@export var frame_id: String = "~/gps_link"
-@export var parent_frame_id: String = "~/base_link" # Path to the car's center
+@export var gps_rate: float = 10.0
+@export var frame_id: String = "car/gps"
+@export var parent_frame_id: String = "car/cog"
 
 
 
@@ -36,7 +36,7 @@ var _msg: RosSensorMsgsNavSatFix
 func _ready() -> void:
 	_node = RosNode.new()
 	_node.init(name.to_snake_case(),ros_namespace.to_snake_case())
-	_gps_pub = _node.create_publisher("~/fix", "sensor_msgs/msg/NavSatFix")
+	_gps_pub = _node.create_publisher("/sensors/gps", "sensor_msgs/msg/NavSatFix")
 	_timer = _node.create_timer(1.0 / gps_rate, _publish_gps)
 	
 	# --- Static Transform Publisher ---

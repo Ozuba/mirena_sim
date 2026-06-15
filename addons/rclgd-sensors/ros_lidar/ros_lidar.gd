@@ -21,9 +21,9 @@ const FACE_CAPTURE_EFFECT_CLASS = preload("res://addons/rclgd-sensors/ros_lidar/
 @export_group("ROS 2 Settings")
 @export var ros_namespace : String = ""
 @export var publish_rate: float = 10.0
-@export var lidar_topic: String = "~/lidar"
-@export var frame_id: String = "~lidar"
-@export var parent_frame_id: String = "~base_link"
+@export var lidar_topic: String = "/sensors/lidar/points"
+@export var frame_id: String = "car/lidar"
+@export var parent_frame_id: String = "car/cog"
 
 # --- Internal Nodes ---
 var _viewports: Array[SubViewport] = []

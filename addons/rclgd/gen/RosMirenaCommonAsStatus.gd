@@ -13,4 +13,3 @@ var as_status : int:
 var mission_selected : String:
 	get: return get_member(&"mission_selected")
 	set(v): set_member(&"mission_selected", v)
-

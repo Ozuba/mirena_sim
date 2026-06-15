@@ -12,9 +12,9 @@ class_name RosCamera
 @export_group("ROS 2 Settings")
 @export var ros_namespace : String = ""
 @export var publish_rate: float = 15.0
-@export var frame_id: String = "camera_link"
-@export var parent_frame_id: String = "base_link"
-@export var optical_frame_id: String = "camera_optical"
+@export var frame_id: String = "car/camera"
+@export var parent_frame_id: String = "car/cog"
+@export var optical_frame_id: String = "camera_optical_frame"
 
 # --- Internal Nodes ---
 var _viewport: SubViewport
@@ -44,8 +44,8 @@ func _ready() -> void:
 	_node = RosNode.new()
 	_node.init(name.to_snake_case(),ros_namespace.to_snake_case())
 	
-	_camera_pub = _node.create_publisher("~/image_raw", "sensor_msgs/msg/Image")
-	_camera_info_pub = _node.create_publisher("~/camera_info", "sensor_msgs/msg/CameraInfo")
+	_camera_pub = _node.create_publisher("/sensors/camera/image", "sensor_msgs/msg/Image")
+	_camera_info_pub = _node.create_publisher("/sensors/camera/camera_info", "sensor_msgs/msg/CameraInfo")
 	_tf_broadcaster = _node.create_tf_broadcaster()
 	_resolved_optical_frame = _node.resolve_frame(optical_frame_id)
 

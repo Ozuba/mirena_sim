@@ -242,27 +242,18 @@ horizontal_fov_max = 60.0
 max_range = 200.0
 noise_std_dev = 0.001
 face_resolution = 2048
-lidar_topic = "~/cloud"
-parent_frame_id = "~cog"
 metadata/_custom_type_script = "uid://cxrb8iam8llhk"
 
 [node name="Camera" type="Node3D" parent="." unique_id=1031281475]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.068, 0.98, 0)
 script = ExtResource("4_dflui")
 publish_rate = 60.0
-frame_id = "~camera"
-parent_frame_id = "~cog"
-optical_frame_id = "~camera_optical"
 metadata/_custom_type_script = "uid://ds4q43s0n1ft7"
 
 [node name="IMU" type="Node3D" parent="." unique_id=598701879]
 script = ExtResource("5_sviuk")
-frame_id = "~imu_link"
-parent_frame_id = "~cog"
 metadata/_custom_type_script = "uid://bsmemyc0nuhy2"
 
 [node name="GPS" type="Node3D" parent="." unique_id=1746440958]
 script = ExtResource("6_1avwx")
-frame_id = "~gps_link"
-parent_frame_id = "~cog"
 metadata/_custom_type_script = "uid://c0hu800pgnmoh"

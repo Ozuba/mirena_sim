@@ -11,9 +11,9 @@ class_name RosImu
 
 @export_group("ROS 2 Settings")
 @export var ros_namespace : String = ""
-@export var imu_rate: float = 100.0 
-@export var frame_id: String = "~/imu_link"
-@export var parent_frame_id: String = "~/base_link"
+@export var imu_rate: float = 100.0
+@export var frame_id: String = "car/imu"
+@export var parent_frame_id: String = "car/cog"
 
 
 
@@ -39,7 +39,7 @@ var _msg: RosSensorMsgsImu
 func _ready() -> void:
 	_node = RosNode.new()
 	_node.init(name.to_snake_case(),ros_namespace.to_snake_case())
-	_imu_pub = _node.create_publisher("~/data", "sensor_msgs/msg/Imu")
+	_imu_pub = _node.create_publisher("/sensors/imu", "sensor_msgs/msg/Imu")
 	_timer = _node.create_timer(1.0 / imu_rate, _publish_imu)
 	
 	_tf_broadcaster = _node.create_tf_broadcaster()

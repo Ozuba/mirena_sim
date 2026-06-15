@@ -19,15 +19,14 @@ var _rail_progress: float = 0.0
 var path : Path3D
 
 # --- ROS Variables ---
-@export var frame_id: String = "~cog"
+@export var frame_id: String = "car/cog"
 var _node: RosNode
 # Publishers
 var _state_pub: RosPublisher
-var _as_status_pub : RosPublisher # as status system
+var _as_status_pub : RosPublisher
 var _perception_pub: RosPublisher
 var _slam_pub: RosPublisher
 var _inferred_control_pub: RosPublisher
-var _state_tim : RosTimer
 var _debug_tim : RosTimer
 # Subscribers
 var _control_sub: RosSubscriber
@@ -41,39 +40,28 @@ var origin  : Transform3D = Transform3D.IDENTITY
 var gas: float = 0.0
 var _steer_smoothed: float = 0.0
 var slam_cones: Array = [] # Seen cones
-var _as_status : RosMirenaCommonAsStatus 
+var _as_status : RosMirenaCommonAsStatus
 
 @onready var car_state : RosMirenaCommonCar = RosMirenaCommonCar.new()
 
-func _init():
-	child_entered_tree.connect(_on_child_entered_tree)
-
-func _on_child_entered_tree(node: Node) -> void:
-	# If the child node has a namespace property, overwrite it immediately
-	if "ros_namespace" in node:
-		# Use the current name of the car instance as the namespace basis
-		node.ros_namespace = self.name.to_snake_case()
-	
 func _ready():
-	## ROS
+	## ROS — no namespace: all topic names below are absolute
 	_node = RosNode.new()
-	_node.init(name.to_snake_case(),name.to_snake_case())
-	## Publisher
-	_as_status_pub = _node.create_publisher("as_status", "mirena_common/msg/ASStatus")
-	_state_pub = _node.create_publisher("debug_state","mirena_common/msg/Car")
-	_perception_pub = _node.create_publisher("debug_perception","mirena_common/msg/EntityList")
-	_slam_pub = _node.create_publisher("debug_slam","mirena_common/msg/EntityList")
-	_inferred_control_pub = _node.create_publisher("inferred_control","mirena_common/msg/CarControl")
-	
-	
+	_node.init("mirena_car", "")
+	## Publishers (absolute topic names from topic contract)
+	_as_status_pub        = _node.create_publisher("/as_status",        "mirena_common/msg/ASStatus")
+	_state_pub            = _node.create_publisher("/state/car",       "mirena_common/msg/Car")
+	_perception_pub       = _node.create_publisher("/debug/perception",  "mirena_common/msg/EntityList")
+	_slam_pub             = _node.create_publisher("/debug/slam",        "mirena_common/msg/EntityList")
+	_inferred_control_pub = _node.create_publisher("/inferred_control",  "mirena_common/msg/CarControl")
+
 	# State setup
 	_as_status = RosMirenaCommonAsStatus.new()
 	_as_status.as_status = 0
 	## Publisher timers
-	_debug_tim = _node.create_timer(0.1,_debug_publish)
-	_state_tim = _node.create_timer(0.005,_publish_car_state)
-	# Subscribers
-	_control_sub = _node.create_subscriber("control", "mirena_common/msg/CarControl", _on_control)
+	_debug_tim = _node.create_timer(0.1, _debug_publish)
+	# Subscriber
+	_control_sub = _node.create_subscriber("/control", "mirena_common/msg/CarControl", _on_control)
 	# Transforms
 	_tf_broadcaster = _node.create_tf_broadcaster()
 	
@@ -88,8 +76,6 @@ func _on_control(msg):
 	_ros_steer = msg.steer_angle
 
 func _physics_process(delta: float) -> void:
-
-	
 	# Process driving commands
 	match pilot:
 		PilotMode.NO_PILOT:
@@ -106,6 +92,8 @@ func _physics_process(delta: float) -> void:
 	
 	if global_position.y < -1:
 		reset_position()
+
+	_publish_car_state()
 		
 # Publish Debug Info
 func _debug_publish():
@@ -119,8 +107,8 @@ func _debug_publish():
 func _publish_car_state():
 	var now = _node.now()
 	car_state.header.stamp = now
-	car_state.header.frame_id = "debug_odom"
-	car_state.child_frame_id = _node.resolve_frame(frame_id) # COG usualy
+	car_state.header.frame_id = "odom"
+	car_state.child_frame_id = frame_id  # "car/cog"
 	
 	var odom_transform : Transform3D = origin.inverse() * global_transform
 	# 1. Pose and Dynamics
@@ -151,11 +139,13 @@ func _publish_car_state():
 	
 	car_state.covariance = cov
 	# Publish debug odom and map transforms 
-	_tf_broadcaster.send_transform(odom_transform.translated(center_of_mass).inverse(),"debug_odom",frame_id, false,now)
-	_tf_broadcaster.send_transform(origin.inverse(),"debug_map","debug_odom", false,now)
+	#_tf_broadcaster.send_transform(odom_transform.translated(center_of_mass).inverse(), "debug_odom", frame_id, false, now)
+	#_tf_broadcaster.send_transform(origin.inverse(), "debug_map", "debug_odom", false, now)
+	_tf_broadcaster.send_transform(odom_transform.translated(center_of_mass),frame_id, "odom", false, now)
+
 
 	_state_pub.publish(car_state)
-	
+
 
 
 func _publish_perception():
@@ -165,7 +155,7 @@ func _publish_perception():
 	
 	var msg = RosMirenaCommonEntityList.new()
 	msg.header.stamp = _node.now()
-	msg.header.frame_id = _node.resolve_frame(frame_id)
+	msg.header.frame_id = frame_id  # "car/cog"
 	msg.entities = cones.map(func(c): return _to_ent(c))
 	_perception_pub.publish(msg)
 
@@ -257,7 +247,7 @@ func _process_track_rail(delta: float) -> void:
 # --- Physics & Low Level Control ---
 
 func _apply_vehicle_physics(_delta: float) -> void:
-	var u = (global_transform.basis.inverse() * linear_velocity).z
+	var u = linear_velocity.z
 	var max_fx_motor = MOTOR_PEAK_TRQ * GEAR_RATIO / WHEEL_RADIUS
 	var max_fx_regen = 0.5 * (1.0 + tanh(u / 0.01)) * max_fx_motor
 	
