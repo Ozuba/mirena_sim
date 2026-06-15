@@ -30,7 +30,7 @@ var _inferred_control_pub: RosPublisher
 var _debug_tim : RosTimer
 # Subscribers
 var _control_sub: RosSubscriber
-
+var _mission_status_sub: RosSubscriber
 var _tf_broadcaster: RosTfBroadcaster
 var _ros_gas: float = 0.0
 var _ros_steer: float = 0.0
@@ -41,6 +41,7 @@ var gas: float = 0.0
 var _steer_smoothed: float = 0.0
 var slam_cones: Array = [] # Seen cones
 var _as_status : RosMirenaCommonAsStatus
+var _mission_status
 
 @onready var car_state : RosMirenaCommonCar = RosMirenaCommonCar.new()
 
@@ -58,10 +59,13 @@ func _ready():
 	# State setup
 	_as_status = RosMirenaCommonAsStatus.new()
 	_as_status.as_status = 0
+	_mission_status = RosMirenaCommonMissionStatus.new()
+	_mission_status.mission_status = 0
 	## Publisher timers
 	_debug_tim = _node.create_timer(0.1, _debug_publish)
-	# Subscriber
-	_control_sub = _node.create_subscriber("/control", "mirena_common/msg/CarControl", _on_control)
+	# Subscribers
+	_control_sub = _node.create_subscription("/control", "mirena_common/msg/CarControl", _on_control)
+	_mission_status_sub = _node.create_subscription("/system/mission_status","mirena_common/msg/MissionStatus",_on_mission_status)
 	# Transforms
 	_tf_broadcaster = _node.create_tf_broadcaster()
 	
@@ -74,7 +78,10 @@ func _ready():
 func _on_control(msg):
 	_ros_gas = msg.gas
 	_ros_steer = msg.steer_angle
-
+	
+func _on_mission_status(msg):
+	_mission_status = msg 
+	
 func _physics_process(delta: float) -> void:
 	# Process driving commands
 	match pilot:

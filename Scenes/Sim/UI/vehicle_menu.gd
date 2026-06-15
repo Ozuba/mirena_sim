@@ -1,10 +1,17 @@
 extends MarginContainer
 
+# Text for each mission_status value (index matches mirena_common/MissionStatus constants).
+const MISSION_STATUS_NAMES := ["INACTIVE", "CONFIGURING", "READY", "RUNNING", "FINISHED", "FAILED"]
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	pass # Replace with function body.
 
+func _process(delta):
+	var ms_idx: int = Sim.car._mission_status.mission_status
+	var ms_text: String = MISSION_STATUS_NAMES[ms_idx] if ms_idx >= 0 and ms_idx < MISSION_STATUS_NAMES.size() else "UNKNOWN"
+	$Vehicle/MissionStatus/Label.text = "MISSION_STATUS: " + ms_text
 
 func _on_pilot_mode_item_selected(index: int) -> void:
 	match index:
@@ -29,5 +36,5 @@ func _on_as_state_item_selected(index: int) -> void:
 
 
 func _on_mission_item_selected(index: int) -> void:
-	var mission = $Vehicle/MarginContainer/AsStatus/MissionSelector/Mission.get_item_text(index)
+	var mission = $Vehicle/AsStatus/MissionSelector/Mission.get_item_text(index)
 	Sim.car._as_status.mission_selected = mission
