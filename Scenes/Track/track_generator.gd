@@ -18,54 +18,59 @@ func generate(
 	octaves: int = 1, # Original FRACTAL_NONE is effectively 1 octave
 	min_poly_size: int = DEFAULT_MIN_POLY_SIZE
 ) -> Curve3D:
-	
-	# 1. Noise Setup
-	var noise = FastNoiseLite.new()
-	noise.seed = randi()
-	noise.noise_type = FastNoiseLite.TYPE_PERLIN
-	noise.frequency = freq
-	noise.fractal_type = FastNoiseLite.FRACTAL_FBM if octaves > 1 else FastNoiseLite.FRACTAL_NONE
-	noise.fractal_octaves = octaves
-	
-	# 2. Grid Generation
-	var bitmap = BitMap.new()
-	bitmap.create(DEFAULT_MAP_SIZE)
-	var center = Vector2(DEFAULT_MAP_SIZE) / 2.0
-	var max_dist = center.length() * 0.8 # Original falloff logic
-
-	for x in DEFAULT_MAP_SIZE.x:
-		for y in DEFAULT_MAP_SIZE.y:
-			var falloff = clamp(1.0 - (Vector2(x, y).distance_to(center) / max_dist), 0.0, 1.0)
-			if noise.get_noise_2d(x, y) * falloff > threshold:
-				bitmap.set_bit(x, y, true)
-
-	# 3. Polygon Extraction
-	var polys = bitmap.opaque_to_polygons(Rect2i(0, 0, DEFAULT_MAP_SIZE.x, DEFAULT_MAP_SIZE.y))
-	# Filter by size just like the original
-	var valid_polys = polys.filter(func(p): return p.size() > min_poly_size)
-	
-	if valid_polys.is_empty(): return null
-	
-	# Pick the largest one to ensure a single main loop
-	valid_polys.sort_custom(func(a, b): return a.size() > b.size())
-	var raw_points = valid_polys[0]
-
-	# 4. Smoothing (Chaikin's Algorithm)
-	var processed = _chaikin_smooth(raw_points, smoothing)
-	
-	# 5. Build Curve3D
-	var bounds = _get_bounds(processed)
-	var scale_factor = world_scale / max(bounds.size.x, bounds.size.y)
-	
 	var curve = Curve3D.new()
-	curve.closed = true
-	
-	for p in processed:
-		var p2d = (p - bounds.center) * scale_factor
-		curve.add_point(Vector3(p2d.x, 0, p2d.y))
-	
-	# Apply tangents for the "soft" look
-	_compute_tangents(curve, 0.35)
+	var valid_curve:bool = false
+	while valid_curve == false:
+		# 1. Noise Setup
+		var noise = FastNoiseLite.new()
+		noise.seed = randi()
+		noise.noise_type = FastNoiseLite.TYPE_PERLIN
+		noise.frequency = freq
+		noise.fractal_type = FastNoiseLite.FRACTAL_FBM if octaves > 1 else FastNoiseLite.FRACTAL_NONE
+		noise.fractal_octaves = octaves
+		
+		# 2. Grid Generation
+		var bitmap = BitMap.new()
+		bitmap.create(DEFAULT_MAP_SIZE)
+		var center = Vector2(DEFAULT_MAP_SIZE) / 2.0
+		var max_dist = center.length() * 0.8 # Original falloff logic
+
+		for x in DEFAULT_MAP_SIZE.x:
+			for y in DEFAULT_MAP_SIZE.y:
+				var falloff = clamp(1.0 - (Vector2(x, y).distance_to(center) / max_dist), 0.0, 1.0)
+				if noise.get_noise_2d(x, y) * falloff > threshold:
+					bitmap.set_bit(x, y, true)
+
+		# 3. Polygon Extraction
+		var polys = bitmap.opaque_to_polygons(Rect2i(0, 0, DEFAULT_MAP_SIZE.x, DEFAULT_MAP_SIZE.y))
+		# Filter by size just like the original
+		var valid_polys = polys.filter(func(p): return p.size() > min_poly_size)
+		
+		
+		
+		# Pick the largest one to ensure a single main loop
+		valid_polys.sort_custom(func(a, b): return a.size() > b.size())
+		var raw_points = valid_polys[0]
+		if raw_points.size() > 0:
+			valid_curve = true
+		
+			
+		# 4. Smoothing (Chaikin's Algorithm)
+		var processed = _chaikin_smooth(raw_points, smoothing)
+		
+		# 5. Build Curve3D
+		var bounds = _get_bounds(processed)
+		var scale_factor = world_scale / max(bounds.size.x, bounds.size.y)
+		
+		
+		curve.closed = true
+		
+		for p in processed:
+			var p2d = (p - bounds.center) * scale_factor
+			curve.add_point(Vector3(p2d.x, 0, p2d.y))
+		
+		# Apply tangents for the "soft" look
+		_compute_tangents(curve, 0.35)
 	
 	return curve
 
