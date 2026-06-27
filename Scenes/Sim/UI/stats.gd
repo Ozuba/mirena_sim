@@ -7,5 +7,4 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
-	var fps = Engine.get_frames_per_second()
 	$MarginContainer/VBoxContainer/FpsLabel.text = "FPS: %d" % Engine.get_frames_per_second()

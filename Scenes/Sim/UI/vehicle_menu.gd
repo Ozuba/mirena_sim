@@ -8,7 +8,7 @@ const MISSION_STATUS_NAMES := ["INACTIVE", "CONFIGURING", "READY", "RUNNING", "F
 func _ready() -> void:
 	pass # Replace with function body.
 
-func _process(delta):
+func _process(_delta):
 	var ms_idx: int = Sim.car._mission_status.mission_status
 	var ms_text: String = MISSION_STATUS_NAMES[ms_idx] if ms_idx >= 0 and ms_idx < MISSION_STATUS_NAMES.size() else "UNKNOWN"
 	$Vehicle/MissionStatus/Label.text = "MISSION_STATUS: " + ms_text

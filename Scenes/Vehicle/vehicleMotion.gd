@@ -19,19 +19,17 @@ var _rail_progress: float = 0.0
 var path : Path3D
 
 # --- ROS Variables ---
-@export var frame_id: String = "car/cog"
 var _node: RosNode
+
+# Idfk
+var _pipeline_spoofer: PipelineSpoofer
 # Publishers
-var _state_pub: RosPublisher
 var _as_status_pub : RosPublisher
-var _perception_pub: RosPublisher
-var _slam_pub: RosPublisher
 var _inferred_control_pub: RosPublisher
 var _debug_tim : RosTimer
 # Subscribers
 var _control_sub: RosSubscriber
 var _mission_status_sub: RosSubscriber
-var _tf_broadcaster: RosTfBroadcaster
 var _ros_gas: float = 0.0
 var _ros_steer: float = 0.0
 
@@ -39,11 +37,8 @@ var _ros_steer: float = 0.0
 var origin  : Transform3D = Transform3D.IDENTITY
 var gas: float = 0.0
 var _steer_smoothed: float = 0.0
-var slam_cones: Array = [] # Seen cones
 var _as_status : RosMirenaCommonAsStatus
 var _mission_status
-
-@onready var car_state : RosMirenaCommonCar = RosMirenaCommonCar.new()
 
 func _ready():
 	## ROS — no namespace: all topic names below are absolute
@@ -51,11 +46,10 @@ func _ready():
 	_node.init("mirena_car", "")
 	## Publishers (absolute topic names from topic contract)
 	_as_status_pub        = _node.create_publisher("/as_status",        "mirena_common/msg/ASStatus")
-	_state_pub            = _node.create_publisher("/state/car",       "mirena_common/msg/Car")
-	_perception_pub       = _node.create_publisher("/debug/perception",  "mirena_common/msg/EntityList")
-	_slam_pub             = _node.create_publisher("/debug/slam",        "mirena_common/msg/EntityList")
 	_inferred_control_pub = _node.create_publisher("/inferred_control",  "mirena_common/msg/CarControl")
 
+	_pipeline_spoofer = PipelineSpoofer.new(self)
+	
 	# State setup
 	_as_status = RosMirenaCommonAsStatus.new()
 	_as_status.as_status = 0
@@ -66,10 +60,6 @@ func _ready():
 	# Subscribers
 	_control_sub = _node.create_subscription("/control", "mirena_common/msg/CarControl", _on_control)
 	_mission_status_sub = _node.create_subscription("/system/mission_status","mirena_common/msg/MissionStatus",_on_mission_status)
-	# Transforms
-	_tf_broadcaster = _node.create_tf_broadcaster()
-	
-
 
 	# Camera Registration
 	Sim.register_camera($TPCam)
@@ -100,80 +90,13 @@ func _physics_process(delta: float) -> void:
 	if global_position.y < -1:
 		reset_position()
 
-	_publish_car_state()
 		
 # Publish Debug Info
 func _debug_publish():
-	_publish_perception()
-	_publish_slam()
+	_pipeline_spoofer.spoof()
 	_publish_control()
 	_as_status_pub.publish(_as_status)
 # ROS Publishing
-
-## Car state (Substitutes sensor EKF)
-func _publish_car_state():
-	var now = _node.now()
-	car_state.header.stamp = now
-	car_state.header.frame_id = "odom"
-	car_state.child_frame_id = frame_id  # "car/cog"
-	
-	var odom_transform : Transform3D = origin.inverse() * global_transform
-	# 1. Pose and Dynamics
-	car_state.x = -odom_transform.origin.z
-	car_state.y = -odom_transform.origin.x
-	car_state.psi = odom_transform.basis.get_euler().y
-	
-	var local_vel = basis.inverse() * linear_velocity
-	car_state.u = -local_vel.z
-	car_state.v = -local_vel.x
-	car_state.omega = angular_velocity.y
-	
-	# 2. Covariance Setup (6x6 matrix flattened)
-	# Indices for diagonal: x=0, y=7, psi=14, u=21, v=28, omega=35
-	var cov = []
-	cov.resize(36)
-	for i in range(36):
-		cov[i] = 0.0 # Initialize all to zero
-		
-	# Set Variances (Standard Deviation squared)
-	# These values represent "how much we trust the simulator"
-	cov[0]  = 0 # x variance (m^2)
-	cov[7]  = 0  # y variance (m^2)
-	cov[14] = 0 # psi variance (rad^2)
-	cov[21] = 0  # u variance (m/s^2)
-	cov[28] = 0  # v variance (m/s^2)
-	cov[35] = 0  # omega variance (rad/s^2)
-	
-	car_state.covariance = cov
-	# Publish debug odom and map transforms 
-	#_tf_broadcaster.send_transform(odom_transform.translated(center_of_mass).inverse(), "debug_odom", frame_id, false, now)
-	#_tf_broadcaster.send_transform(origin.inverse(), "debug_map", "debug_odom", false, now)
-	_tf_broadcaster.send_transform(odom_transform.translated(center_of_mass),frame_id, "odom", false, now)
-
-
-	_state_pub.publish(car_state)
-
-
-
-func _publish_perception():
-	var cones = get_cones_in_sight(12.0)
-	for cone in cones:
-		if not slam_cones.has(cone): slam_cones.append(cone)
-	
-	var msg = RosMirenaCommonEntityList.new()
-	msg.header.stamp = _node.now()
-	msg.header.frame_id = frame_id  # "car/cog"
-	msg.entities = cones.map(func(c): return _to_ent(c))
-	_perception_pub.publish(msg)
-
-func _publish_slam():
-	var msg = RosMirenaCommonEntityList.new()
-	msg.header.stamp = _node.now()
-	msg.header.frame_id = "map"
-	slam_cones = slam_cones.filter(func(c): return is_instance_valid(c))
-	# Use Identity transform for global positions
-	msg.entities = slam_cones.map(func(c): return _to_ent(c,true))
-	_slam_pub.publish(msg)
 
 func _publish_control():
 	var msg = RosMirenaCommonCarControl.new()
@@ -183,18 +106,6 @@ func _publish_control():
 	msg.steer_angle = self.steering
 
 	_inferred_control_pub.publish(msg)
-
-# Conversion helper
-func _to_ent(cone: Node3D, global : bool = false  ) -> RosMirenaCommonEntity:
-	var ent = RosMirenaCommonEntity.new()
-	var pos =  cone.global_position if global else to_local(cone.global_position)
-	ent.type = cone.get_type_as_string()
-	
-	# ROS Swizzle: Forward=Z, Left=-X, Up=Y
-	ent.position.x = -pos.z
-	ent.position.y = -pos.x
-	ent.position.z = pos.y
-	return ent
 
 
 # --- Pilot Logic ---
@@ -277,8 +188,8 @@ func _smooth_steer(current: float, target: float, delta: float, speed: float) ->
 
 # --- Interface & Utility ---
 
-func set_origin(transform, reset_vel: bool = false) -> void:
-	origin = transform
+func set_origin(_transform, reset_vel: bool = false) -> void:
+	origin = _transform
 	if reset_vel:
 		linear_velocity = Vector3.ZERO
 		angular_velocity = Vector3.ZERO
@@ -292,7 +203,7 @@ func reset_position() -> void:
 	self.brake = 0;
 	_rail_progress = 0
 	# Reset slam
-	slam_cones.clear()
+	_pipeline_spoofer.reset()
 
 func cone_collision_set(enable: bool) -> void:
 	self.collision_layer = (self.collision_layer & ~2) | (2 * int(enable))

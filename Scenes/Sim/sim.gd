@@ -11,7 +11,7 @@ var _stats: Dictionary = {
 
 var car : MirenaCar
 var track : Track
-var arguments : Dictionary
+var _arguments : Dictionary
 
 
 # -------------------------------------------------
@@ -55,7 +55,7 @@ func _parse_arguments() -> void:
 			# Options without an argument will be present in the dictionary,
 			# with the value set to an empty string.
 			arguments[argument.trim_prefix("--")] = ""
-	self.arguments = arguments
+	_arguments = arguments
 	print(arguments)
 
 	#else:

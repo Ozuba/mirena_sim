@@ -45,7 +45,7 @@ func _ready() -> void:
 
 
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED if current else Input.MOUSE_MODE_VISIBLE)
 	if current:
 		var dir = Vector3.ZERO
@@ -82,9 +82,11 @@ func _input(event: InputEvent) -> void:
 		# Speed up and down with the mouse wheel
 		if event is InputEventMouseButton:
 			if event.button_index == MOUSE_BUTTON_WHEEL_UP and event.pressed:
+				@warning_ignore("standalone_ternary")
 				slow_down.call() if invert_speed_controls else speed_up.call()
 				
 			if event.button_index == MOUSE_BUTTON_WHEEL_DOWN and event.pressed:
+				@warning_ignore("standalone_ternary")
 				speed_up.call() if invert_speed_controls else slow_down.call()
 
 
@@ -108,9 +110,9 @@ func _add_keybindings() -> void:
 	if "__debug_camera_toggle" 	not in actions: _add_key_input_action("__debug_camera_toggle", toggle_key)
 
 
-func _add_key_input_action(name: String, key: Key) -> void:
+func _add_key_input_action(_name: String, key: Key) -> void:
 	var ev = InputEventKey.new()
 	ev.physical_keycode = key
 	
-	InputMap.add_action(name)
-	InputMap.action_add_event(name, ev)
+	InputMap.add_action(_name)
+	InputMap.action_add_event(_name, ev)
