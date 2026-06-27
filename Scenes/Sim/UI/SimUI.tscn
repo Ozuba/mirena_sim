@@ -17,9 +17,21 @@ func _ready() -> void:
 
 [sub_resource type="LabelSettings" id="LabelSettings_0tiax"]
 font_size = 22
-font_color = Color(0.744876, 0.999331, 1, 1)
+font_color = Color(0.89054835, 0.9999997, 0.99915665, 1)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_val13"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u0bst"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(1, 1, 1, 0.36078432)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
 
 [node name="SimUI" type="Control" unique_id=2132864431]
 layout_mode = 3
@@ -90,9 +102,10 @@ label_settings = SubResource("LabelSettings_0tiax")
 [node name="MenuTabs" type="TabContainer" parent="MainMenu/MarginContainer/VBoxContainer" unique_id=1858219786]
 layout_mode = 2
 size_flags_vertical = 3
-current_tab = 0
+current_tab = 2
 
 [node name="VEHICLE" type="MarginContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs" unique_id=1780155961]
+visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
@@ -260,6 +273,90 @@ file_mode = 0
 display_mode = 1
 root_subfolder = "TrackFiles"
 
+[node name="PIPELINE SPOOF" type="MarginContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs" unique_id=2003303415]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+metadata/_tab_index = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/PIPELINE SPOOF" unique_id=94082811]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="MarginContainer" type="MarginContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/PIPELINE SPOOF/VBoxContainer" unique_id=609116737]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_right = 10
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/PIPELINE SPOOF/VBoxContainer/MarginContainer" unique_id=1200947352]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/PIPELINE SPOOF/VBoxContainer/MarginContainer/HBoxContainer" unique_id=851010644]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Consensus"
+
+[node name="ConsensusSpoofEnable" type="CheckButton" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/PIPELINE SPOOF/VBoxContainer/MarginContainer/HBoxContainer" unique_id=179911252]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 10
+
+[node name="Panel" type="Panel" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/PIPELINE SPOOF/VBoxContainer" unique_id=1514334749]
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_u0bst")
+
+[node name="MarginContainer2" type="MarginContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/PIPELINE SPOOF/VBoxContainer" unique_id=968148704]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_right = 10
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/PIPELINE SPOOF/VBoxContainer/MarginContainer2" unique_id=732800731]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/PIPELINE SPOOF/VBoxContainer/MarginContainer2/HBoxContainer" unique_id=1438484341]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Perception"
+
+[node name="PerceptionSpoofEnable" type="CheckButton" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/PIPELINE SPOOF/VBoxContainer/MarginContainer2/HBoxContainer" unique_id=882906995]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 10
+
+[node name="Panel2" type="Panel" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/PIPELINE SPOOF/VBoxContainer" unique_id=1516601454]
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_u0bst")
+
+[node name="MarginContainer3" type="MarginContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/PIPELINE SPOOF/VBoxContainer" unique_id=1307852730]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_right = 10
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/PIPELINE SPOOF/VBoxContainer/MarginContainer3" unique_id=113939706]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/PIPELINE SPOOF/VBoxContainer/MarginContainer3/HBoxContainer" unique_id=75514277]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Slam"
+
+[node name="SlamSpoofEnable" type="CheckButton" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/PIPELINE SPOOF/VBoxContainer/MarginContainer3/HBoxContainer" unique_id=1367925820]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 10
+
+[node name="Panel3" type="Panel" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/PIPELINE SPOOF/VBoxContainer" unique_id=807195783]
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_u0bst")
+
 [node name="EXTRA" type="MarginContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs" unique_id=137354673]
 visible = false
 layout_mode = 2
@@ -268,7 +365,7 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 script = ExtResource("6_ac68a")
-metadata/_tab_index = 2
+metadata/_tab_index = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/EXTRA" unique_id=1688313888]
 layout_mode = 2

@@ -72,9 +72,9 @@ func _init(owner: MirenaCar) -> void:
 	_perception_msg = RosMirenaCommonEntityList.new()
 	_slam_map_msg = RosMirenaCommonEntityList.new()
 	
-	_perception = PerceptionSpoof.new("virtual/perception/entities", "car/perception/entities")
-	_consensus = ConsensusSpoof.new("virtual/consensus/car", "car/consensus/car")
-	_slam = SlamSpoof.new("virtual/slam/car", "car/slam/car", "virtual/slam/entities", "car/slam/entities")
+	_perception = PerceptionSpoof.new("vcar/perception/entities", "car/perception/entities")
+	_consensus = ConsensusSpoof.new("vcar/consensus/car", "car/consensus/car")
+	_slam = SlamSpoof.new("vcar/slam/car", "car/slam/car", "vcar/slam/entities", "car/slam/entities")
 
 func _update_car_state() -> void:
 	var now = _consensus.node.now()
@@ -117,7 +117,7 @@ func _update_seen_cones() -> void:
 		if not _slam_cones.has(cone): _slam_cones.append(cone)
 	_slam_cones = _slam_cones.filter(func(c): return is_instance_valid(c))
 	
-	# This is shit. we need an inertial frame asap
+	# This is shit. we need an inertial frame asap lmao...
 	_perception_msg.header.stamp = _perception.node.now()
 	var _to_cog_tf = _owner.global_transform.inverse()
 	_perception_msg.entities = cones.map(func(c): return _to_ent(_to_cog_tf, c))
@@ -144,8 +144,8 @@ func spoof() -> void:
 	_update_seen_cones()
 	
 	if _consensus.do_vv_spoof:
-		_car_state.header.frame_id = "virtual/odom"
-		_car_state.child_frame_id = "virtual/cog"
+		_car_state.header.frame_id = "vcar/odom"
+		_car_state.child_frame_id = "vcar/cog"
 		_consensus.vv_car_estimate_pub.publish(_car_state)
 	if _consensus.do_rv_spoof:
 		_car_state.header.frame_id = "car/odom"
@@ -153,26 +153,30 @@ func spoof() -> void:
 		_consensus.rv_car_estimate_pub.publish(_car_state)
 	
 	if _perception.do_vv_spoof:
-		_perception_msg.header.frame_id = "virtual/cog"
+		_perception_msg.header.frame_id = "vcar/cog"
 		_perception.vv_perception_pub.publish(_perception_msg)
 	if _perception.do_rv_spoof:
 		_perception_msg.header.frame_id = "car/cog"
 		_perception.rv_perception_pub.publish(_perception_msg)
 	
 	# ------------------- SLAM --------------
+	var now = _slam.node.now()
 	if _slam.do_vv_spoof:
-		_car_state.header.frame_id = "virtual/odom"
-		_car_state.child_frame_id = "virtual/cog"
+		_car_state.header.frame_id = "vcar/odom"
+		_car_state.child_frame_id = "vcar/cog"
 		_slam.vv_car_state_pub.publish(_car_state)
 		_slam.vv_slam_map_pub.publish(_slam_map_msg)
-		_slam.tf_broadcaster.send_transform(_map_to_odom_tf, FIXED_FRAME, "virtual/odom", false, _slam.node.now())
-		_slam.tf_broadcaster.send_transform(_odom_to_cog_tf, "virtual/cog", "virtual/odom", false, _slam.node.now())
+		_slam.tf_broadcaster.send_transform(_map_to_odom_tf, "vcar/odom", FIXED_FRAME, false, now)
+		_slam.tf_broadcaster.send_transform(_odom_to_cog_tf, "vcar/cog", "vcar/odom", false, now)
 
 	if _slam.do_rv_spoof:
 		_car_state.header.frame_id = "car/odom"
 		_car_state.child_frame_id = "car/cog"
 		_slam.rv_car_state_pub.publish(_car_state)
 		_slam.rv_slam_map_pub.publish(_slam_map_msg)
+		_slam.tf_broadcaster.send_transform(_map_to_odom_tf, "car/odom", FIXED_FRAME, false, now)
+		_slam.tf_broadcaster.send_transform(_odom_to_cog_tf, "car/cog", "car/odom", false, now)
+
 
 func reset():
 	_slam_cones = []
