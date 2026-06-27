@@ -102,10 +102,9 @@ label_settings = SubResource("LabelSettings_0tiax")
 [node name="MenuTabs" type="TabContainer" parent="MainMenu/MarginContainer/VBoxContainer" unique_id=1858219786]
 layout_mode = 2
 size_flags_vertical = 3
-current_tab = 2
+current_tab = 0
 
 [node name="VEHICLE" type="MarginContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs" unique_id=1780155961]
-visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
@@ -274,6 +273,7 @@ display_mode = 1
 root_subfolder = "TrackFiles"
 
 [node name="PIPELINE SPOOF" type="MarginContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs" unique_id=2003303415]
+visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
