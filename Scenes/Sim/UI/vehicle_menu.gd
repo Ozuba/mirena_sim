@@ -1,6 +1,6 @@
 extends MarginContainer
 
-# Text for each mission_status value (index matches mirena_common/MissionStatus constants).
+# Text for each MissionInfo.status value (index matches mirena_common/MissionInfo constants).
 const MISSION_STATUS_NAMES := ["INACTIVE", "CONFIGURING", "READY", "RUNNING", "FINISHED", "FAILED"]
 
 
@@ -9,7 +9,7 @@ func _ready() -> void:
 	pass # Replace with function body.
 
 func _process(_delta):
-	var ms_idx: int = Sim.car._mission_status.mission_status
+	var ms_idx: int = Sim.car._mission_info.status
 	var ms_text: String = MISSION_STATUS_NAMES[ms_idx] if ms_idx >= 0 and ms_idx < MISSION_STATUS_NAMES.size() else "UNKNOWN"
 	$Vehicle/MissionStatus/Label.text = "MISSION_STATUS: " + ms_text
 
@@ -32,9 +32,10 @@ func _on_reset_car_button_pressed() -> void:
 
 
 func _on_as_state_item_selected(index: int) -> void:
-	Sim.car._as_status.as_status = index
+	# Dropdown item ids match the AsInfo.AS_STATUS_* constants.
+	Sim.car._as_info.status = index
 
 
 func _on_mission_item_selected(index: int) -> void:
-	var mission = $Vehicle/AsStatus/MissionSelector/Mission.get_item_text(index)
-	Sim.car._as_status.mission_selected = mission
+	# Dropdown item ids match the AsInfo.AS_MISSION_* constants.
+	Sim.car._as_info.mission = index

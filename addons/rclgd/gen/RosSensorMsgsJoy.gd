@@ -14,7 +14,7 @@ var axes : PackedFloat32Array:
 	get: return get_member(&"axes")
 	set(v): set_member(&"axes", v)
 
-var buttons : Array:
+var buttons : PackedInt32Array:
 	get: return get_member(&"buttons")
 	set(v): set_member(&"buttons", v)
 

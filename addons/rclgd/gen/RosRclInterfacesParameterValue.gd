@@ -34,7 +34,7 @@ var bool_array_value : Array:
 	get: return get_member(&"bool_array_value")
 	set(v): set_member(&"bool_array_value", v)
 
-var integer_array_value : Array:
+var integer_array_value : PackedInt64Array:
 	get: return get_member(&"integer_array_value")
 	set(v): set_member(&"integer_array_value", v)
 

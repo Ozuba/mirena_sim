@@ -14,7 +14,7 @@ var info : RosNavMsgsMapMetaData:
 	get: return get_member(&"info") as RosMsg
 	set(v): set_member(&"info", v)
 
-var data : Array:
+var data : PackedInt32Array:
 	get: return get_member(&"data")
 	set(v): set_member(&"data", v)
 

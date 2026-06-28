@@ -26,7 +26,7 @@ var height : int:
 	get: return get_member(&"height")
 	set(v): set_member(&"height", v)
 
-var data : Array:
+var data : PackedInt32Array:
 	get: return get_member(&"data")
 	set(v): set_member(&"data", v)
 

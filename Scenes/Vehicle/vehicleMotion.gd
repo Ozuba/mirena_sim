@@ -24,12 +24,12 @@ var _node: RosNode
 # Idfk
 var _pipeline_spoofer: PipelineSpoofer
 # Publishers
-var _as_status_pub : RosPublisher
+var _as_info_pub : RosPublisher
 var _inferred_control_pub: RosPublisher
 var _debug_tim : RosTimer
 # Subscribers
 var _control_sub: RosSubscriber
-var _mission_status_sub: RosSubscriber
+var _mission_info_sub: RosSubscriber
 var _ros_gas: float = 0.0
 var _ros_steer: float = 0.0
 
@@ -37,29 +37,29 @@ var _ros_steer: float = 0.0
 var origin  : Transform3D = Transform3D.IDENTITY
 var gas: float = 0.0
 var _steer_smoothed: float = 0.0
-var _as_status : RosMirenaCommonAsStatus
-var _mission_status
+var _as_info : RosMirenaCommonAsInfo
+var _mission_info
 
 func _ready():
 	## ROS — no namespace: all topic names below are absolute
 	_node = RosNode.new()
 	_node.init("mirena_car", "")
 	## Publishers (absolute topic names from topic contract)
-	_as_status_pub        = _node.create_publisher("/as_status",        "mirena_common/msg/ASStatus")
+	_as_info_pub          = _node.create_publisher("/as_status",        "mirena_common/msg/AsInfo")
 	_inferred_control_pub = _node.create_publisher("/inferred_control",  "mirena_common/msg/CarControl")
 
 	_pipeline_spoofer = PipelineSpoofer.new(self)
-	
+
 	# State setup
-	_as_status = RosMirenaCommonAsStatus.new()
-	_as_status.as_status = 0
-	_mission_status = RosMirenaCommonMissionStatus.new()
-	_mission_status.mission_status = 0
+	_as_info = RosMirenaCommonAsInfo.new()
+	_as_info.status = 0
+	_mission_info = RosMirenaCommonMissionInfo.new()
+	_mission_info.status = 0
 	## Publisher timers
 	_debug_tim = _node.create_timer(0.1, _debug_publish)
 	# Subscribers
 	_control_sub = _node.create_subscription("/control", "mirena_common/msg/CarControl", _on_control)
-	_mission_status_sub = _node.create_subscription("/system/mission_status","mirena_common/msg/MissionStatus",_on_mission_status)
+	_mission_info_sub = _node.create_subscription("/system/mission_status","mirena_common/msg/MissionInfo",_on_mission_info)
 
 	# Camera Registration
 	Sim.register_camera($TPCam)
@@ -69,8 +69,8 @@ func _on_control(msg):
 	_ros_gas = msg.gas
 	_ros_steer = msg.steer_angle
 	
-func _on_mission_status(msg):
-	_mission_status = msg 
+func _on_mission_info(msg):
+	_mission_info = msg
 	
 func _physics_process(delta: float) -> void:
 	# Process driving commands
@@ -95,7 +95,7 @@ func _physics_process(delta: float) -> void:
 func _debug_publish():
 	_pipeline_spoofer.spoof()
 	_publish_control()
-	_as_status_pub.publish(_as_status)
+	_as_info_pub.publish(_as_info)
 # ROS Publishing
 
 func _publish_control():
