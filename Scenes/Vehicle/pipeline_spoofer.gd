@@ -23,6 +23,7 @@ class ConsensusSpoof extends RefCounted:
 	var rv_car_estimate_pub: RosPublisher;
 	var do_vv_spoof: bool = true;
 	var do_rv_spoof: bool = false;
+	var tf_broadcaster: RosTfBroadcaster;
 	
 	func _init(virtual_vehicle_topic: String, real_vehicle_topic: String) -> void:
 		node = RosNode.new()
@@ -30,6 +31,7 @@ class ConsensusSpoof extends RefCounted:
 
 		vv_car_estimate_pub = node.create_publisher(virtual_vehicle_topic, "mirena_common/msg/Car")
 		rv_car_estimate_pub = node.create_publisher(real_vehicle_topic, "mirena_common/msg/Car")
+		tf_broadcaster = node.create_tf_broadcaster()
 
 class PerceptionSpoof extends RefCounted:
 	var node: RosNode
@@ -143,14 +145,18 @@ func spoof() -> void:
 	_update_car_state()
 	_update_seen_cones()
 	
+	var now = _slam.node.now()
 	if _consensus.do_vv_spoof:
 		_car_state.header.frame_id = "vcar/odom"
 		_car_state.child_frame_id = "vcar/cog"
 		_consensus.vv_car_estimate_pub.publish(_car_state)
+		_consensus.tf_broadcaster.send_transform(_odom_to_cog_tf, "vcar/cog", "vcar/odom", false, now)
 	if _consensus.do_rv_spoof:
 		_car_state.header.frame_id = "car/odom"
 		_car_state.child_frame_id = "car/cog"
 		_consensus.rv_car_estimate_pub.publish(_car_state)
+		_consensus.tf_broadcaster.send_transform(_odom_to_cog_tf, "car/cog", "car/odom", false, now)
+
 	
 	if _perception.do_vv_spoof:
 		_perception_msg.header.frame_id = "vcar/cog"
@@ -160,14 +166,13 @@ func spoof() -> void:
 		_perception.rv_perception_pub.publish(_perception_msg)
 	
 	# ------------------- SLAM --------------
-	var now = _slam.node.now()
+
 	if _slam.do_vv_spoof:
 		_car_state.header.frame_id = "vcar/odom"
 		_car_state.child_frame_id = "vcar/cog"
 		_slam.vv_car_state_pub.publish(_car_state)
 		_slam.vv_slam_map_pub.publish(_slam_map_msg)
 		_slam.tf_broadcaster.send_transform(_map_to_odom_tf, "vcar/odom", FIXED_FRAME, false, now)
-		_slam.tf_broadcaster.send_transform(_odom_to_cog_tf, "vcar/cog", "vcar/odom", false, now)
 
 	if _slam.do_rv_spoof:
 		_car_state.header.frame_id = "car/odom"
@@ -175,7 +180,6 @@ func spoof() -> void:
 		_slam.rv_car_state_pub.publish(_car_state)
 		_slam.rv_slam_map_pub.publish(_slam_map_msg)
 		_slam.tf_broadcaster.send_transform(_map_to_odom_tf, "car/odom", FIXED_FRAME, false, now)
-		_slam.tf_broadcaster.send_transform(_odom_to_cog_tf, "car/cog", "car/odom", false, now)
 
 
 func reset():
