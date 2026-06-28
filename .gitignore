@@ -1,4 +1,3 @@
 .godot/
-*.core  
+*.core
 core.*
-*.import
