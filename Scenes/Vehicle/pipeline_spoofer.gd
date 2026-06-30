@@ -5,10 +5,12 @@ var _owner: MirenaCar
 var _consensus: ConsensusSpoof
 var _perception: PerceptionSpoof
 var _slam: SlamSpoof
+var _planning: PlanningSpoof
 
 var _car_state : RosMirenaCommonCar 
 var _perception_msg : RosMirenaCommonEntityList
 var _slam_map_msg : RosMirenaCommonEntityList
+var _track_msg : RosMirenaCommonTrack
 
 var _slam_cones: Array = [] # Seen cones
 
@@ -68,15 +70,32 @@ class SlamSpoof extends RefCounted:
 		rv_slam_map_pub = node.create_publisher(real_map_topic, RosMirenaCommonEntityList.ROS_TYPE_NAME)
 		tf_broadcaster = node.create_tf_broadcaster()
 
+class PlanningSpoof extends RefCounted:
+	var node: RosNode
+	var vv_planning_pub: RosPublisher;
+	var rv_planning_pub: RosPublisher;
+	var do_vv_spoof: bool = true;
+	var do_rv_spoof: bool = false;
+	
+	func _init(virtual_planning_topic: String, real_planning_topic: String) -> void:
+		node = RosNode.new()
+		node.init("planing_spoof", "")
+
+		vv_planning_pub = node.create_publisher(virtual_planning_topic, RosMirenaCommonTrack.ROS_TYPE_NAME)
+		rv_planning_pub = node.create_publisher(real_planning_topic, RosMirenaCommonTrack.ROS_TYPE_NAME)
+
+
 func _init(owner: MirenaCar) -> void:
 	_owner = owner
 	_car_state = RosMirenaCommonCar.new()
 	_perception_msg = RosMirenaCommonEntityList.new()
 	_slam_map_msg = RosMirenaCommonEntityList.new()
+	_track_msg = RosMirenaCommonTrack.new()
 	
 	_perception = PerceptionSpoof.new("vcar/perception/entities", "car/perception/entities")
 	_consensus = ConsensusSpoof.new("vcar/consensus/car", "car/consensus/car")
 	_slam = SlamSpoof.new("vcar/slam/car", "car/slam/car", "vcar/slam/entities", "car/slam/entities")
+	_planning = PlanningSpoof.new("vcar/planning/track", "car/planning/track")
 
 func _update_car_state() -> void:
 	var now = _consensus.node.now()
@@ -127,6 +146,20 @@ func _update_seen_cones() -> void:
 	_slam_map_msg.header.frame_id = FIXED_FRAME
 	var _to_map_tf = _owner.origin.inverse()
 	_slam_map_msg.entities = _slam_cones.map(func(c): return _to_ent(_to_map_tf, c))
+
+func _update_track() -> void:
+	if not Sim.track: return
+	var track := Sim.track
+	_track_msg.header.frame_id = FIXED_FRAME
+	_track_msg.is_closed = track.track_curve.closed
+	_track_msg.gates = track.get_gate_positions().map(func(t: Transform3D):
+		var gate = RosMirenaCommonGate.new()
+		gate.x = -t.origin.z  # Godot -Z Forward -> ROS +X
+		gate.y = -t.origin.x  # Godot -X Left    -> ROS +Y
+		gate.psi = -t.basis.get_euler(EulerOrder.EULER_ORDER_YXZ).x
+		
+		return gate
+	)
 	
 
 static func _to_ent(transform: Transform3D, cone: Node3D) -> RosMirenaCommonEntity:
@@ -144,6 +177,7 @@ static func _to_ent(transform: Transform3D, cone: Node3D) -> RosMirenaCommonEnti
 func spoof() -> void:
 	_update_car_state()
 	_update_seen_cones()
+	_update_track()
 	
 	var now = _slam.node.now()
 	if _consensus.do_vv_spoof:
@@ -180,7 +214,12 @@ func spoof() -> void:
 		_slam.rv_car_state_pub.publish(_car_state)
 		_slam.rv_slam_map_pub.publish(_slam_map_msg)
 		_slam.tf_broadcaster.send_transform(_map_to_odom_tf, "car/odom", FIXED_FRAME, false, now)
-
+		
+	if _planning.do_vv_spoof:
+		_planning.vv_planning_pub.publish(_track_msg)
+		
+	if _planning.do_rv_spoof:
+		_planning.rv_planning_pub.publish(_track_msg)
 
 func reset():
 	_slam_cones = []

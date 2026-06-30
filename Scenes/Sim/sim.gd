@@ -4,9 +4,9 @@ extends Node
 # Global objects
 # -------------------------------------------------
 
-var _stats: Dictionary = {
-	"cones_fallen": 0
-}
+#var _stats: Dictionary = {
+#	"cones_fallen": 0
+#}
 
 
 var car : MirenaCar

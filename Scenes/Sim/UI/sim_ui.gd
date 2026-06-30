@@ -14,3 +14,4 @@ func _ready() -> void:
 	%ConsensusSpoofEnable.toggled.connect(func(value) : Sim.car._pipeline_spoofer._consensus.do_rv_spoof = value)
 	%PerceptionSpoofEnable.toggled.connect(func(value) : Sim.car._pipeline_spoofer._perception.do_rv_spoof = value)
 	%SlamSpoofEnable.toggled.connect(func(value) : Sim.car._pipeline_spoofer._slam.do_rv_spoof = value)
+	%PlanningSpoofEnable.toggled.connect(func(value) : Sim.car._pipeline_spoofer._planning.do_rv_spoof = value)

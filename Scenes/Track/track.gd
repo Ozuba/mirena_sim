@@ -21,10 +21,8 @@ signal track_loaded
 
 # ROS node to manage tracks
 var _node: RosNode
-var _track_pub : RosPublisher
 var _map_pub : RosPublisher
 var _map_timer : RosTimer
-var _track_timer : RosTimer
 
 # Standard ROS 2 Origin (X: Forward, Y: Left, PSI: Counter-Clockwise Yaw)
 var origin : Transform3D 
@@ -47,11 +45,9 @@ func _ready() -> void:
 	_node.declare_parameter("track", "")
 	_node.parameter_changed.connect(_on_ros_parameter_changed)
 	# Publishers
-	_track_pub = _node.create_publisher("~/track","mirena_common/msg/Track")
 	_map_pub = _node.create_publisher("~/full_map","mirena_common/msg/EntityList")
 	# Timers for publishers
 	_map_timer = _node.create_timer(1,_publish_full_map)
-	_track_timer = _node.create_timer(1,_publish_track)
 	
 	#Check parameter
 	var value = _node.get_parameter("track")
@@ -71,22 +67,6 @@ func _publish_full_map():
 	msg.entities = get_tree().get_nodes_in_group("Cones").map(func(c): return _to_ent(c,true))
 	_map_pub.publish(msg)
 
-
-func _publish_track():
-	if not Sim.track: return
-	var msg = RosMirenaCommonTrack.new()
-	msg.header.frame_id = "debug_map"
-	msg.header.stamp = _node.now()
-	msg.is_closed = track_curve.closed
-	msg.gates = get_gate_positions().map(func(t: Transform3D):
-		var gate = RosMirenaCommonGate.new()
-		gate.x = -t.origin.z  # Godot -Z Forward -> ROS +X
-		gate.y = -t.origin.x  # Godot -X Left    -> ROS +Y
-		gate.psi = -t.basis.get_euler(EulerOrder.EULER_ORDER_YXZ).x
-		
-		return gate
-	)
-	_track_pub.publish(msg)
 	
 func _to_ent(cone: Node3D, global : bool = false  ) -> RosMirenaCommonEntity:
 	var ent = RosMirenaCommonEntity.new()

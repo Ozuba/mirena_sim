@@ -357,6 +357,25 @@ custom_minimum_size = Vector2(0, 2)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_u0bst")
 
+[node name="MarginContainer4" type="MarginContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/PIPELINE SPOOF/VBoxContainer" unique_id=1459096775]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_right = 10
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/PIPELINE SPOOF/VBoxContainer/MarginContainer4" unique_id=1855373321]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/PIPELINE SPOOF/VBoxContainer/MarginContainer4/HBoxContainer" unique_id=845441115]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Planning"
+
+[node name="PlanningSpoofEnable" type="CheckButton" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs/PIPELINE SPOOF/VBoxContainer/MarginContainer4/HBoxContainer" unique_id=1516149979]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 10
+
 [node name="EXTRA" type="MarginContainer" parent="MainMenu/MarginContainer/VBoxContainer/MenuTabs" unique_id=137354673]
 visible = false
 layout_mode = 2
